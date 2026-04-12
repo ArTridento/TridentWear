@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="View detailed sizing, pricing, and product information for Trident premium streetwear pieces.">
+  <title>Product Detail | Trident</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body data-page="products">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/">
+        <span class="brand-name"><span>Trident</span></span>
+        <span class="brand-tagline">Premium Streetwear</span>
+      </a>
+      <button class="mobile-toggle" type="button" data-mobile-toggle aria-label="Open navigation">
+        <span class="mobile-toggle-line"></span>
+        <span class="mobile-toggle-line"></span>
+        <span class="mobile-toggle-line"></span>
+      </button>
+      <nav class="site-nav" data-mobile-nav>
+        <a class="nav-link" href="/" data-nav-link="home">Home</a>
+        <a class="nav-link" href="/products" data-nav-link="products">Products</a>
+        <a class="nav-link" href="/about" data-nav-link="about">About</a>
+        <a class="nav-link" href="/contact" data-nav-link="contact">Contact</a>
+        <a class="nav-link" href="/admin" data-nav-link="admin" data-admin-link hidden>Admin</a>
+      </nav>
+      <div class="header-tools">
+        <a class="utility-pill" href="/auth" data-account-link>Login</a>
+        <a class="utility-pill" href="/cart">Cart <span class="cart-badge" data-cart-count>0</span></a>
+        <button class="utility-pill" type="button" data-logout-button hidden>Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <div class="page-hero-panel">
+          <span class="eyebrow">Product Detail</span>
+          <p class="page-copy">Pick your size, add to cart, and move through checkout without breaking the premium flow.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-tight">
+      <div class="container" data-product-detail></div>
+    </section>
+
+    <section class="section-tight">
+      <div class="container">
+        <div class="section-header">
+          <span class="eyebrow">Related Pieces</span>
+          <h2 class="section-title">Complete the <span class="accent">rotation</span>.</h2>
+        </div>
+        <div class="product-grid" data-related-products></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <div class="brand">
+          <span class="brand-name"><span>Trident</span></span>
+          <span class="brand-tagline">Premium Streetwear</span>
+        </div>
+        <p class="footer-note">Every product page is wired to the live store catalog.</p>
+      </div>
+      <div>
+        <h3 class="footer-title">Navigate</h3>
+        <div class="footer-links">
+          <a href="/products">Products</a>
+          <a href="/cart">Cart</a>
+          <a href="/auth">Account</a>
+        </div>
+      </div>
+      <div>
+        <h3 class="footer-title">Brand</h3>
+        <div class="footer-links">
+          <a href="/about">Story</a>
+          <a href="/contact">Contact</a>
+          <a href="/">Home</a>
+        </div>
+      </div>
+      <div>
+        <h3 class="footer-title">Support</h3>
+        <div class="footer-links">
+          <a href="mailto:hello@tridentwear.com">hello@tridentwear.com</a>
+          <a href="tel:+919876543210">+91 98765 43210</a>
+          <a href="/admin">Admin</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/js/pages/product.js"></script>
+</body>
+</html>
