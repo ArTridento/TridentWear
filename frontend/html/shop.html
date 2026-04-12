@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Browse premium T-shirts and shirts from Trident, a dark luxury streetwear brand built for elevated everyday wear.">
+  <title>Products | Trident</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body data-page="products">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/">
+        <span class="brand-name"><span>Trident</span></span>
+        <span class="brand-tagline">Premium Streetwear</span>
+      </a>
+      <button class="mobile-toggle" type="button" data-mobile-toggle aria-label="Open navigation">
+        <span class="mobile-toggle-line"></span>
+        <span class="mobile-toggle-line"></span>
+        <span class="mobile-toggle-line"></span>
+      </button>
+      <nav class="site-nav" data-mobile-nav>
+        <a class="nav-link" href="/" data-nav-link="home">Home</a>
+        <a class="nav-link" href="/products" data-nav-link="products">Products</a>
+        <a class="nav-link" href="/about" data-nav-link="about">About</a>
+        <a class="nav-link" href="/contact" data-nav-link="contact">Contact</a>
+        <a class="nav-link" href="/admin" data-nav-link="admin" data-admin-link hidden>Admin</a>
+      </nav>
+      <div class="header-tools">
+        <a class="utility-pill" href="/auth" data-account-link>Login</a>
+        <a class="utility-pill" href="/cart">Cart <span class="cart-badge" data-cart-count>0</span></a>
+        <button class="utility-pill" type="button" data-logout-button hidden>Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <div class="page-hero-panel">
+          <span class="eyebrow">Collection</span>
+          <h1 class="page-title">Premium pieces with a <span class="accent">midnight edge</span>.</h1>
+          <p class="page-copy">T-shirts lead the line, with shirts ready for sharper styling and elevated layering.</p>
+          <div class="filter-bar">
+            <button class="btn filter-chip is-active" type="button" data-filter="all">All</button>
+            <button class="btn filter-chip" type="button" data-filter="tshirt">T-Shirts</button>
+            <button class="btn filter-chip" type="button" data-filter="shirt">Shirts</button>
+          </div>
+          <div class="helper-note info">Showing <strong data-product-count>0 pieces</strong> from the live FastAPI catalog.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-tight">
+      <div class="container">
+        <div class="product-grid" data-products-grid></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <div class="brand">
+          <span class="brand-name"><span>Trident</span></span>
+          <span class="brand-tagline">Premium Streetwear</span>
+        </div>
+        <p class="footer-note">The cleanest route into dark premium essentials.</p>
+      </div>
+      <div>
+        <h3 class="footer-title">Shop</h3>
+        <div class="footer-links">
+          <a href="/products">All Products</a>
+          <a href="/products">T-Shirts</a>
+          <a href="/products">Shirts</a>
+        </div>
+      </div>
+      <div>
+        <h3 class="footer-title">Account</h3>
+        <div class="footer-links">
+          <a href="/auth">Login</a>
+          <a href="/cart">Cart</a>
+          <a href="/admin">Admin</a>
+        </div>
+      </div>
+      <div>
+        <h3 class="footer-title">Support</h3>
+        <div class="footer-links">
+          <a href="/contact">Contact</a>
+          <a href="/about">Brand Story</a>
+          <a href="mailto:hello@tridentwear.com">Email Us</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/js/pages/products.js"></script>
+</body>
+</html>
