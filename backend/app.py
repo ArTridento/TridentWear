@@ -36,6 +36,7 @@ PRODUCTS_PATH = DB_DIR / "products.json"
 ORDERS_PATH = DB_DIR / "orders.json"
 USERS_PATH = DB_DIR / "users.json"
 CONTACTS_PATH = DB_DIR / "contacts.json"
+REVIEWS_PATH = DB_DIR / "reviews.json"
 FRONTEND_PRODUCTS_PATH = JS_DIR / "products.json"
 
 PASSWORD_ITERATIONS = 120_000
@@ -58,6 +59,15 @@ class LoginPayload(BaseModel):
     email: str
     password: str
 
+
+
+class ReviewPayload(BaseModel):
+    product_id: int
+    rating: int
+    review: str
+
+class OrderStatusUpdate(BaseModel):
+    status: str
 
 class ContactPayload(BaseModel):
     name: str
@@ -240,6 +250,13 @@ def load_orders() -> List[Dict[str, Any]]:
 def save_orders(orders: List[Dict[str, Any]]) -> None:
     write_json(ORDERS_PATH, orders)
 
+
+
+def load_reviews() -> List[Dict[str, Any]]:
+    return read_json(REVIEWS_PATH, [])
+
+def save_reviews(reviews: List[Dict[str, Any]]) -> None:
+    write_json(REVIEWS_PATH, reviews)
 
 def load_users() -> List[Dict[str, Any]]:
     return read_json(USERS_PATH, [DEFAULT_ADMIN])
@@ -933,3 +950,75 @@ async def custom_404_handler(request: Request, exc: StarletteHTTPException):
         return FileResponse(HTML_DIR / "404.html", status_code=404)
     from fastapi.responses import JSONResponse
     return JSONResponse({"detail": exc.detail}, status_code=exc.status_code)
+
+@products_router.post("/reviews")
+def create_review(payload: ReviewPayload, request: Request) -> Dict[str, Any]:
+    user = get_session_user(request)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="You must be logged in to review products.")
+    
+    if payload.rating < 1 or payload.rating > 5:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Rating must be between 1 and 5.")
+        
+    reviews = load_reviews()
+    # Check if user already reviewed
+    for r in reviews:
+        if r["user_id"] == user["id"] and r["product_id"] == payload.product_id:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="You have already reviewed this product.")
+            
+    review = {
+        "id": next_id(reviews),
+        "user_id": user["id"],
+        "user_name": user["name"],
+        "product_id": payload.product_id,
+        "rating": payload.rating,
+        "review": payload.review.strip(),
+        "created_at": now_iso()
+    }
+    reviews.append(review)
+    save_reviews(reviews)
+    return {"success": True, "message": "Review submitted successfully.", "review": review}
+
+@products_router.get("/reviews/{product_id}")
+def get_reviews(product_id: int) -> List[Dict[str, Any]]:
+    reviews = load_reviews()
+    return [r for r in reviews if r["product_id"] == product_id]
+
+@admin_router.get("/orders")
+def get_all_orders(_: Dict[str, Any] = Depends(require_admin)) -> List[Dict[str, Any]]:
+    return load_orders()
+
+@admin_router.put("/orders/{order_id}")
+def update_order_status(order_id: str, payload: OrderStatusUpdate, _: Dict[str, Any] = Depends(require_admin)) -> Dict[str, Any]:
+    orders = load_orders()
+    for o in orders:
+        if o.get("order_id") == order_id:
+            o["status"] = payload.status
+            save_orders(orders)
+            return {"success": True, "message": "Order status updated.", "order": o}
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found.")
+
+@admin_router.get("/analytics")
+def get_analytics(_: Dict[str, Any] = Depends(require_admin)) -> Dict[str, Any]:
+    orders = load_orders()
+    total_orders = len(orders)
+    total_revenue = sum(o.get("subtotal", 0) for o in orders)
+    unique_customers = len(set(o.get("customer", {}).get("email") for o in orders if o.get("customer", {}).get("email")))
+    
+    # Simple top products computation
+    product_sales = {}
+    for o in orders:
+        for item in o.get("items", []):
+            name = item.get("name")
+            qty = item.get("qty", 1)
+            if name:
+                product_sales[name] = product_sales.get(name, 0) + qty
+                
+    top_products = [{"name": k, "sold": v} for k, v in sorted(product_sales.items(), key=lambda x: x[1], reverse=True)[:5]]
+    
+    return {
+        "total_orders": total_orders,
+        "total_revenue": total_revenue,
+        "customers": unique_customers,
+        "top_products": top_products
+    }
