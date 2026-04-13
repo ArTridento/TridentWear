@@ -32,7 +32,8 @@
         <div class="search-results" data-search-results hidden></div>
       </div>
       <div class="header-tools">
-        <a class="utility-pill" href="/auth" data-account-link>Login</a>
+        <a class="utility-pill" href="/login" data-login-link>Login</a>
+        <a class="utility-pill" href="/register" data-register-link>Sign Up</a>
         <a class="utility-pill" href="/cart">Cart <span class="cart-badge" data-cart-count>0</span></a>
         <button class="utility-pill" type="button" data-logout-button hidden>Logout</button>
       </div>
@@ -53,6 +54,9 @@
           <div class="hero-actions">
             <a class="btn btn-primary" href="/products">Shop Collection</a>
             <a class="btn btn-outline" href="/about">Brand Story</a>
+          </div>
+          <div class="hero-stats reveal reveal-delay-4">
+            <h3 class="hero-stats-title"><span id="customerCount" class="accent">0</span>+ Happy Customers</h3>
           </div>
           <div class="hero-metrics">
             <article class="metric-card reveal reveal-delay-1">
@@ -131,7 +135,7 @@
       </div>
       <div>
         <h3 class="footer-title">Store</h3>
-        <div class="footer-links"><a href="/cart">Cart</a><a href="/auth">Login</a><a href="/admin">Admin</a></div>
+        <div class="footer-links"><a href="/cart">Cart</a><a href="/login">Login</a><a href="/admin">Admin</a></div>
       </div>
       <div>
         <h3 class="footer-title">Legal</h3>

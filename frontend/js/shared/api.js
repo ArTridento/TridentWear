@@ -1,4 +1,4 @@
-export const API_BASE = "http://127.0.0.1:8000";
+export const API_BASE = "";
 const AUTH_STORAGE_KEY = "tridentwear-auth-session";
 
 function resolveUrl(path) {
@@ -47,8 +47,8 @@ export async function request(path, options = {}) {
   const session = getAuthSession();
   const token = session?.token;
 
-  if (token && !headers.has("x-session-token") && !headers.has("authorization")) {
-    headers.set("x-session-token", token);
+  if (token && !headers.has("authorization") && !headers.has("Authorization") && !headers.has("x-session-token")) {
+    headers.set("Authorization", `Bearer ${token}`);
   }
 
   const response = await fetch(resolveUrl(path), {

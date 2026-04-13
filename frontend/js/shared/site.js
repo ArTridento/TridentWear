@@ -139,10 +139,14 @@ export function bindProductCardActions(container, products) {
       const product = lookup.get(button.dataset.productId);
       if (!product) return;
       const defaultSize = product.sizes?.[0] || "M";
-      addCartItem(product, { size: defaultSize });
-      showToast(`${product.name} (${defaultSize}) added to cart.`);
-      button.textContent = "Added ✓";
-      window.setTimeout(() => { button.textContent = "Add to Cart"; }, 1200);
+      try {
+        addCartItem(product, { size: defaultSize });
+        showToast(`${product.name} (${defaultSize}) added to cart.`);
+        button.textContent = "Added ✓";
+        window.setTimeout(() => { button.textContent = "Add to Cart"; }, 1200);
+      } catch (err) {
+        showToast(err.message, "error");
+      }
     });
   });
 
@@ -262,18 +266,56 @@ function setCartCount(count) {
   document.querySelectorAll("[data-cart-count]").forEach((badge) => { badge.textContent = String(count); });
 }
 
-function setAccountUi() {
-  const accountLink = document.querySelector("[data-account-link]");
-  const logoutButton = document.querySelector("[data-logout-button]");
-  const adminLink = document.querySelector("[data-admin-link]");
+function ensureAuthLinks() {
+  document.querySelectorAll(".header-tools").forEach((container) => {
+    const loginLink = container.querySelector("[data-login-link]");
+    if (!loginLink || container.querySelector("[data-register-link]")) {
+      return;
+    }
 
-  if (accountLink) {
-    if (!currentUser) { accountLink.textContent = "Login"; accountLink.setAttribute("href", "/auth"); }
-    else if (currentUser.role === "admin") { accountLink.textContent = "Admin"; accountLink.setAttribute("href", "/admin"); }
-    else { accountLink.textContent = currentUser.name.split(" ")[0]; accountLink.setAttribute("href", "/auth"); }
-  }
-  if (logoutButton) logoutButton.hidden = !currentUser;
-  if (adminLink) adminLink.hidden = !(currentUser && currentUser.role === "admin");
+    const registerLink = document.createElement("a");
+    registerLink.className = "utility-pill";
+    registerLink.href = "/register";
+    registerLink.textContent = "Register";
+    registerLink.setAttribute("data-register-link", "");
+
+    const cartLink = Array.from(container.querySelectorAll("a")).find((link) => link.getAttribute("href") === "/cart");
+    const logoutButton = container.querySelector("[data-logout-button]");
+    container.insertBefore(registerLink, cartLink || logoutButton || null);
+  });
+}
+
+function setAccountUi() {
+  ensureAuthLinks();
+  const firstName = currentUser?.name?.split(" ")[0] || "Member";
+
+  document.querySelectorAll("[data-login-link]").forEach((loginLink) => {
+    if (!currentUser) {
+      loginLink.textContent = "Login";
+      loginLink.setAttribute("href", "/login");
+      loginLink.classList.remove("is-greeting");
+      loginLink.removeAttribute("title");
+      return;
+    }
+
+    loginLink.textContent = `Hello, ${firstName}`;
+    loginLink.setAttribute("href", currentUser.role === "admin" ? "/admin" : "/products");
+    loginLink.classList.add("is-greeting");
+    loginLink.setAttribute("title", `Signed in as ${currentUser.name}`);
+  });
+
+  document.querySelectorAll("[data-register-link]").forEach((registerLink) => {
+    registerLink.hidden = Boolean(currentUser);
+    registerLink.setAttribute("href", "/register");
+  });
+
+  document.querySelectorAll("[data-logout-button]").forEach((logoutButton) => {
+    logoutButton.hidden = !currentUser;
+  });
+
+  document.querySelectorAll("[data-admin-link]").forEach((adminLink) => {
+    adminLink.hidden = !(currentUser && currentUser.role === "admin");
+  });
 }
 
 function bindMobileMenu() {
@@ -285,17 +327,25 @@ function bindMobileMenu() {
 }
 
 function bindLogout() {
-  const button = document.querySelector("[data-logout-button]");
-  if (!button) return;
-  button.addEventListener("click", async () => {
-    try {
-      await post("/api/auth/logout", {});
-      clearAuthSession();
-      currentUser = null;
-      setAccountUi();
-      showToast("Signed out successfully.");
-      if (document.body.dataset.page === "admin") window.location.href = "/auth";
-    } catch (error) { showToast(error.message, "error"); }
+  document.querySelectorAll("[data-logout-button]").forEach((button) => {
+    if (button.dataset.logoutBound === "true") {
+      return;
+    }
+
+    button.dataset.logoutBound = "true";
+    button.addEventListener("click", async () => {
+      try {
+        await post("/api/auth/logout", {});
+        clearAuthSession();
+        currentUser = null;
+        setAccountUi();
+        window.setTimeout(() => {
+          window.location.href = "/login";
+        }, 120);
+      } catch (error) {
+        showToast(error.message, "error");
+      }
+    });
   });
 }
 
@@ -400,9 +450,17 @@ export async function refreshAuthState() {
   if (!session?.token) return currentUser;
   try {
     const data = await get("/api/auth/me");
-    currentUser = data.user;
-    saveAuthSession({ ...session, user: currentUser });
-  } catch { clearAuthSession(); currentUser = null; }
+    if (!data?.authenticated || !data.user) {
+      clearAuthSession();
+      currentUser = null;
+    } else {
+      currentUser = data.user;
+      saveAuthSession({ ...session, user: currentUser });
+    }
+  } catch {
+    clearAuthSession();
+    currentUser = null;
+  }
   setAccountUi();
   return currentUser;
 }

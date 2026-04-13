@@ -7,7 +7,7 @@ Trident is a premium streetwear store project built with a plain HTML/CSS/JavaSc
 - Frontend: HTML, CSS, JavaScript
 - Backend: FastAPI
 - Data storage: JSON files in `db/`
-- Auth: Cookie-based sessions with local seeded users
+- Auth: JWT + localStorage on the frontend with a session bridge for protected page loads
 - Admin uploads: Stored in `frontend/images/uploads/`
 
 ## Project Structure
@@ -33,7 +33,9 @@ TridentWear/
 |   |   |-- cart.html
 |   |   |-- contact.html
 |   |   |-- index.html
+|   |   |-- login.html
 |   |   |-- product.html
+|   |   |-- register.html
 |   |   `-- shop.html
 |   |-- images/
 |   |   `-- uploads/
@@ -52,7 +54,7 @@ TridentWear/
 - Products page with live filtering
 - Product detail page with size selection
 - Cart page with local cart persistence and checkout form
-- Login/register with local session auth
+- Dedicated `login.html` and `register.html` flows with bcrypt-hashed passwords and JWT auth
 - Admin panel with add, edit, delete, featured toggle, and image upload
 - Contact form that writes to `db/contacts.json`
 - Orders saved to `db/orders.json`
@@ -85,6 +87,8 @@ TridentWear/
 
 ## API Overview
 
+- `POST /register`
+- `POST /login`
 - `GET /api/auth/me`
 - `POST /api/auth/register`
 - `POST /api/auth/login`

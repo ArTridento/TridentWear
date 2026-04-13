@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Login to your TRIDENT Wear account to continue shopping and stay signed in across the storefront.">
+  <title>Login | TRIDENT Wear</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="icon" type="image/png" href="../images/Logo.png">
+</head>
+<body data-page="auth">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/"><span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span><span class="brand-tagline">T-Shirt Collections</span></a>
+      <button class="mobile-toggle" type="button" data-mobile-toggle aria-label="Open navigation"><span class="mobile-toggle-line"></span><span class="mobile-toggle-line"></span><span class="mobile-toggle-line"></span></button>
+      <nav class="site-nav" data-mobile-nav>
+        <a class="nav-link" href="/" data-nav-link="home">Home</a>
+        <a class="nav-link" href="/products" data-nav-link="products">Shop</a>
+        <a class="nav-link" href="/about" data-nav-link="about">About</a>
+        <a class="nav-link" href="/contact" data-nav-link="contact">Contact</a>
+        <a class="nav-link" href="/admin" data-nav-link="admin" data-admin-link hidden>Admin</a>
+      </nav>
+      <div class="search-wrapper" data-search-wrapper>
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="search-input" type="text" placeholder="Search products..." data-search-input>
+        <div class="search-results" data-search-results hidden></div>
+      </div>
+      <div class="header-tools">
+        <a class="utility-pill" href="/login" data-login-link>Login</a>
+        <a class="utility-pill" href="/cart">Cart <span class="cart-badge" data-cart-count>0</span></a>
+        <button class="utility-pill" type="button" data-logout-button hidden>Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container auth-shell">
+        <aside class="auth-display reveal-left">
+          <span class="eyebrow">Member Login</span>
+          <h1 class="auth-display-title">Welcome back to the <span class="accent">TRIDENT line</span>.</h1>
+          <p class="auth-display-copy">
+            Sign in to stay logged in across every page, move through checkout faster, and unlock admin access when your account has the right role.
+          </p>
+          <div class="story-points">
+            <div class="helper-note info">JWT token auth powers the frontend session state.</div>
+            <div class="helper-note success">Passwords are stored securely with bcrypt hashing.</div>
+            <div class="helper-note warning">Local admin test login: <strong>admin@trident.local</strong> / <strong>TridentAdmin123!</strong></div>
+          </div>
+        </aside>
+
+        <section class="auth-card reveal-right">
+          <div class="section-header">
+            <span class="eyebrow">Login</span>
+            <h2 class="auth-heading">Sign in</h2>
+            <p class="auth-copy">Use your email and password to continue shopping.</p>
+          </div>
+          <div data-auth-status hidden></div>
+          <form class="form-grid auth-form-stack" data-login-form>
+            <div class="form-group full"><label class="label" for="login-email">Email</label><input class="field" id="login-email" type="email" autocomplete="email" required></div>
+            <div class="form-group full"><label class="label" for="login-password">Password</label><input class="field" id="login-password" type="password" autocomplete="current-password" required></div>
+            <div class="form-group full"><button class="btn btn-primary" type="submit">Login</button></div>
+          </form>
+          <div class="auth-links-row">
+            <span>Need an account?</span>
+            <a href="/register" data-auth-switch>Create one now</a>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div><div class="brand"><span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span><span class="brand-tagline">T-Shirt Collections</span></div><p class="footer-note">Secure account access for modern menswear shopping.</p></div>
+      <div><h3 class="footer-title">Shop</h3><div class="footer-links"><a href="/products">All Products</a><a href="/cart">Cart</a><a href="/register">Register</a></div></div>
+      <div><h3 class="footer-title">Account</h3><div class="footer-links"><a href="/login">Login</a><a href="/admin">Admin</a><a href="/contact">Support</a></div></div>
+      <div><h3 class="footer-title">Legal</h3><div class="footer-links"><a href="/privacy">Privacy Policy</a><a href="/terms">Terms &amp; Conditions</a><a href="/returns">Returns</a><a href="/shipping">Shipping</a></div></div>
+      <div><h3 class="footer-title">Contact</h3><div class="footer-links"><a href="/contact">Contact Us</a><a href="mailto:hello@tridentwear.com">hello@tridentwear.com</a><a href="tel:+919876543210">+91 98765 43210</a><a href="https://wa.me/919876543210" target="_blank" rel="noreferrer">WhatsApp</a></div></div>
+    </div>
+    <div class="container"><div class="footer-bottom"><span class="footer-copy">&copy; 2026 TridentWear. All rights reserved.</span></div></div>
+  </footer>
+
+  <script type="module" src="../js/pages/login.js"></script>
+</body>
+</html>

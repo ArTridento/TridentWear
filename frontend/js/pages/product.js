@@ -151,8 +151,12 @@ function renderProduct(product) {
       return;
     }
 
-    addCartItem(item, { size: selectedSize });
-    showToast(`${item.name} (${selectedSize}) added to cart.`);
+    try {
+      addCartItem(item, { size: selectedSize });
+      showToast(`${item.name} (${selectedSize}) added to cart.`);
+    } catch (err) {
+      showToast(err.message, "error");
+    }
   });
 }
 

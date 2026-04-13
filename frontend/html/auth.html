@@ -2,93 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="refresh" content="0; url=/login">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Login or register for Trident. Admin and customer authentication runs locally through FastAPI sessions.">
-  <title>Login / Register | TridentWear</title>
+  <meta name="description" content="TRIDENT Wear account access now lives on the dedicated login and register pages.">
+  <title>Account Redirect | TRIDENT Wear</title>
   <link rel="stylesheet" href="../css/styles.css">
-  <link rel="icon" type="image/png" href="../images/Logo.png">
+  <script>
+    window.location.replace(`/login${window.location.search}`);
+  </script>
 </head>
 <body data-page="auth">
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="/"><span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span><span class="brand-tagline">T-Shirt Collections</span></a>
-      <button class="mobile-toggle" type="button" data-mobile-toggle aria-label="Open navigation"><span class="mobile-toggle-line"></span><span class="mobile-toggle-line"></span><span class="mobile-toggle-line"></span></button>
-      <nav class="site-nav" data-mobile-nav>
-        <a class="nav-link" href="/" data-nav-link="home">Home</a>
-        <a class="nav-link" href="/products" data-nav-link="products">Products</a>
-        <a class="nav-link" href="/about" data-nav-link="about">About</a>
-        <a class="nav-link" href="/contact" data-nav-link="contact">Contact</a>
-        <a class="nav-link" href="/admin" data-nav-link="admin" data-admin-link hidden>Admin</a>
-      </nav>
-      <div class="search-wrapper" data-search-wrapper>
-        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input class="search-input" type="text" placeholder="Search products..." data-search-input>
-        <div class="search-results" data-search-results hidden></div>
-      </div>
-      <div class="header-tools">
-        <a class="utility-pill" href="/auth" data-account-link>Login</a>
-        <a class="utility-pill" href="/cart">Cart <span class="cart-badge" data-cart-count>0</span></a>
-        <button class="utility-pill" type="button" data-logout-button hidden>Logout</button>
+  <main class="section">
+    <div class="container">
+      <div class="page-hero-panel">
+        <span class="eyebrow">Redirecting</span>
+        <h1 class="page-title">Taking you to <span class="accent">login</span>.</h1>
+        <p class="page-copy">If the redirect does not start automatically, use one of the links below.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="/login">Login</a>
+          <a class="btn btn-outline" href="/register">Register</a>
+        </div>
       </div>
     </div>
-  </header>
-
-  <main>
-    <section class="section">
-      <div class="container auth-shell">
-        <aside class="auth-display reveal-left">
-          <span class="eyebrow">Access Trident</span>
-          <h1 class="auth-display-title">Enter the <span class="accent">control room</span>.</h1>
-          <p class="auth-display-copy">
-            Register to save your details for checkout, or sign in to manage the store if you are the local admin.
-          </p>
-          <div class="story-points">
-            <div class="helper-note info">Seeded local admin: <strong>admin@trident.local</strong></div>
-            <div class="helper-note warning">Seeded password: <strong>TridentAdmin123!</strong></div>
-          </div>
-        </aside>
-
-        <section class="auth-card reveal-right">
-          <div class="auth-tab-list">
-            <button class="tab-button is-active" type="button" data-auth-tab="register">Register</button>
-            <button class="tab-button" type="button" data-auth-tab="login">Login</button>
-          </div>
-          <div class="section-tight" data-auth-status hidden></div>
-          <section data-auth-panel="register">
-            <h2 class="auth-heading">Create account</h2>
-            <p class="auth-copy">Set up a customer account for faster repeat checkout.</p>
-            <form class="form-grid" data-register-form>
-              <div class="form-group"><label class="label" for="register-name">Name</label><input class="field" id="register-name" type="text" required></div>
-              <div class="form-group"><label class="label" for="register-email">Email</label><input class="field" id="register-email" type="email" required></div>
-              <div class="form-group full"><label class="label" for="register-password">Password</label><input class="field" id="register-password" type="password" minlength="8" required></div>
-              <div class="form-group full"><button class="btn btn-primary" type="submit">Register</button></div>
-            </form>
-          </section>
-          <section data-auth-panel="login" hidden>
-            <h2 class="auth-heading">Welcome back</h2>
-            <p class="auth-copy">Sign in to continue shopping or access the admin panel.</p>
-            <form class="form-grid" data-login-form>
-              <div class="form-group full"><label class="label" for="login-email">Email</label><input class="field" id="login-email" type="email" required></div>
-              <div class="form-group full"><label class="label" for="login-password">Password</label><input class="field" id="login-password" type="password" required></div>
-              <div class="form-group full"><button class="btn btn-secondary" type="submit">Login</button></div>
-            </form>
-          </section>
-        </section>
-      </div>
-    </section>
   </main>
-
-  <footer class="site-footer">
-    <div class="container footer-grid">
-      <div><div class="brand"><span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span><span class="brand-tagline">T-Shirt Collections</span></div><p class="footer-note">Authentication is handled with local users and FastAPI session tokens.</p></div>
-      <div><h3 class="footer-title">Store</h3><div class="footer-links"><a href="/products">Products</a><a href="/cart">Cart</a><a href="/contact">Contact</a></div></div>
-      <div><h3 class="footer-title">Brand</h3><div class="footer-links"><a href="/">Home</a><a href="/about">About</a><a href="/admin">Admin</a></div></div>
-      <div><h3 class="footer-title">Legal</h3><div class="footer-links"><a href="/privacy">Privacy Policy</a><a href="/terms">Terms &amp; Conditions</a><a href="/returns">Return &amp; Refund Policy</a><a href="/shipping">Shipping Policy</a></div></div>
-      <div><h3 class="footer-title">Contact</h3><div class="footer-links"><a href="/contact">Contact Us</a><a href="mailto:hello@tridentwear.com">hello@tridentwear.com</a><a href="tel:+919876543210">+91 98765 43210</a><a href="https://wa.me/919876543210" target="_blank" rel="noreferrer">WhatsApp</a></div></div>
-    </div>
-    <div class="container"><div class="footer-bottom"><span class="footer-copy">&copy; 2026 TridentWear. All rights reserved.</span></div></div>
-  </footer>
-
-  <script type="module" src="../js/pages/auth.js"></script>
 </body>
 </html>

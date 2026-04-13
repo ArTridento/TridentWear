@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Review your Trident cart, update quantities, and place a locally powered checkout order.">
-  <title>Cart | TridentWear</title>
+  <title>Checkout | TridentWear</title>
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="icon" type="image/png" href="../images/Logo.png">
 </head>
-<body data-page="cart">
+<body data-page="checkout">
   <header class="site-header">
     <div class="container header-inner">
       <a class="brand" href="/"><span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span><span class="brand-tagline">T-Shirt Collections</span></a>
@@ -39,30 +39,34 @@
       <div class="container">
         <div class="page-hero-panel reveal-scale">
           <span class="eyebrow">Checkout</span>
-          <h1 class="page-title">Your Trident <span class="accent">cart</span>.</h1>
-          <p class="page-copy">Review your selections before completing checkout.</p>
+          <h1 class="page-title">Complete your <span class="accent">order</span>.</h1>
+          <p class="page-copy">Guest checkout is enabled, and signed-in users get customer details prefilled automatically.</p>
         </div>
       </div>
     </section>
 
     <section class="section-tight">
       <div class="container cart-grid">
-        <article class="cart-card reveal-left">
-          <div class="section-header">
-            <span class="eyebrow">Items</span>
-            <h2 class="section-title">Review the drop</h2>
-          </div>
-          <div class="cart-list" data-cart-list></div>
-        </article>
+        
 
-        <div class="checkout-panel reveal-right">
+        <div class="checkout-panel reveal-scale" style="width: 100%; max-width: 800px; margin: 0 auto;">
           <div class="section-header">
             <span class="eyebrow">Shipping Details</span>
             <h2 class="section-title">Place the order</h2>
           </div>
           <div data-cart-summary></div>
           <div class="section-tight" data-order-status></div>
-          <div class="form-group full"><a class="btn btn-primary" href="/checkout" style="display: block; text-align: center;">Proceed to Checkout</a></div>
+          <form class="form-grid" data-checkout-form>
+            <div class="form-group"><label class="label" for="checkout-name">Full Name</label><input class="field" id="checkout-name" type="text" required></div>
+            <div class="form-group"><label class="label" for="checkout-email">Email</label><input class="field" id="checkout-email" type="email" required></div>
+            <div class="form-group"><label class="label" for="checkout-phone">Phone</label><input class="field" id="checkout-phone" type="tel" required></div>
+            <div class="form-group"><label class="label" for="checkout-city">City</label><input class="field" id="checkout-city" type="text" required></div>
+            <div class="form-group full"><label class="label" for="checkout-address">Address</label><textarea class="textarea" id="checkout-address" required></textarea></div>
+            <div class="form-group"><label class="label" for="checkout-postal">Postal Code</label><input class="field" id="checkout-postal" type="text"></div>
+            <div class="form-group"><label class="label" for="checkout-country">Country</label><input class="field" id="checkout-country" type="text" value="India"></div>
+            <div class="form-group full"><label class="label" for="checkout-notes">Order Notes</label><textarea class="textarea" id="checkout-notes" placeholder="Any delivery notes or fit preferences?"></textarea></div>
+            <div class="form-group full"><button class="btn btn-primary" type="submit" data-checkout-button>Place Order</button></div>
+          </form>
         </div>
       </div>
     </section>
@@ -81,6 +85,6 @@
 
   <button class="back-to-top" type="button" data-back-to-top aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
 
-  <script type="module" src="../js/pages/cart.js"></script>
+  <script type="module" src="../js/pages/checkout.js"></script>
 </body>
 </html>

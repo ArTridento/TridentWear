@@ -1,4 +1,12 @@
-const STORAGE_KEY = "trident-premium-cart";
+import { getAuthSession } from "./api.js";
+
+function getStorageKey() {
+  const session = getAuthSession();
+  if (session && session.user && session.user.id) {
+    return `trident-cart-${session.user.id}`;
+  }
+  return null;
+}
 
 function emitChange(items) {
   window.dispatchEvent(
@@ -14,7 +22,9 @@ function emitChange(items) {
 
 export function loadCart() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const key = getStorageKey();
+    if (!key) return [];
+    const raw = localStorage.getItem(key);
     return raw ? JSON.parse(raw) : [];
   } catch {
     return [];
@@ -22,7 +32,10 @@ export function loadCart() {
 }
 
 export function saveCart(items) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  const key = getStorageKey();
+  if (key) {
+    localStorage.setItem(key, JSON.stringify(items));
+  }
   emitChange(items);
   return items;
 }
@@ -40,6 +53,9 @@ export function getCartSubtotal(items = loadCart()) {
 }
 
 export function addCartItem(product, options = {}) {
+  if (!getStorageKey()) {
+    throw new Error("You must be logged in to add items to your cart.");
+  }
   const size = options.size || product.sizes?.[0] || "M";
   const qty = Math.max(Number(options.qty || 1), 1);
   const items = loadCart();

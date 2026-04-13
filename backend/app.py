@@ -5,9 +5,12 @@ import hashlib
 import hmac
 import json
 import os
+import re
 import shutil
 import uuid
-from datetime import datetime, timezone
+import bcrypt
+import jwt
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from urllib.parse import quote
@@ -37,12 +40,18 @@ FRONTEND_PRODUCTS_PATH = JS_DIR / "products.json"
 
 PASSWORD_ITERATIONS = 120_000
 ALLOWED_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".gif"}
+JWT_SECRET = os.getenv("TRIDENT_JWT_SECRET", os.getenv("JWT_SECRET", "trident-super-secret-key-12345"))
+JWT_ALGORITHM = "HS256"
+JWT_EXPIRATION_DAYS = int(os.getenv("TRIDENT_JWT_EXPIRATION_DAYS", "7"))
+EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+REVOKED_TOKEN_IDS: set[str] = set()
 
 
 class RegisterPayload(BaseModel):
     name: str
     email: str
     password: str
+    confirm_password: Optional[str] = None
 
 
 class LoginPayload(BaseModel):
@@ -142,7 +151,7 @@ DEFAULT_ADMIN = {
     "id": 1,
     "name": "Trident Admin",
     "email": "admin@trident.local",
-    "password_hash": "pbkdf2_sha256$120000$dHJpZGVudC1hZG1pbi1zYWx0$u18gS+1HGVISRBv+6SO4YQRt0VWUGQqny6zPVDTTePk=",
+    "password_hash": "$2b$12$7Q07pQBBqNur7Rdxq4R7pebAeUdR89zN4T.NQfpcPZ/p4CVB3TRJq",
     "role": "admin",
     "created_at": "2026-04-12T00:00:00+00:00",
 }
@@ -265,14 +274,11 @@ def serialize_user(user: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def hash_password(password: str, salt: Optional[bytes] = None) -> str:
-    salt_bytes = salt or os.urandom(16)
-    digest = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt_bytes, PASSWORD_ITERATIONS)
-    salt_encoded = base64.b64encode(salt_bytes).decode("utf-8")
-    digest_encoded = base64.b64encode(digest).decode("utf-8")
-    return f"pbkdf2_sha256${PASSWORD_ITERATIONS}${salt_encoded}${digest_encoded}"
+    _ = salt
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
 
-def verify_password(password: str, stored_hash: str) -> bool:
+def verify_legacy_password(password: str, stored_hash: str) -> bool:
     try:
         algorithm, iterations_text, salt_encoded, digest_encoded = stored_hash.split("$", 3)
     except ValueError:
@@ -284,12 +290,21 @@ def verify_password(password: str, stored_hash: str) -> bool:
     try:
         iterations = int(iterations_text)
         salt_bytes = base64.b64decode(salt_encoded.encode("utf-8"))
-    except (ValueError, TypeError):
+        expected = base64.b64decode(digest_encoded.encode("utf-8"))
+    except (TypeError, ValueError):
         return False
 
     computed = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt_bytes, iterations)
-    expected = base64.b64decode(digest_encoded.encode("utf-8"))
     return hmac.compare_digest(computed, expected)
+
+
+def verify_password(password: str, stored_hash: str) -> bool:
+    if stored_hash.startswith("pbkdf2_sha256$"):
+        return verify_legacy_password(password, stored_hash)
+    try:
+        return bcrypt.checkpw(password.encode("utf-8"), stored_hash.encode("utf-8"))
+    except ValueError:
+        return False
 
 
 def find_user_by_email(email: str) -> Optional[Dict[str, Any]]:
@@ -300,14 +315,103 @@ def find_user_by_email(email: str) -> Optional[Dict[str, Any]]:
     return None
 
 
-def get_session_user(request: Request) -> Optional[Dict[str, Any]]:
-    user_id = request.session.get("user_id")
-    if not user_id:
-        return None
-
+def find_user_by_id(user_id: int) -> Optional[Dict[str, Any]]:
     for user in load_users():
         if int(user.get("id", 0)) == int(user_id):
             return user
+    return None
+
+
+def update_user(user_id: int, changes: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    users = load_users()
+    updated_user: Optional[Dict[str, Any]] = None
+
+    for index, user in enumerate(users):
+        if int(user.get("id", 0)) != int(user_id):
+            continue
+        users[index] = {**user, **changes}
+        updated_user = users[index]
+        break
+
+    if updated_user is None:
+        return None
+
+    save_users(users)
+    return updated_user
+
+
+def issue_auth_token(user: Dict[str, Any]) -> str:
+    now = datetime.now(timezone.utc)
+    payload = {
+        "sub": str(user["id"]),
+        "email": user["email"],
+        "role": user["role"],
+        "name": user["name"],
+        "iat": now,
+        "exp": now + timedelta(days=JWT_EXPIRATION_DAYS),
+        "jti": uuid.uuid4().hex,
+    }
+    return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+
+
+def revoke_auth_token(token: Optional[str]) -> None:
+    if not token:
+        return
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM], options={"verify_exp": False})
+    except jwt.PyJWTError:
+        return
+
+    token_id = payload.get("jti")
+    if token_id:
+        REVOKED_TOKEN_IDS.add(str(token_id))
+
+
+def get_request_token(request: Request) -> Optional[str]:
+    auth_header = request.headers.get("authorization", "").strip()
+    if auth_header.lower().startswith("bearer "):
+        return auth_header[7:].strip()
+
+    token = request.headers.get("x-session-token", "").strip()
+    return token or None
+
+
+def store_session_user(request: Request, user: Dict[str, Any]) -> None:
+    request.session.clear()
+    request.session["user_id"] = int(user["id"])
+
+
+def upgrade_password_hash_if_needed(user: Dict[str, Any], password: str) -> Dict[str, Any]:
+    stored_hash = user.get("password_hash", "")
+    if not stored_hash.startswith("pbkdf2_sha256$"):
+        return user
+
+    upgraded_user = update_user(user["id"], {"password_hash": hash_password(password)})
+    return upgraded_user or user
+
+
+def get_session_user(request: Request) -> Optional[Dict[str, Any]]:
+    token = get_request_token(request)
+    user_id = None
+    if token:
+        try:
+            payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+            if payload.get("jti") in REVOKED_TOKEN_IDS:
+                raise jwt.InvalidTokenError("Token has been revoked.")
+            user_id = payload.get("sub")
+        except jwt.PyJWTError:
+            pass
+
+    if not user_id:
+        user_id = request.session.get("user_id")
+
+    if not user_id:
+        return None
+
+    user = find_user_by_id(int(user_id))
+    if user:
+        return user
+
     request.session.clear()
     return None
 
@@ -323,7 +427,7 @@ def require_admin(request: Request) -> Dict[str, Any]:
 
 def validate_email(email: str) -> str:
     normalized = email.strip().lower()
-    if "@" not in normalized or "." not in normalized.split("@")[-1]:
+    if not EMAIL_PATTERN.match(normalized):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Enter a valid email address.")
     return normalized
 
@@ -386,7 +490,7 @@ app.mount("/js", StaticFiles(directory=JS_DIR), name="js")
 app.mount("/images", StaticFiles(directory=IMAGES_DIR), name="images")
 
 pages_router = APIRouter()
-auth_router = APIRouter(prefix="/api/auth", tags=["auth"])
+auth_router = APIRouter(tags=["auth"])
 products_router = APIRouter(prefix="/api", tags=["products"])
 admin_router = APIRouter(prefix="/api/admin", tags=["admin"])
 orders_router = APIRouter(prefix="/api", tags=["orders"])
@@ -416,10 +520,26 @@ def serve_product_page() -> FileResponse:
 def serve_cart_page() -> FileResponse:
     return html_response("cart.html")
 
+@pages_router.get("/checkout", include_in_schema=False)
+def serve_checkout_page() -> FileResponse:
+    return html_response("checkout.html")
+
+
 
 @pages_router.get("/auth", include_in_schema=False)
-def serve_auth_page() -> FileResponse:
-    return html_response("auth.html")
+def serve_auth_page(request: Request) -> RedirectResponse:
+    query = f"?{request.url.query}" if request.url.query else ""
+    return RedirectResponse(url=f"/login{query}", status_code=status.HTTP_307_TEMPORARY_REDIRECT)
+
+
+@pages_router.get("/login", include_in_schema=False)
+def serve_login_page() -> FileResponse:
+    return html_response("login.html")
+
+
+@pages_router.get("/register", include_in_schema=False)
+def serve_register_page() -> FileResponse:
+    return html_response("register.html")
 
 
 @pages_router.get("/about", include_in_schema=False)
@@ -437,7 +557,7 @@ def serve_admin_page(request: Request):
     user = get_session_user(request)
     if not user or user.get("role") != "admin":
         next_path = quote("/admin", safe="")
-        return RedirectResponse(url=f"/auth?next={next_path}", status_code=status.HTTP_303_SEE_OTHER)
+        return RedirectResponse(url=f"/login?next={next_path}", status_code=status.HTTP_303_SEE_OTHER)
     return html_response("admin.html")
 
 
@@ -474,7 +594,10 @@ def legacy_html_routes(page_name: str, request: Request):
         "products": "/products",
         "product": "/product",
         "cart": "/cart",
-        "auth": "/auth",
+        "checkout": "/checkout",
+        "auth": "/login",
+        "login": "/login",
+        "register": "/register",
         "about": "/about",
         "contact": "/contact",
         "admin": "/admin",
@@ -491,13 +614,14 @@ def legacy_html_routes(page_name: str, request: Request):
     return RedirectResponse(url=target, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
 
 
-@auth_router.get("/me")
+@auth_router.get("/api/auth/me")
 def get_auth_state(request: Request) -> Dict[str, Any]:
     user = get_session_user(request)
     return {"authenticated": bool(user), "user": serialize_user(user) if user else None}
 
 
 @auth_router.post("/register")
+@auth_router.post("/api/auth/register")
 def register(payload: RegisterPayload, request: Request) -> Dict[str, Any]:
     name = payload.name.strip()
     email = validate_email(payload.email)
@@ -507,6 +631,8 @@ def register(payload: RegisterPayload, request: Request) -> Dict[str, Any]:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Name must be at least 2 characters.")
     if len(password) < 8:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Password must be at least 8 characters.")
+    if payload.confirm_password is not None and payload.confirm_password.strip() != password:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Passwords do not match.")
     if find_user_by_email(email):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="An account with that email already exists.")
 
@@ -521,14 +647,14 @@ def register(payload: RegisterPayload, request: Request) -> Dict[str, Any]:
     }
     users.append(new_user)
     save_users(users)
+    store_session_user(request, new_user)
+    token = issue_auth_token(new_user)
 
-    request.session.clear()
-    request.session["user_id"] = new_user["id"]
-
-    return {"success": True, "message": "Account created successfully.", "user": serialize_user(new_user)}
+    return {"success": True, "message": "Account created successfully.", "token": token, "user": serialize_user(new_user)}
 
 
 @auth_router.post("/login")
+@auth_router.post("/api/auth/login")
 def login(payload: LoginPayload, request: Request) -> Dict[str, Any]:
     email = validate_email(payload.email)
     password = payload.password.strip()
@@ -536,15 +662,17 @@ def login(payload: LoginPayload, request: Request) -> Dict[str, Any]:
 
     if not user or not verify_password(password, user.get("password_hash", "")):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password.")
+    user = upgrade_password_hash_if_needed(user, password)
+    store_session_user(request, user)
+    token = issue_auth_token(user)
 
-    request.session.clear()
-    request.session["user_id"] = user["id"]
-
-    return {"success": True, "message": "Signed in successfully.", "user": serialize_user(user)}
+    return {"success": True, "message": "Signed in successfully.", "token": token, "user": serialize_user(user)}
 
 
 @auth_router.post("/logout")
+@auth_router.post("/api/auth/logout")
 def logout(request: Request) -> Dict[str, Any]:
+    revoke_auth_token(get_request_token(request))
     request.session.clear()
     return {"success": True, "message": "Signed out."}
 
@@ -698,6 +826,14 @@ def delete_product(product_id: int, _: Dict[str, Any] = Depends(require_admin)) 
     save_products(remaining_products)
     return {"success": True, "message": f'{existing["name"]} deleted.'}
 
+
+@orders_router.get("/stats")
+def get_stats() -> Dict[str, int]:
+    orders = load_orders()
+    # Count unique users based on email, fallback to 150 if none yet for display
+    unique_users = set(o.get("customer", {}).get("email") for o in orders if o.get("customer", {}).get("email"))
+    baseline = 150
+    return {"customers": baseline + len(unique_users) if unique_users else baseline + len(orders)}
 
 @orders_router.post("/orders")
 def create_order(payload: OrderPayload, request: Request) -> Dict[str, Any]:
