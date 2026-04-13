@@ -1,21 +1,29 @@
 import { get } from "../shared/api.js";
-import { bindProductCardActions, createLoaderMarkup, initSite, productCardMarkup } from "../shared/site.js";
+import {
+  bindProductCardActions,
+  createSkeletonCards,
+  initSite,
+  productCardMarkup,
+  startProgress,
+  endProgress,
+} from "../shared/site.js";
 
 async function loadFeaturedProducts() {
   const grid = document.querySelector("[data-featured-grid]");
-  if (!grid) {
-    return;
-  }
+  if (!grid) return;
 
-  grid.innerHTML = createLoaderMarkup("Loading featured collection...");
+  grid.innerHTML = createSkeletonCards(4);
+  startProgress();
 
   try {
     const data = await get("/api/products?featured=true");
-    const products = data.products.slice(0, 4);
+    const products = (Array.isArray(data) ? data : data.products || []).slice(0, 4);
     grid.innerHTML = products.map(productCardMarkup).join("");
     bindProductCardActions(grid, products);
   } catch (error) {
     grid.innerHTML = `<div class="helper-note danger">${error.message}</div>`;
+  } finally {
+    endProgress();
   }
 }
 

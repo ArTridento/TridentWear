@@ -7,7 +7,13 @@
     "description": "Premium 220 GSM cotton crew neck tee in timeless black. Relaxed fit, pre-shrunk fabric.",
     "image": "/images/black-tshirt.png",
     "tag": "Bestseller",
-    "sizes": ["S", "M", "L", "XL", "XXL"],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
     "stock": 150,
     "featured": true
   },
@@ -19,9 +25,31 @@
     "description": "Clean white tee with a minimal cut. 200 GSM bio-washed cotton for an ultra-soft feel.",
     "image": "/images/white-tshirt.png",
     "tag": "New Drop",
-    "sizes": ["S", "M", "L", "XL"],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
     "stock": 200,
     "featured": true
+  },
+  {
+    "id": 5,
+    "name": "Charcoal Oversized Tee",
+    "category": "tshirt",
+    "price": 899,
+    "description": "Oversized drop-shoulder tee in charcoal grey. Heavy cotton weight with a premium streetwear drape.",
+    "image": "/images/grey-tshirt.png",
+    "tag": "Trending",
+    "sizes": [
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 100,
+    "featured": false
   },
   {
     "id": 3,
@@ -31,7 +59,12 @@
     "description": "Slim-fit navy blue formal shirt with wrinkle-resistant fabric built for all-day structure.",
     "image": "/images/navy-shirt.png",
     "tag": "Premium",
-    "sizes": ["S", "M", "L", "XL"],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
     "stock": 80,
     "featured": true
   },
@@ -43,21 +76,14 @@
     "description": "Relaxed-fit olive button-up with breathable cotton blend and easy street-luxury styling.",
     "image": "/images/olive-shirt.png",
     "tag": "Street Essential",
-    "sizes": ["M", "L", "XL", "XXL"],
+    "sizes": [
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
     "stock": 120,
     "featured": true
-  },
-  {
-    "id": 5,
-    "name": "Charcoal Oversized Tee",
-    "category": "tshirt",
-    "price": 899,
-    "description": "Oversized drop-shoulder tee in charcoal grey. Heavy cotton weight with a premium streetwear drape.",
-    "image": "/images/grey-tshirt.png",
-    "tag": "Trending",
-    "sizes": ["M", "L", "XL", "XXL"],
-    "stock": 100,
-    "featured": false
   },
   {
     "id": 6,
@@ -67,7 +93,12 @@
     "description": "Lightweight linen-blend shirt in a clean stone tone with a refined mandarin collar finish.",
     "image": "/images/olive-shirt.png",
     "tag": "Summer Edit",
-    "sizes": ["S", "M", "L", "XL"],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
     "stock": 90,
     "featured": false
   }

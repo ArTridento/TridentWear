@@ -1,4 +1,4 @@
-import { post } from "../shared/api.js";
+import { postWithFallback, resolveAssetUrl } from "../shared/api.js";
 import { clearCart, getCartSubtotal, loadCart, removeCartItem, updateCartItemQuantity } from "../shared/cart.js";
 import { createEmptyMarkup, formatCurrency, getCurrentUser, initSite, showToast } from "../shared/site.js";
 
@@ -60,7 +60,7 @@ function renderCart() {
       (item) => `
         <article class="cart-item">
           <div class="cart-item-media">
-            <img src="${item.image}" alt="${item.name}">
+            <img src="${resolveAssetUrl(item.image)}" alt="${item.name}">
           </div>
           <div>
             <div class="cart-item-title-row">
@@ -136,7 +136,7 @@ function bindCheckout() {
     button.textContent = "Placing Order...";
 
     try {
-      const data = await post("/api/orders", payload);
+      const data = await postWithFallback(["/api/orders", "/orders"], payload);
       clearCart();
       renderCart();
       form.reset();

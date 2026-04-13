@@ -1,4 +1,4 @@
-import { post } from "../shared/api.js";
+import { post, saveAuthSession } from "../shared/api.js";
 import { getCurrentUser, initSite, refreshAuthState, showToast } from "../shared/site.js";
 
 function setActiveTab(target) {
@@ -59,6 +59,7 @@ function bindRegister() {
         email: form.querySelector("#register-email").value.trim(),
         password: form.querySelector("#register-password").value.trim(),
       });
+      saveAuthSession({ token: data.token, user: data.user });
       await refreshAuthState();
       updateStatus();
       showToast("Account created successfully.");
@@ -79,6 +80,7 @@ function bindLogin() {
         email: form.querySelector("#login-email").value.trim(),
         password: form.querySelector("#login-password").value.trim(),
       });
+      saveAuthSession({ token: data.token, user: data.user });
       await refreshAuthState();
       updateStatus();
       showToast("Welcome back.");

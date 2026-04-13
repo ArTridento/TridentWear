@@ -4,21 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Review your Trident cart, update quantities, and place a locally powered checkout order.">
-  <title>Cart | Trident</title>
-  <link rel="stylesheet" href="/css/styles.css">
+  <title>Cart | TridentWear</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="icon" type="image/png" href="../images/Logo.png">
 </head>
 <body data-page="cart">
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="/">
-        <span class="brand-name"><span>Trident</span></span>
-        <span class="brand-tagline">Premium Streetwear</span>
-      </a>
-      <button class="mobile-toggle" type="button" data-mobile-toggle aria-label="Open navigation">
-        <span class="mobile-toggle-line"></span>
-        <span class="mobile-toggle-line"></span>
-        <span class="mobile-toggle-line"></span>
-      </button>
+      <a class="brand" href="/"><span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span><span class="brand-tagline">T-Shirt Collections</span></a>
+      <button class="mobile-toggle" type="button" data-mobile-toggle aria-label="Open navigation"><span class="mobile-toggle-line"></span><span class="mobile-toggle-line"></span><span class="mobile-toggle-line"></span></button>
       <nav class="site-nav" data-mobile-nav>
         <a class="nav-link" href="/" data-nav-link="home">Home</a>
         <a class="nav-link" href="/products" data-nav-link="products">Products</a>
@@ -26,6 +20,11 @@
         <a class="nav-link" href="/contact" data-nav-link="contact">Contact</a>
         <a class="nav-link" href="/admin" data-nav-link="admin" data-admin-link hidden>Admin</a>
       </nav>
+      <div class="search-wrapper" data-search-wrapper>
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="search-input" type="text" placeholder="Search products..." data-search-input>
+        <div class="search-results" data-search-results hidden></div>
+      </div>
       <div class="header-tools">
         <a class="utility-pill" href="/auth" data-account-link>Login</a>
         <a class="utility-pill" href="/cart">Cart <span class="cart-badge" data-cart-count>0</span></a>
@@ -37,7 +36,7 @@
   <main>
     <section class="page-hero">
       <div class="container">
-        <div class="page-hero-panel">
+        <div class="page-hero-panel reveal-scale">
           <span class="eyebrow">Checkout</span>
           <h1 class="page-title">Your Trident <span class="accent">cart</span>.</h1>
           <p class="page-copy">Guest checkout is enabled, and signed-in users get customer details prefilled automatically.</p>
@@ -47,7 +46,7 @@
 
     <section class="section-tight">
       <div class="container cart-grid">
-        <article class="cart-card">
+        <article class="cart-card reveal-left">
           <div class="section-header">
             <span class="eyebrow">Items</span>
             <h2 class="section-title">Review the drop</h2>
@@ -55,51 +54,23 @@
           <div class="cart-list" data-cart-list></div>
         </article>
 
-        <div class="checkout-panel">
+        <div class="checkout-panel reveal-right">
           <div class="section-header">
             <span class="eyebrow">Shipping Details</span>
             <h2 class="section-title">Place the order</h2>
           </div>
-
           <div data-cart-summary></div>
           <div class="section-tight" data-order-status></div>
-
           <form class="form-grid" data-checkout-form>
-            <div class="form-group">
-              <label class="label" for="checkout-name">Full Name</label>
-              <input class="field" id="checkout-name" type="text" required>
-            </div>
-            <div class="form-group">
-              <label class="label" for="checkout-email">Email</label>
-              <input class="field" id="checkout-email" type="email" required>
-            </div>
-            <div class="form-group">
-              <label class="label" for="checkout-phone">Phone</label>
-              <input class="field" id="checkout-phone" type="tel" required>
-            </div>
-            <div class="form-group">
-              <label class="label" for="checkout-city">City</label>
-              <input class="field" id="checkout-city" type="text" required>
-            </div>
-            <div class="form-group full">
-              <label class="label" for="checkout-address">Address</label>
-              <textarea class="textarea" id="checkout-address" required></textarea>
-            </div>
-            <div class="form-group">
-              <label class="label" for="checkout-postal">Postal Code</label>
-              <input class="field" id="checkout-postal" type="text">
-            </div>
-            <div class="form-group">
-              <label class="label" for="checkout-country">Country</label>
-              <input class="field" id="checkout-country" type="text" value="India">
-            </div>
-            <div class="form-group full">
-              <label class="label" for="checkout-notes">Order Notes</label>
-              <textarea class="textarea" id="checkout-notes" placeholder="Any delivery notes or fit preferences?"></textarea>
-            </div>
-            <div class="form-group full">
-              <button class="btn btn-primary" type="submit" data-checkout-button>Place Order</button>
-            </div>
+            <div class="form-group"><label class="label" for="checkout-name">Full Name</label><input class="field" id="checkout-name" type="text" required></div>
+            <div class="form-group"><label class="label" for="checkout-email">Email</label><input class="field" id="checkout-email" type="email" required></div>
+            <div class="form-group"><label class="label" for="checkout-phone">Phone</label><input class="field" id="checkout-phone" type="tel" required></div>
+            <div class="form-group"><label class="label" for="checkout-city">City</label><input class="field" id="checkout-city" type="text" required></div>
+            <div class="form-group full"><label class="label" for="checkout-address">Address</label><textarea class="textarea" id="checkout-address" required></textarea></div>
+            <div class="form-group"><label class="label" for="checkout-postal">Postal Code</label><input class="field" id="checkout-postal" type="text"></div>
+            <div class="form-group"><label class="label" for="checkout-country">Country</label><input class="field" id="checkout-country" type="text" value="India"></div>
+            <div class="form-group full"><label class="label" for="checkout-notes">Order Notes</label><textarea class="textarea" id="checkout-notes" placeholder="Any delivery notes or fit preferences?"></textarea></div>
+            <div class="form-group full"><button class="btn btn-primary" type="submit" data-checkout-button>Place Order</button></div>
           </form>
         </div>
       </div>
@@ -108,40 +79,17 @@
 
   <footer class="site-footer">
     <div class="container footer-grid">
-      <div>
-        <div class="brand">
-          <span class="brand-name"><span>Trident</span></span>
-          <span class="brand-tagline">Premium Streetwear</span>
-        </div>
-        <p class="footer-note">Cart state is stored locally and submitted to FastAPI when the order is placed.</p>
-      </div>
-      <div>
-        <h3 class="footer-title">Shop</h3>
-        <div class="footer-links">
-          <a href="/products">Products</a>
-          <a href="/product?id=1">Featured Tee</a>
-          <a href="/about">About</a>
-        </div>
-      </div>
-      <div>
-        <h3 class="footer-title">Account</h3>
-        <div class="footer-links">
-          <a href="/auth">Login</a>
-          <a href="/admin">Admin</a>
-          <a href="/contact">Support</a>
-        </div>
-      </div>
-      <div>
-        <h3 class="footer-title">Help</h3>
-        <div class="footer-links">
-          <a href="mailto:hello@tridentwear.com">hello@tridentwear.com</a>
-          <a href="tel:+919876543210">+91 98765 43210</a>
-          <a href="/contact">Contact</a>
-        </div>
-      </div>
+      <div><div class="brand"><span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span><span class="brand-tagline">T-Shirt Collections</span></div><p class="footer-note">Cart state is stored locally and submitted to FastAPI when the order is placed.</p></div>
+      <div><h3 class="footer-title">Shop</h3><div class="footer-links"><a href="/products">Products</a><a href="/product?id=1">Featured Tee</a><a href="/about">About</a></div></div>
+      <div><h3 class="footer-title">Account</h3><div class="footer-links"><a href="/auth">Login</a><a href="/admin">Admin</a><a href="/contact">Support</a></div></div>
+      <div><h3 class="footer-title">Legal</h3><div class="footer-links"><a href="/privacy">Privacy Policy</a><a href="/terms">Terms &amp; Conditions</a><a href="/returns">Return &amp; Refund Policy</a><a href="/shipping">Shipping Policy</a></div></div>
+      <div><h3 class="footer-title">Contact</h3><div class="footer-links"><a href="/contact">Contact Us</a><a href="mailto:hello@tridentwear.com">hello@tridentwear.com</a><a href="tel:+919876543210">+91 98765 43210</a><a href="https://wa.me/919876543210" target="_blank" rel="noreferrer">WhatsApp</a></div></div>
     </div>
+    <div class="container"><div class="footer-bottom"><span class="footer-copy">&copy; 2026 TridentWear. All rights reserved.</span></div></div>
   </footer>
 
-  <script type="module" src="/js/pages/cart.js"></script>
+  <button class="back-to-top" type="button" data-back-to-top aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+
+  <script type="module" src="../js/pages/cart.js"></script>
 </body>
 </html>

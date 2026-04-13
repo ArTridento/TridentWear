@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Page not found. Return to TridentWear homepage or browse the product catalog.">
+  <title>404 - Page Not Found | TridentWear</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="icon" type="image/png" href="../images/Logo.png">
+</head>
+<body data-page="404">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/"><span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span></a>
+      <nav class="site-nav" data-mobile-nav>
+        <a class="nav-link" href="/" data-nav-link="home">Home</a>
+        <a class="nav-link" href="/products" data-nav-link="products">Products</a>
+        <a class="nav-link" href="/about" data-nav-link="about">About</a>
+        <a class="nav-link" href="/contact" data-nav-link="contact">Contact</a>
+      </nav>
+      <div class="header-tools">
+        <a class="utility-pill" href="/cart">Cart <span class="cart-badge" data-cart-count>0</span></a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="error-page">
+      <div class="error-code reveal-scale">404</div>
+      <h1 class="error-title reveal">Page Not Found</h1>
+      <p class="error-copy reveal">The page you're looking for doesn't exist or has been moved. Let's get you back on track.</p>
+      <div class="error-actions reveal">
+        <a class="btn btn-primary" href="/">Back to Home</a>
+        <a class="btn btn-outline" href="/products">Browse Products</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div><div class="brand"><span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span><span class="brand-tagline">T-Shirt Collections</span></div></div>
+      <div><h3 class="footer-title">Navigate</h3><div class="footer-links"><a href="/">Home</a><a href="/products">Products</a><a href="/about">About</a></div></div>
+      <div><h3 class="footer-title">Store</h3><div class="footer-links"><a href="/cart">Cart</a><a href="/auth">Login</a><a href="/contact">Contact</a></div></div>
+      <div><h3 class="footer-title">Legal</h3><div class="footer-links"><a href="/privacy">Privacy Policy</a><a href="/terms">Terms &amp; Conditions</a></div></div>
+    </div>
+    <div class="container"><div class="footer-bottom"><span class="footer-copy">&copy; 2026 TridentWear. All rights reserved.</span></div></div>
+  </footer>
+
+  <script type="module">
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("is-visible"); observer.unobserve(e.target); } });
+    }, { threshold: 0.08 });
+    document.querySelectorAll(".reveal, .reveal-scale").forEach((el) => observer.observe(el));
+  </script>
+</body>
+</html>

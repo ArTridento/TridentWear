@@ -13,6 +13,7 @@ from typing import Any, Dict, List, Optional
 from urllib.parse import quote
 
 from fastapi import APIRouter, Depends, FastAPI, File, Form, HTTPException, Request, UploadFile, status
+from fastapi.exceptions import StarletteHTTPException
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -116,7 +117,7 @@ DEFAULT_PRODUCTS: List[Dict[str, Any]] = [
         "name": "Charcoal Oversized Tee",
         "category": "tshirt",
         "price": 899,
-        "description": "Oversized drop-shoulder tee in charcoal grey. Heavy cotton weight with a premium streetwear drape.",
+        "description": "Oversized drop-shoulder tee in charcoal grey. Heavy cotton weight with a clean structured drape.",
         "image": "/images/grey-tshirt.png",
         "tag": "Trending",
         "sizes": ["M", "L", "XL", "XXL"],
@@ -370,7 +371,7 @@ def ensure_data_files() -> None:
     write_json(CONTACTS_PATH, contacts)
 
 
-app = FastAPI(title="Trident Premium Store")
+app = FastAPI(title="Trident Premium Store", docs_url=None, redoc_url=None)
 app.add_middleware(
     SessionMiddleware,
     secret_key=os.getenv("TRIDENT_SESSION_SECRET", "trident-local-session-secret"),
@@ -431,8 +432,8 @@ def serve_contact_page() -> FileResponse:
     return html_response("contact.html")
 
 
-@pages_router.get("/admin", include_in_schema=False)
-def serve_admin_page(request: Request) -> FileResponse | RedirectResponse:
+@pages_router.get("/admin", include_in_schema=False, response_model=None)
+def serve_admin_page(request: Request):
     user = get_session_user(request)
     if not user or user.get("role") != "admin":
         next_path = quote("/admin", safe="")
@@ -440,13 +441,33 @@ def serve_admin_page(request: Request) -> FileResponse | RedirectResponse:
     return html_response("admin.html")
 
 
+@pages_router.get("/privacy", include_in_schema=False)
+def serve_privacy_page() -> FileResponse:
+    return html_response("privacy.html")
+
+
+@pages_router.get("/terms", include_in_schema=False)
+def serve_terms_page() -> FileResponse:
+    return html_response("terms.html")
+
+
+@pages_router.get("/returns", include_in_schema=False)
+def serve_returns_page() -> FileResponse:
+    return html_response("returns.html")
+
+
+@pages_router.get("/shipping", include_in_schema=False)
+def serve_shipping_page() -> FileResponse:
+    return html_response("shipping.html")
+
+
 @pages_router.get("/shop", include_in_schema=False)
 def legacy_shop_page() -> RedirectResponse:
     return RedirectResponse(url="/products", status_code=status.HTTP_307_TEMPORARY_REDIRECT)
 
 
-@pages_router.get("/{page_name}.html", include_in_schema=False)
-def legacy_html_routes(page_name: str, request: Request) -> FileResponse | RedirectResponse:
+@pages_router.get("/{page_name}.html", include_in_schema=False, response_model=None)
+def legacy_html_routes(page_name: str, request: Request):
     mapping = {
         "index": "/",
         "shop": "/products",
@@ -457,14 +478,16 @@ def legacy_html_routes(page_name: str, request: Request) -> FileResponse | Redir
         "about": "/about",
         "contact": "/contact",
         "admin": "/admin",
+        "privacy": "/privacy",
+        "terms": "/terms",
+        "returns": "/returns",
+        "shipping": "/shipping",
     }
     target = mapping.get(page_name)
     if not target:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Page not found.")
+        return FileResponse(HTML_DIR / "404.html", status_code=404)
     if target == "/admin":
         return serve_admin_page(request)
-    if target in {"/", "/products", "/product", "/cart", "/auth", "/about", "/contact"}:
-        return html_response(f"{'index' if target == '/' else target.removeprefix('/')}.html" if target != "/products" else "shop.html")
     return RedirectResponse(url=target, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
 
 
@@ -766,3 +789,11 @@ app.include_router(products_router)
 app.include_router(admin_router)
 app.include_router(orders_router)
 app.include_router(contact_router)
+
+
+@app.exception_handler(StarletteHTTPException)
+async def custom_404_handler(request: Request, exc: StarletteHTTPException):
+    if exc.status_code == 404 and "text/html" in request.headers.get("accept", ""):
+        return FileResponse(HTML_DIR / "404.html", status_code=404)
+    from fastapi.responses import JSONResponse
+    return JSONResponse({"detail": exc.detail}, status_code=exc.status_code)

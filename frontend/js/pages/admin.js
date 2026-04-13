@@ -1,4 +1,5 @@
-import { del, get, postForm, putForm } from "../shared/api.js";
+import { del, get, postForm, putForm, resolveAssetUrl } from "../shared/api.js";
+import { normalizeProduct } from "../shared/catalog.js";
 import { createLoaderMarkup, formatCurrency, getCurrentUser, initSite, showToast } from "../shared/site.js";
 
 let products = [];
@@ -58,7 +59,7 @@ function setFormState(product = null) {
   f.featured.checked = Boolean(product.featured);
   f.image.value = "";
   preview.hidden = false;
-  preview.src = product.image;
+    preview.src = resolveAssetUrl(product.image);
 }
 
 function bindPreview() {
@@ -77,7 +78,7 @@ function bindPreview() {
 
 function renderSummary() {
   document.querySelector("[data-summary-total]").textContent = String(products.length);
-  document.querySelector("[data-summary-shirts]").textContent = String(products.filter((product) => product.category === "tshirt").length);
+  document.querySelector("[data-summary-shirts]").textContent = String(products.length);
   document.querySelector("[data-summary-featured]").textContent = String(products.filter((product) => product.featured).length);
 }
 
@@ -95,10 +96,11 @@ function renderProducts() {
           <div class="admin-product-top">
             <div>
               <strong>${product.name}</strong>
-              <div class="section-copy">${product.category === "shirt" ? "Shirt" : "T-Shirt"} - ${formatCurrency(product.price)}</div>
+              <div class="section-copy">T-Shirt - ${formatCurrency(product.price)}</div>
+              <div class="section-copy">${product.card_tags.join(" / ")}</div>
               <div class="section-copy">${product.stock} stock - ${product.featured ? "Featured" : "Standard"}</div>
             </div>
-            <img class="admin-thumb" src="${product.image}" alt="${product.name}">
+            <img class="admin-thumb" src="${resolveAssetUrl(product.image)}" alt="${product.name}">
           </div>
           <p class="section-copy">${product.description}</p>
           <div class="admin-actions">
@@ -141,7 +143,7 @@ async function loadProducts() {
   const list = document.querySelector("[data-admin-product-list]");
   list.innerHTML = createLoaderMarkup("Loading product manager...");
   const data = await get("/api/products");
-  products = data.products;
+  products = (Array.isArray(data) ? data : data.products || []).map(normalizeProduct);
   renderSummary();
   renderProducts();
 }

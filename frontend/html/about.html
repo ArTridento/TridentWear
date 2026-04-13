@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Learn how Trident approaches premium streetwear, dark luxury styling, and clean functional ecommerce design.">
-  <title>About | Trident</title>
-  <link rel="stylesheet" href="/css/styles.css">
+  <meta name="description" content="Learn how TridentWear builds clean T-shirt collections, category-led browsing, and a polished shopping experience.">
+  <title>About | TridentWear</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="icon" type="image/png" href="../images/Logo.png">
 </head>
 <body data-page="about">
   <header class="site-header">
     <div class="container header-inner">
       <a class="brand" href="/">
-        <span class="brand-name"><span>Trident</span></span>
-        <span class="brand-tagline">Premium Streetwear</span>
+        <span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span>
+        <span class="brand-tagline">T-Shirt Collections</span>
       </a>
       <button class="mobile-toggle" type="button" data-mobile-toggle aria-label="Open navigation">
         <span class="mobile-toggle-line"></span>
@@ -26,6 +27,11 @@
         <a class="nav-link" href="/contact" data-nav-link="contact">Contact</a>
         <a class="nav-link" href="/admin" data-nav-link="admin" data-admin-link hidden>Admin</a>
       </nav>
+      <div class="search-wrapper" data-search-wrapper>
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="search-input" type="text" placeholder="Search products..." data-search-input>
+        <div class="search-results" data-search-results hidden></div>
+      </div>
       <div class="header-tools">
         <a class="utility-pill" href="/auth" data-account-link>Login</a>
         <a class="utility-pill" href="/cart">Cart <span class="cart-badge" data-cart-count>0</span></a>
@@ -37,34 +43,33 @@
   <main>
     <section class="page-hero">
       <div class="container">
-        <div class="page-hero-panel">
+        <div class="page-hero-panel reveal-scale">
           <span class="eyebrow">Brand Story</span>
-          <h1 class="page-title">Dark luxury with a <span class="accent">streetwear backbone</span>.</h1>
-          <p class="page-copy">Trident exists for people who want premium essentials, sharp proportions, and clean confidence in every fit.</p>
+          <h1 class="page-title">Clean clothing with a <span class="accent">clear product focus</span>.</h1>
+          <p class="page-copy">TridentWear is built around well-structured T-shirts, readable product details, and a catalog that is easy to browse.</p>
         </div>
       </div>
     </section>
 
     <section class="section-tight">
       <div class="container split-grid">
-        <article class="story-card">
+        <article class="story-card reveal-left">
           <span class="eyebrow">Origin</span>
-          <h2 class="section-title">Designed for modern rotation</h2>
+          <h2 class="section-title">Designed for daily rotation</h2>
           <p class="story-copy">
-            Trident started from a simple idea: premium basics should feel powerful, not plain. The brand sits between
-            luxury restraint and city-ready streetwear, using dark surfaces, gold accents, and structured fabrics to make
-            everyday pieces feel elevated.
+            TridentWear started from a simple idea: a clothing site should feel clean, modern, and easy to use while still showing
+            enough product depth to make every T-shirt easier to understand. Fabric, fit, GSM, and size details are treated as core
+            content instead of hidden extras.
           </p>
           <div class="story-points">
-            <div class="helper-note info">Minimal identity with richer texture and sharper silhouettes.</div>
+            <div class="helper-note info">All 18 T-shirt categories are visible from the shop page.</div>
             <div class="helper-note info">Built local-first with FastAPI, HTML, CSS, and JS.</div>
-            <div class="helper-note info">T-shirt led collection supported by sharper shirts.</div>
+            <div class="helper-note info">Product pages show fabric, fit, neck type, GSM, and size chart details.</div>
           </div>
         </article>
-
-        <article class="story-card">
+        <article class="story-card reveal-right">
           <div class="story-image">
-            <img src="/images/hero-banner.png" alt="Trident brand image">
+            <img src="../images/hero-banner.png" alt="TridentWear brand image" loading="lazy">
           </div>
         </article>
       </div>
@@ -72,20 +77,35 @@
 
     <section class="section-tight">
       <div class="container cards-grid">
-        <article class="value-card">
-          <span class="eyebrow">Quality</span>
-          <h3 class="product-name">Premium fabric choices</h3>
-          <p class="story-copy">Each product is framed as a premium staple with weight, structure, and a clean handfeel.</p>
+        <article class="value-card reveal reveal-delay-1">
+          <span class="eyebrow">Catalog</span>
+          <h3 class="product-name">Clear category structure</h3>
+          <p class="story-copy">Fit type, neck type, fabric type, design type, and special type all work together in one filter system.</p>
         </article>
-        <article class="value-card">
+        <article class="value-card reveal reveal-delay-2">
           <span class="eyebrow">Clarity</span>
-          <h3 class="product-name">Focused user journey</h3>
-          <p class="story-copy">Every route from browsing to checkout is designed for quick local testing and polished demos.</p>
+          <h3 class="product-name">Focused product details</h3>
+          <p class="story-copy">Every product page explains material, GSM, fit, neck type, and size selection before checkout.</p>
         </article>
-        <article class="value-card">
+        <article class="value-card reveal reveal-delay-3">
           <span class="eyebrow">Control</span>
           <h3 class="product-name">Admin-ready storefront</h3>
           <p class="story-copy">Add, edit, and feature products directly from the local admin panel without breaking the layout.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-tight">
+      <div class="container split-grid">
+        <article class="story-card reveal-left">
+          <span class="eyebrow">What We Build</span>
+          <h2 class="section-title">Product pages that answer real questions</h2>
+          <p class="story-copy">Instead of a flat catalog, TridentWear shows what matters first: price, fit, material, size options, and related products that share category attributes.</p>
+        </article>
+        <article class="story-card reveal-right">
+          <span class="eyebrow">Store Experience</span>
+          <h2 class="section-title">Simple flow from browse to checkout</h2>
+          <p class="story-copy">The shop, cart, contact, and auth pages are built to run locally with the FastAPI backend so the project is ready for demos and further deployment work.</p>
         </article>
       </div>
     </section>
@@ -95,10 +115,10 @@
     <div class="container footer-grid">
       <div>
         <div class="brand">
-          <span class="brand-name"><span>Trident</span></span>
-          <span class="brand-tagline">Premium Streetwear</span>
+          <span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span>
+          <span class="brand-tagline">T-Shirt Collections</span>
         </div>
-        <p class="footer-note">A premium clothing brand project with clean frontend structure and FastAPI backend control.</p>
+        <p class="footer-note">A clothing website project with category-led browsing, customer support, and clear legal pages.</p>
       </div>
       <div>
         <h3 class="footer-title">Navigate</h3>
@@ -117,16 +137,40 @@
         </div>
       </div>
       <div>
-        <h3 class="footer-title">Reach</h3>
+        <h3 class="footer-title">Legal</h3>
         <div class="footer-links">
+          <a href="/privacy">Privacy Policy</a>
+          <a href="/terms">Terms &amp; Conditions</a>
+          <a href="/returns">Return &amp; Refund Policy</a>
+          <a href="/shipping">Shipping Policy</a>
+        </div>
+      </div>
+      <div>
+        <h3 class="footer-title">Contact</h3>
+        <div class="footer-links">
+          <a href="/contact">Contact Us</a>
           <a href="mailto:hello@tridentwear.com">hello@tridentwear.com</a>
           <a href="tel:+919876543210">+91 98765 43210</a>
-          <a href="/about">Story</a>
+          <a href="https://wa.me/919876543210" target="_blank" rel="noreferrer">WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="footer-bottom">
+        <span class="footer-copy">&copy; 2026 TridentWear. All rights reserved.</span>
+        <div class="footer-socials">
+          <a class="footer-social-link" href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+          <a class="footer-social-link" href="https://twitter.com" target="_blank" rel="noreferrer" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg></a>
+          <a class="footer-social-link" href="https://youtube.com" target="_blank" rel="noreferrer" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
         </div>
       </div>
     </div>
   </footer>
 
-  <script type="module" src="/js/pages/about.js"></script>
+  <button class="back-to-top" type="button" data-back-to-top aria-label="Back to top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+
+  <script type="module" src="../js/pages/about.js"></script>
 </body>
 </html>
