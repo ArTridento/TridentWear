@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Analytics Dashboard — view revenue, orders, and top products for TridentWear.">
+  <title>Analytics | TridentWear Admin</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="icon" type="image/png" href="../images/Logo.png">
+</head>
+<body data-page="admin">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/"><span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span><span class="brand-tagline">T-Shirt Collections</span></a>
+      <button class="mobile-toggle" type="button" data-mobile-toggle aria-label="Open navigation"><span class="mobile-toggle-line"></span><span class="mobile-toggle-line"></span><span class="mobile-toggle-line"></span></button>
+      <nav class="site-nav" data-mobile-nav>
+        <a class="nav-link" href="/" data-nav-link="home">Home</a>
+        <a class="nav-link" href="/products" data-nav-link="products">Products</a>
+        <a class="nav-link" href="/about" data-nav-link="about">About</a>
+        <a class="nav-link" href="/contact" data-nav-link="contact">Contact</a>
+        <a class="nav-link" href="/admin" data-nav-link="admin" data-admin-link hidden>Admin</a>
+      </nav>
+      <div class="header-tools">
+        <a class="utility-pill" href="/login" data-login-link>Login</a>
+        <a class="utility-pill" href="/register" data-register-link>Sign Up</a>
+        <a class="utility-pill" href="/cart">Cart <span class="cart-badge" data-cart-count>0</span></a>
+        <button class="utility-pill" type="button" data-logout-button hidden>Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <div class="page-hero-panel reveal-scale">
+          <span class="eyebrow">Admin Panel</span>
+          <h1 class="page-title">Business <span class="accent">Analytics</span>.</h1>
+          <p class="page-copy">Track revenue, customer growth, and top-selling products at a glance.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-tight">
+      <div class="container">
+
+        <nav class="admin-panel-nav">
+          <a class="nav-pill" href="/admin">📦 Products</a>
+          <a class="nav-pill" href="/admin/orders">🧾 Orders</a>
+          <a class="nav-pill is-active" href="/admin/analytics">📊 Analytics</a>
+        </nav>
+
+        <!-- KPI Cards -->
+        <div class="analytics-grid">
+          <article class="analytics-card orders reveal reveal-delay-1">
+            <div class="analytics-icon">🧾</div>
+            <div class="analytics-label">Total Orders</div>
+            <div class="analytics-value" data-kpi-orders>—</div>
+          </article>
+          <article class="analytics-card revenue reveal reveal-delay-2">
+            <div class="analytics-icon">💰</div>
+            <div class="analytics-label">Total Revenue</div>
+            <div class="analytics-value" data-kpi-revenue>—</div>
+          </article>
+          <article class="analytics-card customers reveal reveal-delay-3">
+            <div class="analytics-icon">👥</div>
+            <div class="analytics-label">Unique Customers</div>
+            <div class="analytics-value" data-kpi-customers>—</div>
+          </article>
+        </div>
+
+        <!-- Charts -->
+        <div class="chart-grid-2">
+          <div class="chart-card reveal">
+            <div class="chart-title">Top Products by Units Sold</div>
+            <div class="bar-chart" data-bar-chart>
+              <div style="color:var(--gray);font-size:0.88rem;align-self:center;">Loading…</div>
+            </div>
+          </div>
+
+          <div class="chart-card reveal reveal-delay-1">
+            <div class="chart-title">Revenue Breakdown</div>
+            <div data-revenue-breakdown style="display:grid;gap:0.6rem;margin-top:0.5rem;">
+              <div style="color:var(--gray);font-size:0.88rem;">Loading…</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent orders teaser -->
+        <div class="chart-card reveal">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
+            <div class="chart-title" style="margin:0;">Recent Orders</div>
+            <a class="btn btn-outline" href="/admin/orders" style="font-size:0.82rem;padding:0.4rem 0.85rem;">View All →</a>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr><th>Order ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th></tr>
+              </thead>
+              <tbody data-recent-orders>
+                <tr><td colspan="5" style="text-align:center;padding:1.5rem;color:var(--gray);">Loading…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div><div class="brand"><span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span><span class="brand-tagline">T-Shirt Collections</span></div><p class="footer-note">Admin analytics are derived from live JSON order data.</p></div>
+      <div><h3 class="footer-title">Admin</h3><div class="footer-links"><a href="/admin">Products</a><a href="/admin/orders">Orders</a><a href="/admin/analytics">Analytics</a></div></div>
+      <div><h3 class="footer-title">Store</h3><div class="footer-links"><a href="/products">Storefront</a><a href="/cart">Cart</a><a href="/contact">Support</a></div></div>
+    </div>
+    <div class="container"><div class="footer-bottom"><span class="footer-copy">&copy; 2026 TridentWear. All rights reserved.</span></div></div>
+  </footer>
+
+  <button class="back-to-top" type="button" data-back-to-top aria-label="Back to top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+
+  <script type="module" src="../js/pages/admin-analytics.js"></script>
+</body>
+</html>

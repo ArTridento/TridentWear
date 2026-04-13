@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Admin Orders Dashboard — view and manage all TridentWear customer orders.">
+  <title>Orders Dashboard | TridentWear Admin</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="icon" type="image/png" href="../images/Logo.png">
+</head>
+<body data-page="admin">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/"><span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span><span class="brand-tagline">T-Shirt Collections</span></a>
+      <button class="mobile-toggle" type="button" data-mobile-toggle aria-label="Open navigation"><span class="mobile-toggle-line"></span><span class="mobile-toggle-line"></span><span class="mobile-toggle-line"></span></button>
+      <nav class="site-nav" data-mobile-nav>
+        <a class="nav-link" href="/" data-nav-link="home">Home</a>
+        <a class="nav-link" href="/products" data-nav-link="products">Products</a>
+        <a class="nav-link" href="/about" data-nav-link="about">About</a>
+        <a class="nav-link" href="/contact" data-nav-link="contact">Contact</a>
+        <a class="nav-link" href="/admin" data-nav-link="admin" data-admin-link hidden>Admin</a>
+      </nav>
+      <div class="header-tools">
+        <a class="utility-pill" href="/login" data-login-link>Login</a>
+        <a class="utility-pill" href="/register" data-register-link>Sign Up</a>
+        <a class="utility-pill" href="/cart">Cart <span class="cart-badge" data-cart-count>0</span></a>
+        <button class="utility-pill" type="button" data-logout-button hidden>Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <div class="page-hero-panel reveal-scale">
+          <span class="eyebrow">Admin Panel</span>
+          <h1 class="page-title">Orders <span class="accent">Dashboard</span>.</h1>
+          <p class="page-copy">View, filter, and update the status of every customer order placed on the storefront.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-tight">
+      <div class="container">
+
+        <nav class="admin-panel-nav">
+          <a class="nav-pill" href="/admin">📦 Products</a>
+          <a class="nav-pill is-active" href="/admin/orders">🧾 Orders</a>
+          <a class="nav-pill" href="/admin/analytics">📊 Analytics</a>
+        </nav>
+
+        <div class="admin-summary-grid" style="margin-bottom:1.5rem;">
+          <article class="summary-card reveal reveal-delay-1">
+            <span class="label">Total Orders</span>
+            <strong class="stat-value" data-stat-total>—</strong>
+          </article>
+          <article class="summary-card reveal reveal-delay-2">
+            <span class="label">Pending</span>
+            <strong class="stat-value" data-stat-pending>—</strong>
+          </article>
+          <article class="summary-card reveal reveal-delay-3">
+            <span class="label">Delivered</span>
+            <strong class="stat-value" data-stat-delivered>—</strong>
+          </article>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1rem;flex-wrap:wrap;">
+          <div class="section-header" style="margin:0;">
+            <span class="eyebrow">Live Orders</span>
+            <h2 class="section-title">All customer orders</h2>
+          </div>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+            <select class="status-select" id="filter-status" style="font-size:0.85rem;padding:0.45rem 0.75rem;">
+              <option value="">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="shipped">Shipped</option>
+              <option value="delivered">Delivered</option>
+            </select>
+            <input class="field" id="filter-search" type="text" placeholder="Search order ID or name…" style="width:auto;font-size:0.85rem;padding:0.45rem 0.75rem;">
+          </div>
+        </div>
+
+        <div class="table-wrap reveal">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody data-orders-body>
+              <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--gray);">Loading orders…</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div><div class="brand"><span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span><span class="brand-tagline">T-Shirt Collections</span></div><p class="footer-note">Admin access is protected by JWT sessions and role checks.</p></div>
+      <div><h3 class="footer-title">Admin</h3><div class="footer-links"><a href="/admin">Products</a><a href="/admin/orders">Orders</a><a href="/admin/analytics">Analytics</a></div></div>
+      <div><h3 class="footer-title">Store</h3><div class="footer-links"><a href="/products">Storefront</a><a href="/cart">Cart</a><a href="/contact">Support</a></div></div>
+    </div>
+    <div class="container"><div class="footer-bottom"><span class="footer-copy">&copy; 2026 TridentWear. All rights reserved.</span></div></div>
+  </footer>
+
+  <button class="back-to-top" type="button" data-back-to-top aria-label="Back to top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+
+  <script type="module" src="../js/pages/admin-orders.js"></script>
+</body>
+</html>
