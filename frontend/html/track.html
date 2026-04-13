@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Track your TridentWear order status and updates.">
+  <title>Track Order | TridentWear</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="icon" type="image/png" href="../images/Logo.png">
+</head>
+<body data-page="track">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/"><span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span><span class="brand-tagline">T-Shirt Collections</span></a>
+      <button class="mobile-toggle" type="button" data-mobile-toggle aria-label="Open navigation"><span class="mobile-toggle-line"></span><span class="mobile-toggle-line"></span><span class="mobile-toggle-line"></span></button>
+      <nav class="site-nav" data-mobile-nav>
+        <a class="nav-link" href="/" data-nav-link="home">Home</a>
+        <a class="nav-link" href="/products" data-nav-link="products">Products</a>
+        <a class="nav-link" href="/about" data-nav-link="about">About</a>
+        <a class="nav-link" href="/contact" data-nav-link="contact">Contact</a>
+        <a class="nav-link" href="/admin" data-nav-link="admin" data-admin-link hidden>Admin</a>
+      </nav>
+      <div class="header-tools">
+        <a class="utility-pill" href="/login" data-login-link>Login</a>
+        <a class="utility-pill" href="/register" data-register-link>Sign Up</a>
+        <a class="utility-pill" href="/wishlist">♥ Wishlist</a>
+        <a class="utility-pill" href="/cart">Cart <span class="cart-badge" data-cart-count>0</span></a>
+        <button class="utility-pill" type="button" data-logout-button hidden>Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <div class="page-hero-panel reveal-scale">
+          <span class="eyebrow">Delivery Information</span>
+          <h1 class="page-title">Track your <span class="accent">Order</span>.</h1>
+          <p class="page-copy">Real-time status updates powered by our shipping partners.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-tight">
+      <div class="container" style="max-width:600px;margin: 0 auto; min-height: 40vh;">
+        
+        <form class="checkout-panel reveal-scale" data-track-form style="margin-bottom:2rem;">
+          <div style="display:flex; gap:0.5rem; align-items:flex-end;">
+            <div class="form-group" style="flex:1; margin:0;">
+              <label class="label" for="track-order-id">Order Reference ID</label>
+              <input class="field" id="track-order-id" type="text" placeholder="e.g. TRI-F4A1BC2D" required>
+            </div>
+            <button class="btn btn-primary" type="submit" data-track-btn>Track</button>
+          </div>
+        </form>
+
+        <div id="track-result" style="display:none;">
+          <div class="checkout-panel reveal-scale">
+            <h2 class="section-title" style="margin-bottom:1.5rem;font-size:1.4rem;">Status Overview</h2>
+            
+            <div class="track-progress-bar">
+              <div class="track-step" data-step="placed">
+                <div class="track-dot"></div>
+                <div class="track-label">Placed</div>
+              </div>
+              <div class="track-step" data-step="shipped">
+                <div class="track-dot"></div>
+                <div class="track-label">Shipped</div>
+              </div>
+              <div class="track-step" data-step="out">
+                <div class="track-dot"></div>
+                <div class="track-label">Out for Delivery</div>
+              </div>
+              <div class="track-step" data-step="delivered">
+                <div class="track-dot"></div>
+                <div class="track-label">Delivered</div>
+              </div>
+            </div>
+
+            <div class="track-details-card">
+              <div class="track-row">
+                <span class="track-muted">Current Status</span>
+                <strong id="res-status" style="color:var(--primary); font-size:1.1rem;">-</strong>
+              </div>
+              <div class="track-row">
+                <span class="track-muted">Courier</span>
+                <strong id="res-courier">-</strong>
+              </div>
+              <div class="track-row">
+                <span class="track-muted">Tracking ID</span>
+                <strong id="res-tracking">-</strong>
+              </div>
+              <div class="track-row">
+                <span class="track-muted">Est. Delivery</span>
+                <strong id="res-est">-</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- Live Chat Widget Base -->
+  <div id="live-chat-mount"></div>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div><div class="brand"><span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span><span class="brand-tagline">T-Shirt Collections</span></div><p class="footer-note">Secure checkout. Powered by TridentWear.</p></div>
+      <div><h3 class="footer-title">Shop</h3><div class="footer-links"><a href="/products">Products</a><a href="/cart">Cart</a><a href="/wishlist">Wishlist</a></div></div>
+      <div><h3 class="footer-title">Account</h3><div class="footer-links"><a href="/login">Login</a><a href="/register">Register</a><a href="/admin">Admin</a></div></div>
+      <div><h3 class="footer-title">Legal</h3><div class="footer-links"><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/returns">Returns</a></div></div>
+      <div><h3 class="footer-title">Contact</h3><div class="footer-links"><a href="/contact">Contact Us</a><a href="mailto:hello@tridentwear.com">hello@tridentwear.com</a><a href="https://wa.me/919876543210" target="_blank">WhatsApp</a></div></div>
+    </div>
+    <div class="container"><div class="footer-bottom"><span class="footer-copy">&copy; 2026 TridentWear. All rights reserved.</span></div></div>
+  </footer>
+
+  <button class="back-to-top" type="button" data-back-to-top aria-label="Back to top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+
+  <script type="module" src="../js/pages/track.js"></script>
+</body>
+</html>
