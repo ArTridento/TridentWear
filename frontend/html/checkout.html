@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Review your Trident cart, update quantities, and place a locally powered checkout order.">
+  <meta name="description" content="Complete your TridentWear order — choose COD or online payment, apply coupons.">
   <title>Checkout | TridentWear</title>
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="icon" type="image/png" href="../images/Logo.png">
+  <!-- Razorpay SDK - loads only when needed -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
 </head>
 <body data-page="checkout">
   <header class="site-header">
@@ -20,14 +22,10 @@
         <a class="nav-link" href="/contact" data-nav-link="contact">Contact</a>
         <a class="nav-link" href="/admin" data-nav-link="admin" data-admin-link hidden>Admin</a>
       </nav>
-      <div class="search-wrapper" data-search-wrapper>
-        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input class="search-input" type="text" placeholder="Search products..." data-search-input>
-        <div class="search-results" data-search-results hidden></div>
-      </div>
       <div class="header-tools">
         <a class="utility-pill" href="/login" data-login-link>Login</a>
         <a class="utility-pill" href="/register" data-register-link>Sign Up</a>
+        <a class="utility-pill" href="/wishlist">♥ Wishlist</a>
         <a class="utility-pill" href="/cart">Cart <span class="cart-badge" data-cart-count>0</span></a>
         <button class="utility-pill" type="button" data-logout-button hidden>Logout</button>
       </div>
@@ -40,22 +38,71 @@
         <div class="page-hero-panel reveal-scale">
           <span class="eyebrow">Checkout</span>
           <h1 class="page-title">Complete your <span class="accent">order</span>.</h1>
-          <p class="page-copy">Guest checkout is enabled, and signed-in users get customer details prefilled automatically.</p>
+          <p class="page-copy">Secure checkout with Cash on Delivery or Online Payment.</p>
         </div>
       </div>
     </section>
 
     <section class="section-tight">
-      <div class="container cart-grid">
-        
+      <div class="container" style="max-width:860px;margin:0 auto;">
 
-        <div class="checkout-panel reveal-scale" style="width: 100%; max-width: 800px; margin: 0 auto;">
-          <div class="section-header">
-            <span class="eyebrow">Shipping Details</span>
-            <h2 class="section-title">Place the order</h2>
+        <div data-order-status></div>
+
+        <!-- Order Summary -->
+        <div class="checkout-panel reveal-scale" style="margin-bottom:1rem;">
+          <div class="section-header" style="margin-bottom:0.75rem;">
+            <span class="eyebrow">Order Summary</span>
           </div>
           <div data-cart-summary></div>
-          <div class="section-tight" data-order-status></div>
+        </div>
+
+        <!-- Coupon -->
+        <div class="checkout-panel reveal-scale" style="margin-bottom:1rem;">
+          <div class="section-header" style="margin-bottom:0.75rem;">
+            <span class="eyebrow">Have a Coupon?</span>
+          </div>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+            <input class="field" id="coupon-code" type="text" placeholder="Enter coupon code" style="flex:1;min-width:10rem;text-transform:uppercase;">
+            <button class="btn btn-outline" type="button" data-coupon-apply>Apply</button>
+          </div>
+          <p data-coupon-msg style="font-size:0.85rem;margin-top:0.4rem;"></p>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="checkout-panel reveal-scale" style="margin-bottom:1rem;">
+          <div class="section-header" style="margin-bottom:0.75rem;">
+            <span class="eyebrow">Payment Method</span>
+          </div>
+          <div class="payment-options">
+            <label class="payment-option" id="opt-cod">
+              <input type="radio" name="payment" value="cod" checked>
+              <div class="payment-option-content">
+                <div class="payment-option-icon">🏦</div>
+                <div>
+                  <div class="payment-option-title">Cash on Delivery</div>
+                  <div class="payment-option-desc">Pay when your order arrives</div>
+                </div>
+              </div>
+            </label>
+            <label class="payment-option" id="opt-online">
+              <input type="radio" name="payment" value="online">
+              <div class="payment-option-content">
+                <div class="payment-option-icon">💳</div>
+                <div>
+                  <div class="payment-option-title">Pay Online</div>
+                  <div class="payment-option-desc">UPI, Cards, Net Banking via Razorpay</div>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Shipping Form -->
+        <div class="checkout-panel reveal-scale">
+          <div class="section-header" style="margin-bottom:0.75rem;">
+            <span class="eyebrow">Shipping Details</span>
+            <h2 class="section-title">Where should we send it?</h2>
+          </div>
           <form class="form-grid" data-checkout-form>
             <div class="form-group"><label class="label" for="checkout-name">Full Name</label><input class="field" id="checkout-name" type="text" required></div>
             <div class="form-group"><label class="label" for="checkout-email">Email</label><input class="field" id="checkout-email" type="email" required></div>
@@ -65,26 +112,42 @@
             <div class="form-group"><label class="label" for="checkout-postal">Postal Code</label><input class="field" id="checkout-postal" type="text"></div>
             <div class="form-group"><label class="label" for="checkout-country">Country</label><input class="field" id="checkout-country" type="text" value="India"></div>
             <div class="form-group full"><label class="label" for="checkout-notes">Order Notes</label><textarea class="textarea" id="checkout-notes" placeholder="Any delivery notes or fit preferences?"></textarea></div>
-            <div class="form-group full"><button class="btn btn-primary" type="submit" data-checkout-button>Place Order</button></div>
+            <div class="form-group full">
+              <button class="btn btn-primary" type="submit" data-checkout-button style="width:100%;justify-content:center;padding:0.85rem;">
+                Place Order (COD)
+              </button>
+            </div>
           </form>
         </div>
+
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
     <div class="container footer-grid">
-      <div><div class="brand"><span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span><span class="brand-tagline">T-Shirt Collections</span></div><p class="footer-note">Cart state is stored locally and submitted to FastAPI when the order is placed.</p></div>
-      <div><h3 class="footer-title">Shop</h3><div class="footer-links"><a href="/products">Products</a><a href="/product?id=1">Featured Tee</a><a href="/about">About</a></div></div>
-      <div><h3 class="footer-title">Account</h3><div class="footer-links"><a href="/login">Login</a><a href="/admin">Admin</a><a href="/contact">Support</a></div></div>
-      <div><h3 class="footer-title">Legal</h3><div class="footer-links"><a href="/privacy">Privacy Policy</a><a href="/terms">Terms &amp; Conditions</a><a href="/returns">Return &amp; Refund Policy</a><a href="/shipping">Shipping Policy</a></div></div>
-      <div><h3 class="footer-title">Contact</h3><div class="footer-links"><a href="/contact">Contact Us</a><a href="mailto:hello@tridentwear.com">hello@tridentwear.com</a><a href="tel:+919876543210">+91 98765 43210</a><a href="https://wa.me/919876543210" target="_blank" rel="noreferrer">WhatsApp</a></div></div>
+      <div><div class="brand"><span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span><span class="brand-tagline">T-Shirt Collections</span></div><p class="footer-note">Secure checkout. Powered by TridentWear.</p></div>
+      <div><h3 class="footer-title">Shop</h3><div class="footer-links"><a href="/products">Products</a><a href="/cart">Cart</a><a href="/wishlist">Wishlist</a></div></div>
+      <div><h3 class="footer-title">Account</h3><div class="footer-links"><a href="/login">Login</a><a href="/register">Register</a><a href="/admin">Admin</a></div></div>
+      <div><h3 class="footer-title">Legal</h3><div class="footer-links"><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/returns">Returns</a></div></div>
+      <div><h3 class="footer-title">Contact</h3><div class="footer-links"><a href="/contact">Contact Us</a><a href="mailto:hello@tridentwear.com">hello@tridentwear.com</a><a href="https://wa.me/919876543210" target="_blank">WhatsApp</a></div></div>
     </div>
     <div class="container"><div class="footer-bottom"><span class="footer-copy">&copy; 2026 TridentWear. All rights reserved.</span></div></div>
   </footer>
 
-  <button class="back-to-top" type="button" data-back-to-top aria-label="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+  <button class="back-to-top" type="button" data-back-to-top aria-label="Back to top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
 
   <script type="module" src="../js/pages/checkout.js"></script>
+  <script>
+    // Update button label when payment method changes
+    document.addEventListener("change", e => {
+      if (e.target.name === "payment") {
+        const btn = document.querySelector("[data-checkout-button]");
+        btn.textContent = e.target.value === "cod" ? "Place Order (COD)" : "Pay Online";
+      }
+    });
+  </script>
 </body>
 </html>

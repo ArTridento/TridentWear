@@ -37,6 +37,9 @@ ORDERS_PATH = DB_DIR / "orders.json"
 USERS_PATH = DB_DIR / "users.json"
 CONTACTS_PATH = DB_DIR / "contacts.json"
 REVIEWS_PATH = DB_DIR / "reviews.json"
+COUPONS_PATH = DB_DIR / "coupons.json"
+WISHLIST_PATH = DB_DIR / "wishlist.json"
+
 FRONTEND_PRODUCTS_PATH = JS_DIR / "products.json"
 
 PASSWORD_ITERATIONS = 120_000
@@ -68,6 +71,37 @@ class ReviewPayload(BaseModel):
 
 class OrderStatusUpdate(BaseModel):
     status: str
+
+
+class CouponPayload(BaseModel):
+    code: str
+    discount: float          # percent (1-100)
+    expiry: str              # ISO date string YYYY-MM-DD
+    usage_limit: int = 100
+
+class ApplyCouponPayload(BaseModel):
+    code: str
+    subtotal: float
+
+class WishlistPayload(BaseModel):
+    product_id: int
+
+class CODPayload(BaseModel):
+    items: List[Dict[str, Any]]
+    subtotal: float
+    customer: Dict[str, Any]
+    shipping: Dict[str, Any]
+    coupon_code: Optional[str] = None
+
+class RazorpayCreatePayload(BaseModel):
+    amount: int              # paise
+    currency: str = "INR"
+
+class RazorpayVerifyPayload(BaseModel):
+    razorpay_order_id: str
+    razorpay_payment_id: str
+    razorpay_signature: str
+    order_data: Dict[str, Any]
 
 class ContactPayload(BaseModel):
     name: str
@@ -273,6 +307,95 @@ def load_contacts() -> List[Dict[str, Any]]:
 def save_contacts(contacts: List[Dict[str, Any]]) -> None:
     write_json(CONTACTS_PATH, contacts)
 
+
+
+def load_coupons() -> List[Dict[str, Any]]:
+    return read_json(COUPONS_PATH, [])
+
+def save_coupons(coupons: List[Dict[str, Any]]) -> None:
+    write_json(COUPONS_PATH, coupons)
+
+def load_wishlist() -> List[Dict[str, Any]]:
+    return read_json(WISHLIST_PATH, [])
+
+def save_wishlist(items: List[Dict[str, Any]]) -> None:
+    write_json(WISHLIST_PATH, items)
+
+def deduct_stock(order_items: List[Dict[str, Any]]) -> None:
+    """Reduce product stock after an order is saved."""
+    products = load_products()
+    product_map = {p["id"]: p for p in products}
+    for item in order_items:
+        pid = int(item.get("id", 0))
+        qty = int(item.get("qty", 1))
+        if pid in product_map:
+            product_map[pid]["stock"] = max(0, product_map[pid]["stock"] - qty)
+    save_products(list(product_map.values()))
+
+def validate_coupon(code: str, subtotal: float) -> Dict[str, Any]:
+    """Returns coupon dict or raises HTTPException."""
+    coupons = load_coupons()
+    now = datetime.now(timezone.utc).date()
+    for c in coupons:
+        if c.get("code", "").upper() == code.strip().upper():
+            # Check expiry
+            try:
+                expiry_date = datetime.fromisoformat(c["expiry"]).date()
+            except Exception:
+                expiry_date = now
+            if expiry_date < now:
+                raise HTTPException(status_code=400, detail="Coupon has expired.")
+            if c.get("usage_count", 0) >= c.get("usage_limit", 1):
+                raise HTTPException(status_code=400, detail="Coupon usage limit reached.")
+            discount_amount = round(subtotal * c["discount"] / 100, 2)
+            return {**c, "discount_amount": discount_amount,
+                    "final_total": round(subtotal - discount_amount, 2)}
+    raise HTTPException(status_code=404, detail="Invalid coupon code.")
+
+def use_coupon(code: str) -> None:
+    coupons = load_coupons()
+    for c in coupons:
+        if c.get("code", "").upper() == code.strip().upper():
+            c["usage_count"] = c.get("usage_count", 0) + 1
+    save_coupons(coupons)
+
+def send_order_email(order: Dict[str, Any]) -> None:
+    """Non-blocking email; silently skips if SMTP not configured."""
+    import smtplib, ssl
+    from email.mime.text import MIMEText
+    host = os.getenv("SMTP_HOST", "")
+    port = int(os.getenv("SMTP_PORT", "587"))
+    user = os.getenv("SMTP_USER", "")
+    password = os.getenv("SMTP_PASS", "")
+    if not (host and user and password):
+        return
+    to_email = order.get("customer", {}).get("email", "")
+    if not to_email:
+        return
+    items_text = ", ".join(
+        f"{i['name']} x{i['qty']}" for i in order.get("items", [])
+    )
+    body = (
+        f"Hi {order['customer'].get('name', 'Customer')},\n\n"
+        f"Your TridentWear order {order['order_id']} has been placed!\n"
+        f"Status: {order.get('status','confirmed')}\n"
+        f"Items: {items_text}\n"
+        f"Total: \u20b9{order.get('subtotal', 0)}\n\n"
+        f"Thank you for shopping with us!\n\nTeam TridentWear"
+    )
+    msg = MIMEText(body)
+    msg["Subject"] = f"Order Confirmed – {order['order_id']}"
+    msg["From"] = user
+    msg["To"] = to_email
+    try:
+        ctx = ssl.create_default_context()
+        with smtplib.SMTP(host, port) as smtp:
+            smtp.ehlo()
+            smtp.starttls(context=ctx)
+            smtp.login(user, password)
+            smtp.sendmail(user, [to_email], msg.as_string())
+    except Exception:
+        pass  # Never crash the order flow
 
 def next_id(items: List[Dict[str, Any]]) -> int:
     if not items:
@@ -512,6 +635,10 @@ products_router = APIRouter(prefix="/api", tags=["products"])
 admin_router = APIRouter(prefix="/api/admin", tags=["admin"])
 orders_router = APIRouter(prefix="/api", tags=["orders"])
 contact_router = APIRouter(prefix="/api", tags=["contact"])
+payment_router = APIRouter(prefix="/api/payment", tags=["payment"])
+coupon_router = APIRouter(prefix="/api", tags=["coupons"])
+wishlist_router = APIRouter(prefix="/api/wishlist", tags=["wishlist"])
+
 
 
 def html_response(filename: str) -> FileResponse:
@@ -595,6 +722,11 @@ def serve_admin_analytics_page(request: Request):
         return RedirectResponse(url=f"/login?next={next_path}", status_code=status.HTTP_303_SEE_OTHER)
     return html_response("admin-analytics.html")
 
+
+
+@pages_router.get("/wishlist", include_in_schema=False)
+def serve_wishlist_page() -> FileResponse:
+    return html_response("wishlist.html")
 
 
 @pages_router.get("/privacy", include_in_schema=False)
@@ -875,6 +1007,15 @@ def get_stats() -> Dict[str, int]:
 def create_order(payload: OrderPayload, request: Request) -> Dict[str, Any]:
     if not payload.items:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Your cart is empty.")
+    # Stock check
+    products = load_products()
+    prod_map = {p["id"]: p for p in products}
+    for item in payload.items:
+        pid = int(item.get("id", 0))
+        qty = max(int(item.get("qty", 1)), 1)
+        if pid in prod_map and prod_map[pid]["stock"] < qty:
+            raise HTTPException(status_code=400, detail=f'Insufficient stock for {prod_map[pid]["name"]}')
+
 
     customer_name = str(payload.customer.get("name", "")).strip()
     customer_email = validate_email(str(payload.customer.get("email", "") or "guest@trident.local"))
@@ -928,6 +1069,14 @@ def create_order(payload: OrderPayload, request: Request) -> Dict[str, Any]:
     orders = load_orders()
     orders.append(order)
     save_orders(orders)
+    try:
+        deduct_stock(items)
+    except Exception:
+        pass
+    try:
+        send_order_email(order)
+    except Exception:
+        pass
     return {"success": True, "message": "Order placed successfully.", "order_id": order["order_id"]}
 
 
