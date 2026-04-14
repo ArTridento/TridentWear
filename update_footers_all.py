@@ -1,46 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Page not found. Return to TridentWear homepage or browse the product catalog.">
-  <title>404 - Page Not Found | TridentWear</title>
-  <link rel="stylesheet" href="../css/styles.css">
-  <link rel="icon" type="image/png" href="../images/Logo.png">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-</head>
-<body data-page="404">
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="index.html"><span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span></a>
-      <nav class="site-nav" data-mobile-nav>
-        <a class="nav-link" href="index.html" data-nav-link="home">Home</a>
-        <a class="nav-link" href="products.html" data-nav-link="products">Products</a>
-        <a class="nav-link" href="about.html" data-nav-link="about">About</a>
-        <a class="nav-link" href="contact.html" data-nav-link="contact">Contact</a>
-      </nav>
-      <div class="header-tools">
-        <a class="utility-pill" href="login.html" data-login-link title="Login"><i class="fa-sharp-duotone fa-solid fa-arrow-right-to-bracket"></i></a>
-        <a class="utility-pill" href="register.html" data-register-link title="Register"><i class="fa-solid fa-user-plus"></i></a>
-        <a class="utility-pill" href="cart.html" title="Cart"><i class="fa-sharp fa-solid fa-cart-shopping"></i> <span class="cart-badge" data-cart-count>0</span></a>
-        <button class="utility-pill" type="button" data-logout-button title="Logout" hidden><i class="fa-sharp-duotone fa-solid fa-arrow-left-from-bracket"></i></button>
-      </div>
-    </div>
-  </header>
+"""
+Bulk-update all HTML pages with the new premium footer.
+Run from project root: python update_footers_all.py
+"""
+import re
+from pathlib import Path
 
-  <main>
-    <div class="error-page">
-      <div class="error-code reveal-scale">404</div>
-      <h1 class="error-title reveal">Page Not Found</h1>
-      <p class="error-copy reveal">The page you're looking for doesn't exist or has been moved. Let's get you back on track.</p>
-      <div class="error-actions reveal">
-        <a class="btn btn-primary" href="index.html">Back to Home</a>
-        <a class="btn btn-outline" href="products.html">Browse Products</a>
-      </div>
-    </div>
-  </main>
+HTML_DIR = Path(__file__).resolve().parent / "frontend" / "html"
 
-        <footer class="site-footer">
+SKIP_FILES = {"index.html"}  # Already updated manually
+
+NEW_FOOTER = '''  <footer class="site-footer">
     <div class="footer-top-strip">
       <div class="container">
         <span>🇮🇳 Proudly Made in India — Wear the Pride</span>
@@ -131,13 +100,40 @@
         </div>
       </div>
     </div>
-  </footer>
+  </footer>'''
 
-  <script type="module">
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("is-visible"); observer.unobserve(e.target); } });
-    }, { threshold: 0.08 });
-    document.querySelectorAll(".reveal, .reveal-scale").forEach((el) => observer.observe(el));
-  </script>
-</body>
-</html>
+# Match the footer block  
+FOOTER_PATTERN = re.compile(
+    r'<footer class="site-footer">.*?</footer>',
+    re.DOTALL
+)
+
+updated = []
+skipped = []
+
+for html_file in sorted(HTML_DIR.glob("*.html")):
+    if html_file.name in SKIP_FILES:
+        skipped.append(html_file.name)
+        continue
+    
+    content = html_file.read_text(encoding="utf-8")
+    
+    if '<footer class="site-footer">' not in content:
+        skipped.append(f"{html_file.name} (no footer)")
+        continue
+    
+    new_content = FOOTER_PATTERN.sub(NEW_FOOTER, content, count=1)
+    
+    if new_content != content:
+        html_file.write_text(new_content, encoding="utf-8")
+        updated.append(html_file.name)
+    else:
+        skipped.append(f"{html_file.name} (no match)")
+
+print(f"\nUpdated {len(updated)} files:")
+for f in updated:
+    print(f"   + {f}")
+
+print(f"\nSkipped {len(skipped)} files:")
+for f in skipped:
+    print(f"   - {f}")

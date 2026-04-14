@@ -7,11 +7,12 @@
   <title>Product Detail | TridentWear</title>
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="icon" type="image/png" href="../images/Logo.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body data-page="products">
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="/">
+      <a class="brand" href="index.html">
         <span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span>
         <span class="brand-tagline">T-Shirt Collections</span>
       </a>
@@ -21,11 +22,11 @@
         <span class="mobile-toggle-line"></span>
       </button>
       <nav class="site-nav" data-mobile-nav>
-        <a class="nav-link" href="/" data-nav-link="home">Home</a>
-        <a class="nav-link" href="/products" data-nav-link="products">Products</a>
-        <a class="nav-link" href="/about" data-nav-link="about">About</a>
-        <a class="nav-link" href="/contact" data-nav-link="contact">Contact</a>
-        <a class="nav-link" href="/admin" data-nav-link="admin" data-admin-link hidden>Admin</a>
+        <a class="nav-link" href="index.html" data-nav-link="home">Home</a>
+        <a class="nav-link" href="products.html" data-nav-link="products">Products</a>
+        <a class="nav-link" href="about.html" data-nav-link="about">About</a>
+        <a class="nav-link" href="contact.html" data-nav-link="contact">Contact</a>
+        <a class="nav-link" href="admin.html" data-nav-link="admin" data-admin-link hidden>Admin</a>
       </nav>
       <div class="search-wrapper" data-search-wrapper>
         <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -33,10 +34,10 @@
         <div class="search-results" data-search-results hidden></div>
       </div>
       <div class="header-tools">
-        <a class="utility-pill" href="/login" data-login-link>Login</a>
-        <a class="utility-pill" href="/register" data-register-link>Sign Up</a>
-        <a class="utility-pill" href="/cart">Cart <span class="cart-badge" data-cart-count>0</span></a>
-        <button class="utility-pill" type="button" data-logout-button hidden>Logout</button>
+        <a class="utility-pill" href="login.html" data-login-link title="Login"><i class="fa-sharp-duotone fa-solid fa-arrow-right-to-bracket"></i></a>
+        <a class="utility-pill" href="register.html" data-register-link title="Register"><i class="fa-solid fa-user-plus"></i></a>
+        <a class="utility-pill" href="cart.html" title="Cart"><i class="fa-sharp fa-solid fa-cart-shopping"></i> <span class="cart-badge" data-cart-count>0</span></a>
+        <button class="utility-pill" type="button" data-logout-button title="Logout" hidden><i class="fa-sharp-duotone fa-solid fa-arrow-left-from-bracket"></i></button>
       </div>
     </div>
   </header>
@@ -77,57 +78,94 @@
 
   </main>
 
-  <footer class="site-footer">
-    <div class="container footer-grid">
-      <div>
+        <footer class="site-footer">
+    <div class="footer-top-strip">
+      <div class="container">
+        <span>🇮🇳 Proudly Made in India — Wear the Pride</span>
+      </div>
+    </div>
+    <div class="container footer-main">
+      <div class="footer-brand-col">
         <div class="brand">
           <span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span>
           <span class="brand-tagline">T-Shirt Collections</span>
         </div>
-        <p class="footer-note">Every product page is wired to the live TridentWear catalog, size guide, and store policies.</p>
-      </div>
-      <div>
-        <h3 class="footer-title">Navigate</h3>
-        <div class="footer-links">
-          <a href="/products">Products</a>
-          <a href="/cart">Cart</a>
-          <a href="/login">Account</a>
+        <p class="footer-note">Premium men's clothing built for India's everyday uniform. Heritage quality, modern fit.</p>
+        <div class="footer-trust-badges">
+          <span class="footer-badge"><i class="fa-solid fa-indian-rupee-sign"></i> COD Available</span>
+          <span class="footer-badge"><i class="fa-solid fa-rotate-left"></i> 30-Day Returns</span>
         </div>
       </div>
-      <div>
-        <h3 class="footer-title">Brand</h3>
+      <div class="footer-col">
+        <h3 class="footer-title">Need Help</h3>
         <div class="footer-links">
-          <a href="/about">Story</a>
-          <a href="/contact">Contact</a>
-          <a href="/">Home</a>
+          <a href="contact.html"><i class="fa-regular fa-envelope footer-link-icon"></i>Contact Us</a>
+          <a href="track.html"><i class="fa-solid fa-location-dot footer-link-icon"></i>Track Order</a>
+          <a href="returns.html"><i class="fa-solid fa-rotate-left footer-link-icon"></i>Returns &amp; Refunds</a>
+          <a href="contact.html"><i class="fa-regular fa-circle-question footer-link-icon"></i>FAQs</a>
         </div>
       </div>
-      <div>
-        <h3 class="footer-title">Legal</h3>
+      <div class="footer-col">
+        <h3 class="footer-title">Company</h3>
         <div class="footer-links">
-          <a href="/privacy">Privacy Policy</a>
-          <a href="/terms">Terms &amp; Conditions</a>
-          <a href="/returns">Return &amp; Refund Policy</a>
-          <a href="/shipping">Shipping Policy</a>
+          <a href="about.html">About Us</a>
+          <a href="products.html">Shop All</a>
+          <a href="wishlist.html">Wishlist</a>
+          <a href="contact.html">Careers</a>
         </div>
       </div>
-      <div>
-        <h3 class="footer-title">Contact</h3>
+      <div class="footer-col">
+        <h3 class="footer-title">More Info</h3>
         <div class="footer-links">
-          <a href="/contact">Contact Us</a>
-          <a href="mailto:hello@tridentwear.com">hello@tridentwear.com</a>
-          <a href="tel:+919876543210">+91 98765 43210</a>
-          <a href="https://wa.me/919876543210" target="_blank" rel="noreferrer">WhatsApp</a>
+          <a href="terms.html">T&amp;C</a>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="shipping.html">Shipping Policy</a>
+          <a href="returns.html">Returns Policy</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h3 class="footer-title">Contact Us</h3>
+        <div class="footer-links">
+          <a href="mailto:hello@tridentwear.com"><i class="fa-regular fa-envelope footer-link-icon"></i>hello@tridentwear.com</a>
+          <a href="tel:+919876543210"><i class="fa-solid fa-phone footer-link-icon"></i>+91 98765 43210</a>
+          <a href="https://wa.me/919876543210" target="_blank" rel="noreferrer"><i class="fa-brands fa-whatsapp footer-link-icon"></i>WhatsApp</a>
+        </div>
+        <div class="footer-app-badges">
+          <a class="footer-app-btn" href="#"><i class="fa-brands fa-google-play"></i> Google Play</a>
+          <a class="footer-app-btn" href="#"><i class="fa-brands fa-apple"></i> App Store</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-middle">
+      <div class="container footer-middle-inner">
+        <div class="footer-payment">
+          <span class="footer-payment-label">100% Secure Payment:</span>
+          <div class="footer-payment-icons">
+            <span class="payment-pill"><i class="fa-brands fa-google-pay"></i> GPay</span>
+            <span class="payment-pill"><i class="fa-brands fa-cc-mastercard"></i> Mastercard</span>
+            <span class="payment-pill"><i class="fa-brands fa-cc-visa"></i> Visa</span>
+            <span class="payment-pill"><i class="fa-solid fa-money-bill-wave"></i> COD</span>
+            <span class="payment-pill">UPI</span>
+          </div>
+        </div>
+        <div class="footer-social-wrap">
+          <span class="footer-payment-label">Follow Us:</span>
+          <div class="footer-socials">
+            <a class="footer-social-link" href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a class="footer-social-link" href="https://twitter.com" target="_blank" rel="noreferrer" aria-label="Twitter/X"><i class="fa-brands fa-x-twitter"></i></a>
+            <a class="footer-social-link" href="https://youtube.com" target="_blank" rel="noreferrer" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+            <a class="footer-social-link" href="https://facebook.com" target="_blank" rel="noreferrer" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          </div>
         </div>
       </div>
     </div>
     <div class="container">
       <div class="footer-bottom">
         <span class="footer-copy">&copy; 2026 TridentWear. All rights reserved.</span>
-        <div class="footer-socials">
-          <a class="footer-social-link" href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
-          <a class="footer-social-link" href="https://twitter.com" target="_blank" rel="noreferrer" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg></a>
-          <a class="footer-social-link" href="https://youtube.com" target="_blank" rel="noreferrer" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+        <div class="footer-bottom-links">
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+          <a href="shipping.html">Shipping</a>
         </div>
       </div>
     </div>

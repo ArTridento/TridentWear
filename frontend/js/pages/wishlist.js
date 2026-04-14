@@ -16,7 +16,7 @@ async function loadWishlist() {
     empty.hidden = true;
     container.innerHTML = items.map(({ product }) => `
       <article class="product-card reveal">
-        <a class="product-media" href="/product?id=${product.id}">
+        <a class="product-media" href="product.html?id=${product.id}">
           <img src="${resolveAssetUrl(product.image)}" alt="${product.name}" loading="lazy">
         </a>
         <div class="product-body">
@@ -28,7 +28,7 @@ async function loadWishlist() {
           <div class="product-footer">
             <strong class="product-price">${formatCurrency(product.price)}</strong>
             <div class="cart-row-actions">
-              <a class="btn btn-outline" href="/product?id=${product.id}">View</a>
+              <a class="btn btn-outline" href="product.html?id=${product.id}">View</a>
               <button class="btn btn-outline" type="button" data-remove-wish="${product.id}" style="color:var(--danger);border-color:var(--danger);">
                 ♥ Remove
               </button>
@@ -70,7 +70,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   await initSite();
   const user = getCurrentUser();
   if (!user) {
-    window.location.href = "/login?next=" + encodeURIComponent("/wishlist");
+    window.location.href = "login.html?next=" + encodeURIComponent("wishlist.html");
     return;
   }
 
@@ -86,7 +86,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     empty.hidden = true;
     container.innerHTML = items.map(({ product }) => `
       <article class="product-card reveal">
-        <a class="product-media" href="/product?id=${product.id}">
+        <a class="product-media" href="product.html?id=${product.id}">
           <img src="${resolveAssetUrl(product.image)}" alt="${product.name}" loading="lazy">
         </a>
         <div class="product-body">
@@ -99,7 +99,7 @@ window.addEventListener("DOMContentLoaded", async () => {
           <div class="product-footer">
             <strong class="product-price">${formatCurrency(product.price)}</strong>
             <div class="cart-row-actions">
-              <a class="btn btn-outline" href="/product?id=${product.id}">View</a>
+              <a class="btn btn-outline" href="product.html?id=${product.id}">View</a>
               <button class="btn btn-outline" type="button" data-remove-wish="${product.id}" style="color:var(--danger);border-color:var(--danger);">Remove ♥</button>
             </div>
           </div>

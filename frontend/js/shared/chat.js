@@ -1,5 +1,5 @@
 import { get, post } from "./api.js";
-import { getCurrentUser } from "./site.js";
+import { getAuthSession } from "./api.js";
 
 // Basic WhatsApp implementation + Advanced API fallback if wanted.
 // The user prompt recommends WhatsApp as StartUp version, so we provide

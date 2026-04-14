@@ -93,8 +93,9 @@ function showSuccess(orderId, form) {
       <code class="order-success-id">${orderId}</code>
       <p class="order-success-copy">Thank you for your purchase. You'll receive a confirmation email shortly.</p>
       <div style="display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:center;margin-top:1rem;">
+        <a class="btn btn-primary" href="track.html?id=${orderId}">Track Order</a>
         <a class="btn btn-secondary" href="${waLink}" target="_blank" rel="noreferrer">WhatsApp Us</a>
-        <a class="btn btn-outline" href="/products">Continue Shopping</a>
+        <a class="btn btn-outline" href="products.html">Continue Shopping</a>
       </div>
     </div>
   `;

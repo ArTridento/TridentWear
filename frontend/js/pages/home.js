@@ -8,6 +8,42 @@ import {
   endProgress,
 } from "../shared/site.js";
 
+/* ─── Hero Slider ─── */
+function initHeroSlider() {
+  const slides = document.querySelectorAll(".hero-slide");
+  const dots   = document.querySelectorAll(".hero-dot");
+  const prev   = document.querySelector("[data-hero-prev]");
+  const next   = document.querySelector("[data-hero-next]");
+  if (!slides.length) return;
+
+  let current  = 0;
+  let timer    = null;
+
+  function goTo(index) {
+    slides[current].classList.remove("is-active");
+    dots[current]?.classList.remove("is-active");
+    current = (index + slides.length) % slides.length;
+    slides[current].classList.add("is-active");
+    dots[current]?.classList.add("is-active");
+  }
+
+  function autoplay() {
+    clearInterval(timer);
+    timer = setInterval(() => goTo(current + 1), 4500);
+  }
+
+  prev?.addEventListener("click", () => { goTo(current - 1); autoplay(); });
+  next?.addEventListener("click", () => { goTo(current + 1); autoplay(); });
+  dots.forEach((dot, i) => dot.addEventListener("click", () => { goTo(i); autoplay(); }));
+
+  // Pause on hover
+  document.querySelector(".hero-banner")?.addEventListener("mouseenter", () => clearInterval(timer));
+  document.querySelector(".hero-banner")?.addEventListener("mouseleave", autoplay);
+
+  autoplay();
+}
+
+/* ─── Featured Products (New Arrivals) ─── */
 async function loadFeaturedProducts() {
   const grid = document.querySelector("[data-featured-grid]");
   if (!grid) return;
@@ -16,53 +52,81 @@ async function loadFeaturedProducts() {
   startProgress();
 
   try {
-    const data = await get("/api/products?featured=true");
+    const data     = await get("/api/products?featured=true");
     const products = (Array.isArray(data) ? data : data.products || []).slice(0, 4);
+    if (!products.length) { grid.innerHTML = ""; return; }
     grid.innerHTML = products.map(productCardMarkup).join("");
     bindProductCardActions(grid, products);
-  } catch (error) {
-    grid.innerHTML = `<div class="helper-note danger">${error.message}</div>`;
+  } catch {
+    grid.innerHTML = "";
   } finally {
     endProgress();
   }
 }
 
-async function loadStats() {
-  const countEl = document.getElementById("customerCount");
-  if (!countEl) return;
-  
-  let target = 50; // fallback
-  try {
-    const data = await get("/api/stats");
-    if (data && typeof data.customers === 'number') {
-      target = data.customers;
-    }
-  } catch (err) {
-    // silently fallback to 50
-  }
+/* ─── Trending Products (horizontal scroll) ─── */
+async function loadTrendingProducts() {
+  const wrap = document.querySelector("[data-trending-grid]");
+  if (!wrap) return;
 
-  const duration = 1000;
-  const startTime = performance.now();
-  
-  function updateCount(currentTime) {
-    const elapsed = currentTime - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    const easeOut = progress * (2 - progress);
-    
-    countEl.textContent = Math.floor(easeOut * target);
-    
-    if (progress < 1) {
-      requestAnimationFrame(updateCount);
-    } else {
-      countEl.textContent = target;
-    }
+  wrap.innerHTML = createSkeletonCards(6);
+
+  try {
+    const data     = await get("/api/products");
+    const products = (Array.isArray(data) ? data : data.products || []).slice(0, 8);
+    if (!products.length) { wrap.closest(".trending-section")?.remove(); return; }
+    wrap.innerHTML = products.map(productCardMarkup).join("");
+    bindProductCardActions(wrap, products);
+  } catch {
+    wrap.closest(".trending-section")?.remove();
   }
-  
-  requestAnimationFrame(updateCount);
 }
 
+/* ─── Customer Count Ticker ─── */
+async function loadStats() {
+  const el = document.getElementById("customerCount");
+  if (!el) return;
+
+  let target = 151;
+  try {
+    const data = await get("/api/stats");
+    if (data?.customers) target = data.customers;
+  } catch { /* use fallback */ }
+
+  const start = performance.now();
+  const duration = 1200;
+
+  (function tick(now) {
+    const p   = Math.min((now - start) / duration, 1);
+    const val = Math.floor(p * (2 - p) * target);   // ease-out quad
+    el.textContent = val;
+    if (p < 1) requestAnimationFrame(tick);
+    else el.textContent = target;
+  })(start);
+}
+
+/* ─── Newsletter ─── */
+function initNewsletter() {
+  const form = document.querySelector("[data-newsletter-form]");
+  if (!form) return;
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const input = form.querySelector("input[type=email]");
+    const btn   = form.querySelector("button[type=submit]");
+    const prev  = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-check"></i> Subscribed!';
+    btn.disabled  = true;
+    input.value   = "";
+    setTimeout(() => { btn.innerHTML = prev; btn.disabled = false; }, 3000);
+  });
+}
+
+/* ─── Boot ─── */
 window.addEventListener("DOMContentLoaded", async () => {
   await initSite();
+  initHeroSlider();
+  initNewsletter();
   loadStats();
-  await loadFeaturedProducts();
+  loadFeaturedProducts();
+  loadTrendingProducts();
 });

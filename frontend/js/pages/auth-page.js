@@ -18,7 +18,7 @@ function redirectAfterAuth(user) {
     return;
   }
 
-  window.location.href = user.role === "admin" ? "/admin" : "/products";
+  window.location.href = user.role === "admin" ? "admin.html" : "products.html";
 }
 
 function renderAuthStatus() {
@@ -38,13 +38,13 @@ function renderAuthStatus() {
   status.innerHTML = `
     <div class="auth-status-card">
       <strong>Hello, ${escapeHtml(user.name.split(" ")[0] || user.name)}</strong>
-      <span>Signed in as ${escapeHtml(user.email)}</span>
+      <span>Signed in as ${escapeHtml(user.email || user.phone)}</span>
     </div>
   `;
 }
 
 function wireSwitchLinks(mode) {
-  const alternatePath = mode === "login" ? "/register" : "/login";
+  const alternatePath = mode === "login" ? "register.html" : "login.html";
   document.querySelectorAll("[data-auth-switch]").forEach((link) => {
     link.setAttribute("href", buildPath(alternatePath));
   });
@@ -86,7 +86,7 @@ function bindRegisterForm() {
 
     setSubmitting(form, true, "Create Account", "Creating Account...");
     try {
-      const data = await post("/register", {
+      const data = await post("/api/auth/register", {
         name,
         email,
         password,
@@ -105,13 +105,102 @@ function bindRegisterForm() {
   });
 }
 
+function bindOtpLogin() {
+  const sendOtpBtn = document.getElementById("send-otp-btn");
+  const mobileInput = document.getElementById("login-mobile");
+  const otpContainer = document.getElementById("otp-field-container");
+  const otpInput = document.getElementById("login-otp");
+
+  if (!sendOtpBtn) return;
+
+  sendOtpBtn.addEventListener("click", async () => {
+    const mobile = mobileInput.value.trim();
+    if (!mobile || !/^[0-9]{10}$/.test(mobile)) {
+      showToast("Please enter a valid 10-digit mobile number.", "error");
+      return;
+    }
+
+    if (otpContainer.style.display === "none") {
+      sendOtpBtn.disabled = true;
+      sendOtpBtn.textContent = "Sending...";
+      
+      try {
+        await post("/api/auth/otp/send", { phone: mobile });
+        otpContainer.style.display = "block";
+        sendOtpBtn.textContent = "Verify & Login";
+        sendOtpBtn.classList.replace("btn-secondary", "btn-primary");
+        showToast("OTP sent to your mobile!", "success");
+      } catch (err) {
+        showToast(err.message, "error");
+        sendOtpBtn.textContent = "Send OTP";
+      } finally {
+        sendOtpBtn.disabled = false;
+      }
+    } else {
+      const otp = otpInput.value.trim();
+      if (!otp || otp.length < 6) {
+        showToast("Please enter the 6-digit OTP.", "error");
+        return;
+      }
+
+      sendOtpBtn.disabled = true;
+      sendOtpBtn.textContent = "Verifying...";
+
+      try {
+        const data = await post("/api/auth/otp/verify", { phone: mobile, otp });
+        showToast("Login successful!", "success");
+        saveAuthSession({ token: data.token, user: data.user });
+        await refreshAuthState();
+        redirectAfterAuth(data.user);
+      } catch (err) {
+        showToast(err.message, "error");
+        sendOtpBtn.textContent = "Verify & Login";
+      } finally {
+        sendOtpBtn.disabled = false;
+      }
+    }
+  });
+}
+
+function bindGoogleLogin() {
+  const googleBtn = document.getElementById("google-login-btn");
+  if (!googleBtn) return;
+
+  googleBtn.addEventListener("click", async () => {
+    showToast("Connecting to Google...", "info");
+    
+    // Simulate Google account selection
+    const mockEmail = "google.user@gmail.com";
+    const mockName = "Google Tester";
+    
+    try {
+      const data = await post("/api/auth/google", { 
+        email: mockEmail, 
+        name: mockName,
+        id_token: "mock_google_id_token_123"
+      });
+      
+      saveAuthSession({ token: data.token, user: data.user });
+      await refreshAuthState();
+      showToast("Signed in with Google!", "success");
+      redirectAfterAuth(data.user);
+    } catch (err) {
+      showToast(err.message, "error");
+    }
+  });
+}
+
 function bindLoginForm() {
   const form = document.querySelector("[data-login-form]");
-  if (!form) {
-    return;
-  }
+  if (!form) return;
 
   form.addEventListener("submit", async (event) => {
+    const emailBlock = document.getElementById("email-login-block");
+    if (emailBlock && emailBlock.style.display === "none") {
+      event.preventDefault();
+      return;
+    }
+
     event.preventDefault();
 
     const email = form.querySelector("#login-email")?.value.trim() || "";
@@ -124,7 +213,7 @@ function bindLoginForm() {
 
     setSubmitting(form, true, "Login", "Signing In...");
     try {
-      const data = await post("/login", { email, password });
+      const data = await post("/api/auth/login", { email, password });
       saveAuthSession({ token: data.token, user: data.user });
       await refreshAuthState();
       renderAuthStatus();
@@ -143,4 +232,8 @@ export async function initAuthPage(mode) {
   renderAuthStatus();
   bindRegisterForm();
   bindLoginForm();
+  if (mode === "login") {
+    bindOtpLogin();
+    bindGoogleLogin();
+  }
 }

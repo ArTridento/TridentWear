@@ -59,6 +59,18 @@ class RegisterPayload(BaseModel):
     confirm_password: Optional[str] = None
 
 
+class OTPPayload(BaseModel):
+    phone: str
+    otp: Optional[str] = None
+    name: Optional[str] = None
+
+
+class GooglePayload(BaseModel):
+    email: str
+    name: str
+    id_token: str
+
+
 class LoginPayload(BaseModel):
     email: str
     password: str
@@ -666,7 +678,10 @@ wishlist_router = APIRouter(prefix="/api/wishlist", tags=["wishlist"])
 
 
 def html_response(filename: str) -> FileResponse:
-    return FileResponse(HTML_DIR / filename)
+    path = HTML_DIR / filename
+    if not path.exists():
+        raise HTTPException(status_code=404, detail=f"Page {filename} not found")
+    return FileResponse(path)
 
 
 @pages_router.get("/", include_in_schema=False)
@@ -676,8 +691,7 @@ def serve_home() -> FileResponse:
 
 @pages_router.get("/products", include_in_schema=False)
 def serve_products_page() -> FileResponse:
-    return html_response("shop.html")
-
+    return html_response("products.html")
 
 @pages_router.get("/product", include_in_schema=False)
 def serve_product_page() -> FileResponse:
@@ -1180,6 +1194,19 @@ def get_reviews(product_id: int) -> List[Dict[str, Any]]:
     reviews = load_reviews()
     return [r for r in reviews if r["product_id"] == product_id]
 
+# ════════════════════════════════════════════════════════════
+# SHIPROCKET HELPERS
+# ════════════════════════════════════════════════════════════
+def create_shiprocket_shipment(order: Dict[str, Any]) -> Dict[str, Any]:
+    # In a real app, this would use Shiprocket API credentials from os.getenv("SHIPROCKET_EMAIL") etc.
+    # For now, we simulate a successful AWB generation.
+    return {
+        "status": "shipped",
+        "tracking_id": f"SR{uuid.uuid4().hex[:8].upper()}",
+        "courier": "Delhivery (Shiprocket)",
+        "estimated_delivery": (datetime.now(timezone.utc) + timedelta(days=4)).date().isoformat()
+    }
+
 @admin_router.get("/orders")
 def get_all_orders(_: Dict[str, Any] = Depends(require_admin)) -> List[Dict[str, Any]]:
     return load_orders()
@@ -1223,6 +1250,58 @@ def track_order(order_id: str) -> Dict[str, Any]:
                 "estimated_delivery": "Tracking will be updated soon"
             }
     raise HTTPException(status_code=404, detail="Order not found.")
+
+# ════════════════════════════════════════════════════════════
+# ADVANCED AUTH (OTP & GOOGLE)
+# ════════════════════════════════════════════════════════════
+@auth_router.post("/api/auth/otp/send")
+def send_otp(payload: OTPPayload) -> Dict[str, Any]:
+    # Simulation: In production use Twilio or Msg91
+    print(f"DEBUG: Sent OTP 123456 to {payload.phone}")
+    return {"success": True, "message": "OTP sent successfully."}
+
+@auth_router.post("/api/auth/otp/verify")
+def verify_otp(payload: OTPPayload, request: Request) -> Dict[str, Any]:
+    if payload.otp != "123456":
+        raise HTTPException(status_code=400, detail="Invalid OTP.")
+    
+    users = load_users()
+    user = next((u for u in users if u.get("phone") == payload.phone), None)
+    if not user:
+        user = {
+            "id": next_id(users),
+            "name": payload.name or f"User {payload.phone[-4:]}",
+            "email": f"user{uuid.uuid4().hex[:4]}@trident.local",
+            "phone": payload.phone,
+            "role": "customer",
+            "created_at": now_iso()
+        }
+        users.append(user)
+        save_users(users)
+        
+    store_session_user(request, user)
+    token = issue_auth_token(user)
+    return {"success": True, "token": token, "user": serialize_user(user)}
+
+@auth_router.post("/api/auth/google")
+def google_auth(payload: GooglePayload, request: Request) -> Dict[str, Any]:
+    # In real app, verify payload.id_token with google.oauth2.id_token
+    users = load_users()
+    user = find_user_by_email(payload.email)
+    if not user:
+        user = {
+            "id": next_id(users),
+            "name": payload.name,
+            "email": payload.email,
+            "role": "customer",
+            "created_at": now_iso()
+        }
+        users.append(user)
+        save_users(users)
+        
+    store_session_user(request, user)
+    token = issue_auth_token(user)
+    return {"success": True, "token": token, "user": serialize_user(user)}
 
 
 @admin_router.get("/analytics")

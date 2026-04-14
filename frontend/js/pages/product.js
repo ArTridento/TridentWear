@@ -88,7 +88,7 @@ async function renderReviews(productId) {
       </div>
     ` : !user ? `
       <div class="helper-note info" style="margin-top:1rem;">
-        <a href="/login" style="color:inherit;text-decoration:underline;">Login</a> to leave a review.
+        <a href="login.html" style="color:inherit;text-decoration:underline;">Login</a> to leave a review.
       </div>
     ` : `
       <div class="helper-note success" style="margin-top:1rem;">You've already reviewed this product. ✓</div>
@@ -221,7 +221,7 @@ function renderProduct(product) {
         </div>
         <div class="detail-actions">
           <button class="btn btn-primary" type="button" data-add-detail>Add to Cart</button>
-          <a class="btn btn-outline" href="/cart">Go to Cart</a>
+          <a class="btn btn-outline" href="cart.html">Go to Cart</a>
         </div>
       </div>
     </div>
@@ -242,41 +242,74 @@ function renderProduct(product) {
 
 async function renderRelated(product) {
   const grid = document.querySelector("[data-related-products]");
-  const data = await getWithFallback(["/api/products", "/products?format=json"]);
-  const products = (Array.isArray(data) ? data : data.products || []).map(normalizeProduct);
-  const related = relatedProducts(products, product).slice(0, 4);
+  if (!grid) return;
+  
+  grid.innerHTML = `<div class="horizontal-scroll">${createSkeletonCards(6)}</div>`;
+  
+  try {
+    const data = await getWithFallback(["/api/products", "products.html?format=json"]);
+    const allProducts = (Array.isArray(data) ? data : data.products || []).map(normalizeProduct);
+    
+    // Filter: Same category OR similar price (+/- 20%), excluding self
+    const related = allProducts.filter(p => {
+      if (p.id === product.id) return false;
+      const sameCategory = p.category === product.category;
+      const similarPrice = Math.abs(p.price - product.price) <= product.price * 0.25;
+      return sameCategory || similarPrice;
+    }).slice(0, 8);
 
-  if (!related.length) {
-    grid.innerHTML = createEmptyMarkup("No related styles yet", "Add more T-shirts to expand this category mix.");
-    return;
+    if (!related.length) {
+      grid.innerHTML = createEmptyMarkup("No related styles found", "Check back later for more recommendations.");
+      return;
+    }
+
+    grid.innerHTML = `
+      <div class="horizontal-scroll fade-in">
+        ${related.map(productCardMarkup).join("")}
+      </div>
+    `;
+    bindProductCardActions(grid, related);
+  } catch (err) {
+    grid.innerHTML = "";
   }
-
-  grid.innerHTML = related.map(productCardMarkup).join("");
-  bindProductCardActions(grid, related);
 }
 
 window.addEventListener("DOMContentLoaded", async () => {
   await initSite();
   const detail = document.querySelector("[data-product-detail]");
   const related = document.querySelector("[data-related-products]");
-  detail.innerHTML = createLoaderMarkup("Loading product details...");
-  related.innerHTML = createLoaderMarkup("Loading related products...");
+  
+  detail.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:2rem;">
+      <div class="skeleton" style="height:35rem;border-radius:var(--radius);"></div>
+      <div>
+        <div class="skeleton skeleton-text" style="height:2rem;width:40%;margin-bottom:1rem;"></div>
+        <div class="skeleton skeleton-text" style="height:3rem;width:80%;margin-bottom:2rem;"></div>
+        <div class="skeleton skeleton-text" style="height:1.5rem;width:20%;margin-bottom:1rem;"></div>
+        <div class="skeleton skeleton-text" style="height:6rem;width:100%;margin-bottom:2rem;"></div>
+        <div class="skeleton skeleton-text" style="height:10rem;width:100%;"></div>
+      </div>
+    </div>
+  `;
 
   const id = productIdFromQuery();
   if (!id) {
     detail.innerHTML = createEmptyMarkup("Missing product", "Select a product from the collection first.");
-    related.innerHTML = "";
     return;
   }
 
   try {
+    startGlobalLoader();
     const data = await getWithFallback([`/api/products/${id}`, `/products/${id}`]);
     currentProduct = normalizeProduct(data.product || data);
+    
+    detail.classList.add("fade-in");
     renderProduct(currentProduct);
     renderReviews(id);
     renderRelated(currentProduct);
   } catch (error) {
     detail.innerHTML = createEmptyMarkup("Product unavailable", error.message);
-    related.innerHTML = "";
+  } finally {
+    endGlobalLoader();
   }
 });

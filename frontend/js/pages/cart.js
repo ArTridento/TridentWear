@@ -42,7 +42,7 @@ function bindCartActions() {
 function renderCart() {
   const items = loadCart();
   const list = document.querySelector("[data-cart-list]");
-  const checkoutBtn = document.querySelector("a[href='/checkout']");
+  const checkoutBtn = document.querySelector("a[href='checkout.html']");
 
   if (!items.length) {
     if (list) list.innerHTML = createEmptyMarkup("Your cart is empty", "Add a few premium pieces and come back here.");
@@ -92,5 +92,19 @@ function renderCart() {
 
 window.addEventListener("DOMContentLoaded", async () => {
   await initSite();
-  renderCart();
+  const list = document.querySelector("[data-cart-list]");
+  if (list) {
+    list.innerHTML = `
+      <div class="skeleton" style="height:8rem;margin-bottom:1rem;border-radius:var(--radius);"></div>
+      <div class="skeleton" style="height:8rem;margin-bottom:1rem;border-radius:var(--radius);"></div>
+      <div class="skeleton" style="height:8rem;margin-bottom:1rem;border-radius:var(--radius);"></div>
+    `;
+  }
+  
+  startGlobalLoader();
+  setTimeout(() => {
+    renderCart();
+    endGlobalLoader();
+    if (list) list.classList.add("fade-in");
+  }, 500);
 });

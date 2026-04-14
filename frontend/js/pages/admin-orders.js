@@ -32,14 +32,17 @@ function renderTable(orders) {
       <td><code style="font-size:0.8rem;color:var(--primary);">${o.order_id}</code></td>
       <td>
         <div style="font-weight:600;color:var(--gray-dark);">${o.customer?.name || "—"}</div>
-        <div style="font-size:0.78rem;color:var(--gray);">${o.customer?.email || ""}</div>
+        <div style="font-size:0.75rem;color:var(--gray);">${o.customer?.email || ""}</div>
       </td>
-      <td style="max-width:14rem;">${itemsSummary(o.items)}</td>
+      <td style="max-width:14rem;">
+        ${itemsSummary(o.items)}
+        ${o.tracking_id ? `<div style="font-size:0.7rem;margin-top:0.3rem;color:var(--primary);">Tracking: <strong>${o.tracking_id}</strong></div>` : ""}
+      </td>
       <td><strong style="color:var(--secondary);">${formatCurrency(o.subtotal || 0)}</strong></td>
       <td style="white-space:nowrap;">${fmtDate(o.created_at)}</td>
       <td>${statusBadge(o.status)}</td>
       <td>
-        <select class="status-select" data-status-select="${o.order_id}" title="Change status">
+        <select class="status-select" data-status-select="${o.order_id}">
           <option value="pending"   ${o.status === "pending"   ? "selected" : ""}>Pending</option>
           <option value="confirmed" ${o.status === "confirmed" ? "selected" : ""}>Confirmed</option>
           <option value="shipped"   ${o.status === "shipped"   ? "selected" : ""}>Shipped</option>
@@ -49,33 +52,23 @@ function renderTable(orders) {
     </tr>
   `).join("");
 
-  // Bind selects
   tbody.querySelectorAll("[data-status-select]").forEach(sel => {
     sel.addEventListener("change", async () => {
       const orderId = sel.dataset.statusSelect;
       const newStatus = sel.value;
       try {
-        await request(`/api/admin/orders/${orderId}`, {
-          method: "PUT",
+        const res = await request(`/api/admin/orders/${orderId}`, {
+          method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ status: newStatus }),
         });
-        // Update local array
-        const order = allOrders.find(o => o.order_id === orderId);
-        if (order) order.status = newStatus;
-        // Update badge in same row
-        const row = document.querySelector(`[data-order-row="${orderId}"]`);
-        if (row) row.querySelector(".status-badge").outerHTML = statusBadge(newStatus);
-        // Re-insert badge (outerHTML replacement doesn't work on td node directly, re-render badge cell)
-        const cells = row.querySelectorAll("td");
-        cells[5].innerHTML = statusBadge(newStatus);
-        updateStats(allOrders);
-        showToast(`Order ${orderId} marked as ${newStatus}.`);
+        
+        showToast(res.message || `Order ${orderId} updated.`);
+        // Reload to show fresh tracking ID if any
+        window.location.reload(); 
       } catch (err) {
         showToast(err.message, "error");
-        // Revert
-        const order = allOrders.find(o => o.order_id === orderId);
-        if (order) sel.value = order.status;
+        window.location.reload();
       }
     });
   });

@@ -72,7 +72,7 @@ export function createLoaderMarkup(label = "Loading...") {
   return `<div class="loader-state"><strong>${escapeHtml(label)}</strong></div>`;
 }
 
-export function createEmptyMarkup(title, copy, href = "/products", label = "Browse Products") {
+export function createEmptyMarkup(title, copy, href = "products.html", label = "Browse Products") {
   return `
     <div class="empty-state">
       <strong class="section-title">${escapeHtml(title)}</strong>
@@ -92,7 +92,7 @@ export function productCardMarkup(product) {
 
   return `
     <article class="product-card reveal">
-      <a class="product-media" href="/product?id=${item.id}">
+      <a class="product-media" href="product.html?id=${item.id}">
         <img src="${escapeHtml(productImage)}" alt="${escapeHtml(item.name)}" loading="lazy">
         <div class="product-media-overlay">
           <button class="btn btn-primary" type="button" data-quick-view data-product-id="${item.id}">Quick View</button>
@@ -115,7 +115,7 @@ export function productCardMarkup(product) {
         <div class="product-footer">
           <strong class="product-price">${formatCurrency(item.price)}</strong>
           <div class="cart-row-actions">
-            <a class="btn btn-outline" href="/product?id=${item.id}">View</a>
+            <a class="btn btn-outline" href="product.html?id=${item.id}">View</a>
             <button class="btn btn-primary" type="button" data-add-to-cart data-product-id="${item.id}">Add to Cart</button>
           </div>
         </div>
@@ -191,7 +191,7 @@ export async function toggleWishlist(id) {
   const user = getCurrentUser();
   if (!user) {
     showToast("Please login to use wishlist.", "error");
-    window.location.href = "/login?next=/wishlist";
+    window.location.href = "login.html?next=/wishlist";
     throw new Error("unauthorized");
   }
 
@@ -238,7 +238,7 @@ function openQuickView(product) {
           <article class="spec-card"><span class="label">Neck</span><strong>${escapeHtml(item.neck_type)}</strong></article>
         </div>
         <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-          <a class="btn btn-primary" href="/product?id=${item.id}">Full Details</a>
+          <a class="btn btn-primary" href="product.html?id=${item.id}">Full Details</a>
           <button class="btn btn-secondary" type="button" data-qv-add data-product-id="${item.id}">Add to Cart</button>
         </div>
       </div>
@@ -286,11 +286,11 @@ function ensureAuthLinks() {
 
     const registerLink = document.createElement("a");
     registerLink.className = "utility-pill";
-    registerLink.href = "/register";
+    registerLink.href = "register.html";
     registerLink.textContent = "Register";
     registerLink.setAttribute("data-register-link", "");
 
-    const cartLink = Array.from(container.querySelectorAll("a")).find((link) => link.getAttribute("href") === "/cart");
+    const cartLink = Array.from(container.querySelectorAll("a")).find((link) => link.getAttribute("href") === "cart.html");
     const logoutButton = container.querySelector("[data-logout-button]");
     container.insertBefore(registerLink, cartLink || logoutButton || null);
   });
@@ -302,26 +302,31 @@ function setAccountUi() {
 
   document.querySelectorAll("[data-login-link]").forEach((loginLink) => {
     if (!currentUser) {
-      loginLink.textContent = "Login";
-      loginLink.setAttribute("href", "/login");
+      loginLink.innerHTML = `<i class="fa-sharp-duotone fa-solid fa-arrow-right-to-bracket"></i>`;
+      loginLink.setAttribute("href", "login.html");
       loginLink.classList.remove("is-greeting");
       loginLink.removeAttribute("title");
       return;
     }
 
-    loginLink.textContent = `Hello, ${firstName}`;
-    loginLink.setAttribute("href", currentUser.role === "admin" ? "/admin" : "/products");
+    // Still include the icon for logged in state, but remove "Hello, Name"
+    loginLink.innerHTML = `<i class="fa-sharp-duotone fa-solid fa-user"></i>`;
+    loginLink.setAttribute("href", currentUser.role === "admin" ? "admin.html" : "products.html");
     loginLink.classList.add("is-greeting");
     loginLink.setAttribute("title", `Signed in as ${currentUser.name}`);
   });
 
   document.querySelectorAll("[data-register-link]").forEach((registerLink) => {
     registerLink.hidden = Boolean(currentUser);
-    registerLink.setAttribute("href", "/register");
+    registerLink.innerHTML = `<i class="fa-solid fa-user-plus"></i>`;
+    registerLink.setAttribute("title", "Register");
+    registerLink.setAttribute("href", "register.html");
   });
 
   document.querySelectorAll("[data-logout-button]").forEach((logoutButton) => {
     logoutButton.hidden = !currentUser;
+    logoutButton.innerHTML = `<i class="fa-sharp-duotone fa-solid fa-arrow-left-from-bracket"></i>`;
+    logoutButton.setAttribute("title", "Logout");
   });
 
   document.querySelectorAll("[data-admin-link]").forEach((adminLink) => {
@@ -351,7 +356,7 @@ function bindLogout() {
         currentUser = null;
         setAccountUi();
         window.setTimeout(() => {
-          window.location.href = "/login";
+          window.location.href = "login.html";
         }, 120);
       } catch (error) {
         showToast(error.message, "error");
@@ -387,12 +392,17 @@ function bindSearch() {
       const query = input.value.trim().toLowerCase();
       if (query.length < 2) { dropdown.hidden = true; return; }
       const matches = searchProducts.filter((p) =>
-        p.name.toLowerCase().includes(query) || p.description.toLowerCase().includes(query) || p.tag?.toLowerCase().includes(query)
+        p.name.toLowerCase().includes(query) || p.description.toLowerCase().includes(query)
       ).slice(0, 6);
 
-      if (!matches.length) { dropdown.innerHTML = '<div class="search-no-results">No products found.</div>'; dropdown.hidden = false; return; }
+      if (!matches.length) { 
+        dropdown.innerHTML = '<div class="search-no-results">No products found for "' + escapeHtml(query) + '"</div>'; 
+        dropdown.hidden = false; 
+        return; 
+      }
+      
       dropdown.innerHTML = matches.map((p) => `
-        <a class="search-result-item" href="/product?id=${p.id}">
+        <a class="search-result-item" href="product.html?id=${p.id}">
           <img class="search-result-thumb" src="${resolveAssetUrl(p.image)}" alt="${escapeHtml(p.name)}">
           <div class="search-result-info">
             <span class="search-result-name">${escapeHtml(p.name)}</span>
@@ -401,13 +411,33 @@ function bindSearch() {
         </a>
       `).join("");
       dropdown.hidden = false;
-    }, 250);
+    }, 300);
   });
 
   document.addEventListener("click", (event) => {
     if (!event.target.closest("[data-search-wrapper]")) dropdown.hidden = true;
   });
 }
+
+/* ───────── Loaders & Skeletons ───────── */
+
+export function startGlobalLoader() {
+  if (document.querySelector(".global-loader")) return;
+  const loader = document.createElement("div");
+  loader.className = "global-loader";
+  loader.innerHTML = '<div class="spinner"></div>';
+  document.body.appendChild(loader);
+}
+
+export function endGlobalLoader() {
+  const loader = document.querySelector(".global-loader");
+  if (loader) {
+    loader.style.opacity = "0";
+    setTimeout(() => loader.remove(), 300);
+  }
+}
+
+
 
 /* ───────── Back to Top ───────── */
 
@@ -420,7 +450,7 @@ function initBackToTop() {
 
 /* ───────── Scroll Reveal ───────── */
 
-function observeReveals(root = document) {
+export function observeReveals(root = document) {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) { entry.target.classList.add("is-visible"); observer.unobserve(entry.target); }
@@ -482,7 +512,7 @@ export function getCurrentUser() { return currentUser; }
 
 export async function initSite() {
   setActiveNav();
-  await refreshUser();
+  
   const user = getCurrentUser();
   if (user) {
     try {
@@ -504,5 +534,5 @@ export async function initSite() {
   import("./chat.js").then(m => m.initChatWidget());
   syncCart();
   observeReveals();
-  await refreshAuthState();
+  refreshAuthState(); // Not awaited to prevent blocking
 }

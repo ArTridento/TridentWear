@@ -1,82 +1,83 @@
-import { get, getWithFallback } from "../shared/api.js";
-import { initSite, showToast } from "../shared/site.js";
+import { get } from "../shared/api.js";
+import { initSite, startProgress, endProgress, showToast } from "../shared/site.js";
 
-function getQueryId() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get("id");
-}
+async function trackOrder() {
+  const form = document.querySelector("[data-track-form]");
+  const input = document.getElementById("track-order-id");
+  const resultDiv = document.getElementById("track-result");
+  
+  if (!form || !input || !resultDiv) return;
 
-function updateProgress(statusStr) {
-  const steps = document.querySelectorAll(".track-step");
-  steps.forEach(s => s.classList.remove("active"));
-  
-  const s = (statusStr || "").toLowerCase();
-  
-  // Base logic
-  if (s.includes("delivered")) {
-    steps[0].classList.add("active");
-    steps[1].classList.add("active");
-    steps[2].classList.add("active");
-    steps[3].classList.add("active");
-  } else if (s.includes("out") || s.includes("transit")) {
-    steps[0].classList.add("active");
-    steps[1].classList.add("active");
-    steps[2].classList.add("active");
-  } else if (s.includes("ship")) {
-    steps[0].classList.add("active");
-    steps[1].classList.add("active");
-  } else {
-    // Default to placed
-    steps[0].classList.add("active");
+  // Check URL for orderId
+  const urlParams = new URLSearchParams(window.location.search);
+  const orderId = urlParams.get("id");
+  if (orderId) {
+    input.value = orderId;
+    triggerTracking(orderId);
   }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const id = input.value.trim();
+    if (id) triggerTracking(id);
+  });
 }
 
-async function doTrack(id) {
-  const resDiv = document.getElementById("track-result");
-  const btn = document.querySelector("[data-track-btn]");
+async function triggerTracking(orderId) {
+  const resultDiv = document.getElementById("track-result");
   
   try {
-    btn.disabled = true;
-    btn.textContent = "Locating...";
+    startProgress();
+    const data = await get(`/api/orders/${orderId}/tracking`);
     
-    // In local dev, we might use mock API.
-    const data = await get(`/api/orders/${id}/tracking`);
+    resultDiv.style.display = "block";
+    updateTrackingUI(data);
     
-    document.getElementById("res-status").textContent = data.status || "Unknown";
-    document.getElementById("res-courier").textContent = data.courier || "-";
-    document.getElementById("res-tracking").textContent = data.tracking_id || "Unassigned";
-    document.getElementById("res-est").textContent = data.estimated_delivery || "TBD";
-    
-    updateProgress(data.status);
-    
-    resDiv.style.display = "block";
-  } catch (err) {
-    resDiv.style.display = "none";
-    showToast(err.message || "Order not found", "error");
+    // Smooth scroll to results
+    resultDiv.scrollIntoView({ behavior: 'smooth' });
+  } catch (error) {
+    showToast(error.message || "Order not found", "error");
+    resultDiv.style.display = "none";
   } finally {
-    btn.disabled = false;
-    btn.textContent = "Track";
+    endProgress();
   }
+}
+
+function updateTrackingUI(data) {
+  document.getElementById("res-status").textContent = data.status || "Pending";
+  document.getElementById("res-courier").textContent = data.courier || "Standard Courier";
+  document.getElementById("res-tracking").textContent = data.tracking_id || "Awaiting Shipment";
+  document.getElementById("res-est").textContent = data.estimated_delivery || "TBD";
+
+  // Update Progress Bar
+  const steps = document.querySelectorAll(".track-step");
+  steps.forEach(s => s.classList.remove("is-active", "is-complete"));
+
+  const status = (data.status || "").toLowerCase();
+  
+  const mapping = {
+    "confirmed": ["placed"],
+    "processing": ["placed"],
+    "shipped": ["placed", "shipped"],
+    "in transit": ["placed", "shipped"],
+    "out for delivery": ["placed", "shipped", "out"],
+    "delivered": ["placed", "shipped", "out", "delivered"]
+  };
+
+  const activeSteps = mapping[status] || ["placed"];
+  
+  steps.forEach(step => {
+    const slug = step.dataset.step;
+    if (activeSteps.includes(slug)) {
+      step.classList.add("is-complete");
+      if (activeSteps[activeSteps.length - 1] === slug) {
+        step.classList.add("is-active");
+      }
+    }
+  });
 }
 
 window.addEventListener("DOMContentLoaded", async () => {
   await initSite();
-
-  const form = document.querySelector("[data-track-form]");
-  const input = document.getElementById("track-order-id");
-  
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const id = input.value.trim();
-    if(id) {
-      window.history.pushState({}, "", `/track?id=${encodeURIComponent(id)}`);
-      doTrack(id);
-    }
-  });
-
-  const queryId = getQueryId();
-  if (queryId) {
-    input.value = queryId;
-    doTrack(queryId);
-  }
+  trackOrder();
 });

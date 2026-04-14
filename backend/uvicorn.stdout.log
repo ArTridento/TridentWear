@@ -1,0 +1,80 @@
+INFO:     127.0.0.1:57530 - "GET /products HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58284 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58284 - "GET /css/styles.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:58103 - "GET /js/shared/site.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:63975 - "GET /products HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63975 - "GET /css/styles.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62313 - "GET /js/pages/products.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62313 - "GET /js/shared/catalog.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:63975 - "GET /js/shared/site.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:49671 - "GET /api/products HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59929 - "GET /api/products?featured=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57829 - "GET /products.html HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:57829 - "GET /css/styles.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:57829 - "GET /js/shared/site.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54312 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54312 - "GET /css/styles.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:63558 - "GET /js/pages/home.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54312 - "GET /js/shared/site.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:63558 - "GET /js/shared/api.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:50979 - "GET /products.html HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:50979 - "GET /products HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50979 - "GET /js/pages/products.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50979 - "GET /js/shared/catalog.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53676 - "GET /products.html HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:53676 - "GET /about.html HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:53676 - "GET /about HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53676 - "GET /js/pages/about.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53676 - "GET /products.html HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:61546 - "GET /css/styles.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:61546 - "GET /js/pages/products.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:61546 - "GET /js/shared/site.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62274 - "GET /contact.html HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:62274 - "GET /contact HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62274 - "GET /js/pages/contact.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60458 - "GET /register.html HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:60458 - "GET /register HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60458 - "GET /js/pages/register.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60458 - "GET /js/pages/auth-page.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53699 - "GET /login.html HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:53699 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53699 - "GET /js/pages/login.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50533 - "GET /register.html HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:62320 - "GET /index.html HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:58541 - "GET /products?format=json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58541 - "GET /css/styles.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:58541 - "GET /js/shared/api.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:58541 - "GET /js/shared/site.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55766 - "GET /js/pages/home.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:53396 - "GET /products HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62202 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62202 - "GET /css/styles.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63887 - "GET /js/shared/site.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:63887 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63171 - "GET /js/shared/api.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54699 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54699 - "GET /css/styles.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:51025 - "GET /js/pages/home.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51025 - "GET /js/shared/site.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54699 - "GET /js/shared/api.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54329 - "GET /login.html HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:54329 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54329 - "GET /js/pages/auth-page.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:61742 - "GET /index.html HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:54819 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54819 - "GET /css/styles.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62032 - "GET /js/pages/login.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54819 - "GET /js/pages/auth-page.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54819 - "GET /js/shared/site.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54819 - "GET /images/Logo.png HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62243 - "GET /track.html HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56547 - "GET /track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56547 - "GET /js/pages/track.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59890 - "GET /track HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53919 - "GET /api/orders HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:53919 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53088 - "GET /api/orders/TRI-94698E30/tracking HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53088 - "GET /api/orders/css/styles.css HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53088 - "GET /api/orders/images/Logo.png HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57886 - "GET /css/styles.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62833 - "GET /js/pages/track.js HTTP/1.1" 304 Not Modified
