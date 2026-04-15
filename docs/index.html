@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TridentWear - Premium E-Commerce Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            padding: 1rem 0;
+            border-bottom: 2px solid #ffd700;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        nav a {
+            color: #fff;
+            margin-left: 2rem;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #ffd700;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9)),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%231a1a2e" width="1200" height="600"/><circle cx="200" cy="150" r="100" fill="%23ffd700" opacity="0.1"/><circle cx="1000" cy="500" r="150" fill="%234a4aff" opacity="0.1"/></svg>');
+            color: #fff;
+            padding: 6rem 0;
+            text-align: center;
+            margin: 3rem 0;
+            border-radius: 10px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            color: #e0e0e0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #ffd700;
+            color: #1a1a2e;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: 2px solid #ffd700;
+            margin: 0 10px;
+        }
+
+        .btn:hover {
+            background: transparent;
+            color: #ffd700;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #ffd700;
+            border: 2px solid #ffd700;
+        }
+
+        .btn-secondary:hover {
+            background: #ffd700;
+            color: #1a1a2e;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.2);
+        }
+
+        .feature-card i {
+            font-size: 3rem;
+            color: #ffd700;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            color: #1a1a2e;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .tech-stack {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 3rem;
+            border-radius: 10px;
+            margin: 3rem 0;
+            color: #fff;
+        }
+
+        .tech-stack h2 {
+            color: #ffd700;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .tech-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 5px;
+            text-align: center;
+            border: 1px solid #ffd700;
+        }
+
+        .tech-item h4 {
+            color: #ffd700;
+            margin-bottom: 0.5rem;
+        }
+
+        .credentials {
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid #ffd700;
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 3rem 0;
+            color: #fff;
+        }
+
+        .credentials h2 {
+            color: #ffd700;
+            margin-bottom: 1.5rem;
+        }
+
+        .cred-box {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+            font-family: monospace;
+        }
+
+        .endpoints {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2rem;
+            border-radius: 10px;
+            margin: 3rem 0;
+            color: #fff;
+        }
+
+        .endpoints h2 {
+            color: #ffd700;
+            margin-bottom: 1.5rem;
+        }
+
+        .endpoint-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .endpoint-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-left: 3px solid #ffd700;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        footer {
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            border-top: 2px solid #ffd700;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .social-links a {
+            color: #ffd700;
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+
+        .social-links a:hover {
+            transform: scale(1.2);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-crown"></i> TridentWear
+                </div>
+                <nav>
+                    <a href="#features">Features</a>
+                    <a href="#tech">Tech Stack</a>
+                    <a href="#setup">Setup</a>
+                    <a href="https://github.com/ArTridento/TridentWear" target="_blank">GitHub</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <h1>🛍️ TridentWear</h1>
+            <p>Premium E-Commerce Platform - FastAPI Backend & JavaScript Frontend</p>
+            <a href="https://github.com/ArTridento/TridentWear" class="btn" target="_blank">
+                <i class="fab fa-github"></i> View on GitHub
+            </a>
+            <a href="#setup" class="btn btn-secondary">Get Started</a>
+        </section>
+
+        <section id="features" class="features">
+            <div class="feature-card">
+                <i class="fas fa-lock"></i>
+                <h3>3-Method Authentication</h3>
+                <p>Email/Password, Mobile OTP, and Google OAuth for seamless user access</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-shopping-cart"></i>
+                <h3>Complete Shopping Cart</h3>
+                <p>Add to cart, wishlist, checkout flow, and secure payment integration</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-cogs"></i>
+                <h3>Admin Dashboard</h3>
+                <p>Product management, order tracking, and analytics in one place</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-chart-line"></i>
+                <h3>Real-Time Analytics</h3>
+                <p>Monitor sales, revenue, customer data, and order statistics</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-mobile-alt"></i>
+                <h3>Fully Responsive</h3>
+                <p>Works perfectly on desktop, tablet, and mobile devices</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-rocket"></i>
+                <h3>Production Ready</h3>
+                <p>Optimized, secure, and ready for deployment</p>
+            </div>
+        </section>
+
+        <section id="tech" class="tech-stack">
+            <h2>🛠️ Technology Stack</h2>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <h4>Frontend</h4>
+                    <p>HTML5, CSS3, JavaScript</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Backend</h4>
+                    <p>FastAPI, Uvicorn</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Database</h4>
+                    <p>JSON Files</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Authentication</h4>
+                    <p>JWT, Bcrypt</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="setup" class="credentials">
+            <h2>🚀 Quick Start</h2>
+            <div class="cred-box">
+                <strong>1. Install Dependencies:</strong><br>
+                pip install -r requirements.txt
+            </div>
+            <div class="cred-box">
+                <strong>2. Start Server:</strong><br>
+                python backend/app.py
+            </div>
+            <div class="cred-box">
+                <strong>3. Open in Browser:</strong><br>
+                http://localhost:8000/index.html
+            </div>
+
+            <h2 style="margin-top: 2rem; border-top: 1px solid #ffd700; padding-top: 2rem;">🔐 Test Credentials</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.5rem;">
+                <div>
+                    <strong>Admin Account:</strong>
+                    <div class="cred-box" style="margin-top: 1rem; margin-bottom: 0;">
+                        Email: admin@trident.local<br>
+                        Password: admin@12345<br>
+                        Access: Full Admin Panel
+                    </div>
+                </div>
+                <div>
+                    <strong>Test Customer:</strong>
+                    <div class="cred-box" style="margin-top: 1rem; margin-bottom: 0;">
+                        Email: customer@trident.local<br>
+                        Password: customer@12345<br>
+                        Access: Shopping & Orders
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="endpoints">
+            <h2>📡 API Endpoints (50+)</h2>
+            <div class="endpoint-grid">
+                <div class="endpoint-item">POST /api/auth/login</div>
+                <div class="endpoint-item">POST /api/auth/register</div>
+                <div class="endpoint-item">POST /api/auth/otp/send</div>
+                <div class="endpoint-item">POST /api/auth/otp/verify</div>
+                <div class="endpoint-item">GET /api/products</div>
+                <div class="endpoint-item">GET /api/products/{id}</div>
+                <div class="endpoint-item">POST /api/cart/add</div>
+                <div class="endpoint-item">POST /api/orders</div>
+                <div class="endpoint-item">GET /api/orders</div>
+                <div class="endpoint-item">POST /api/admin/products</div>
+            </div>
+            <p style="margin-top: 1.5rem; text-align: center;">
+                <a href="https://github.com/ArTridento/TridentWear#-api-endpoints" style="color: #ffd700; text-decoration: underline;">
+                    View Full API Documentation →
+                </a>
+            </p>
+        </section>
+
+        <section style="background: rgba(0, 0, 0, 0.3); padding: 2rem; border-radius: 10px; margin: 3rem 0; color: #fff;">
+            <h2 style="color: #ffd700; margin-bottom: 1rem;">📊 Project Stats</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.5rem; text-align: center;">
+                <div>
+                    <div style="font-size: 2rem; color: #ffd700; font-weight: bold;">19</div>
+                    <div>HTML Pages</div>
+                </div>
+                <div>
+                    <div style="font-size: 2rem; color: #ffd700; font-weight: bold;">22</div>
+                    <div>JS Modules</div>
+                </div>
+                <div>
+                    <div style="font-size: 2rem; color: #ffd700; font-weight: bold;">50+</div>
+                    <div>API Endpoints</div>
+                </div>
+                <div>
+                    <div style="font-size: 2rem; color: #ffd700; font-weight: bold;">5</div>
+                    <div>Database Tables</div>
+                </div>
+                <div>
+                    <div style="font-size: 2rem; color: #ffd700; font-weight: bold;">100%</div>
+                    <div>Production Ready</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="social-links">
+            <a href="https://github.com/ArTridento/TridentWear" target="_blank" title="GitHub">
+                <i class="fab fa-github"></i>
+            </a>
+            <a href="https://github.com/ArTridento" target="_blank" title="Profile">
+                <i class="fab fa-github-alt"></i>
+            </a>
+        </div>
+        <p>&copy; 2026 TridentWear. All rights reserved. | Premium E-Commerce Platform</p>
+        <p style="font-size: 0.9rem; color: #aaa; margin-top: 0.5rem;">
+            <a href="https://github.com/ArTridento/TridentWear" style="color: #ffd700; text-decoration: none;">
+                View Source Code on GitHub →
+            </a>
+        </p>
+    </footer>
+</body>
+</html>
