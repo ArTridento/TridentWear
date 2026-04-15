@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Your TridentWear wishlist — saved products for later."
+    />
+    <title>Wishlist | TridentWear</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="icon" type="image/png" href="../images/Logo.png" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+  </head>
+  <body data-page="wishlist">
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="index.html"
+          ><img src="../images/Logo.png" alt="TridentWear Logo" class="brand-logo" />
+          <span class="brand-name"
+            ><span class="brand-trident">Trident</span
+            ><span class="brand-wear">Wear</span></span
+          ><span class="brand-tagline">T-Shirt Collections</span></a
+        >
+        <button
+          class="mobile-toggle"
+          type="button"
+          data-mobile-toggle
+          aria-label="Open navigation"
+        >
+          <span class="mobile-toggle-line"></span
+          ><span class="mobile-toggle-line"></span
+          ><span class="mobile-toggle-line"></span>
+        </button>
+        <nav class="site-nav" data-mobile-nav>
+          <a class="nav-link" href="index.html" data-nav-link="home">Home</a>
+          <a class="nav-link" href="products.html" data-nav-link="products"
+            >Products</a
+          >
+          <a class="nav-link" href="about.html" data-nav-link="about">About</a>
+          <a class="nav-link" href="contact.html" data-nav-link="contact"
+            >Contact</a
+          >
+          <a
+            class="nav-link"
+            href="admin.html"
+            data-nav-link="admin"
+            data-admin-link
+            hidden
+            >Admin</a
+          >
+        </nav>
+        <div class="header-tools">
+          <a
+            class="utility-pill"
+            href="login.html"
+            data-login-link
+            title="Login"
+            ><i class="fa-sharp-duotone fa-solid fa-arrow-right-to-bracket"></i
+          ></a>
+          <a
+            class="utility-pill"
+            href="register.html"
+            data-register-link
+            title="Register"
+            ><i class="fa-solid fa-user-plus"></i
+          ></a>
+          <a class="utility-pill" href="cart.html" title="Cart"
+            ><i class="fa-sharp fa-solid fa-cart-shopping"></i>
+            <span class="cart-badge" data-cart-count>0</span></a
+          >
+          <button
+            class="utility-pill"
+            type="button"
+            data-logout-button
+            title="Logout"
+            hidden
+          >
+            <i class="fa-sharp-duotone fa-solid fa-arrow-left-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="page-hero">
+        <div class="container">
+          <div class="page-hero-panel reveal-scale">
+            <span class="eyebrow">Saved for Later</span>
+            <h1 class="page-title">
+              Your <span class="accent">Wishlist</span>.
+            </h1>
+            <p class="page-copy">
+              Products you've saved. Add them to your cart whenever you're
+              ready.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-tight">
+        <div class="container">
+          <div class="empty-state" data-wishlist-empty hidden>
+            <strong class="section-title">Nothing saved yet</strong>
+            <span class="empty-copy"
+              >Browse the collection and click the ♥ heart icon to save products
+              here.</span
+            >
+            <a
+              class="btn btn-secondary"
+              href="products.html"
+              style="margin-top: 1rem"
+              >Browse Products</a
+            >
+          </div>
+          <div class="product-grid" data-wishlist-grid></div>
+        </div>
+      </section>
+    </main>
+
+    <div class="footer-top-strip">
+      <div class="container">
+        <span>🇮🇳 Proudly Made in India — Wear the Pride</span>
+      </div>
+    </div>
+    <footer class="site-footer">
+      <div class="container footer-main">
+        <div class="footer-brand-col">
+          <div class="brand">
+            <span class="brand-name"
+              ><span class="brand-trident">Trident</span
+              ><span class="brand-wear">Wear</span></span
+            >
+            <span class="brand-tagline">T-Shirt Collections</span>
+          </div>
+          <p class="footer-note">
+            Premium men's clothing built for India's everyday uniform. Heritage
+            quality, modern fit.
+          </p>
+          <div class="footer-trust-badges">
+            <span class="footer-badge"
+              ><i class="fa-solid fa-indian-rupee-sign"></i> COD Available</span
+            >
+            <span class="footer-badge"
+              ><i class="fa-solid fa-rotate-left"></i> 30-Day Returns</span
+            >
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-title">Need Help</h3>
+          <div class="footer-links">
+            <a href="contact.html"
+              ><i class="fa-regular fa-envelope footer-link-icon"></i>Contact
+              Us</a
+            >
+            <a href="track.html"
+              ><i class="fa-solid fa-location-dot footer-link-icon"></i>Track
+              Order</a
+            >
+            <a href="returns.html"
+              ><i class="fa-solid fa-rotate-left footer-link-icon"></i>Returns
+              &amp; Refunds</a
+            >
+            <a href="contact.html"
+              ><i class="fa-regular fa-circle-question footer-link-icon"></i
+              >FAQs</a
+            >
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-title">Company</h3>
+          <div class="footer-links">
+            <a href="about.html">About Us</a>
+            <a href="products.html">Shop All</a>
+            <a href="wishlist.html">Wishlist</a>
+            <a href="contact.html">Careers</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-title">More Info</h3>
+          <div class="footer-links">
+            <a href="terms.html">T&amp;C</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="shipping.html">Shipping Policy</a>
+            <a href="returns.html">Returns Policy</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-title">Contact Us</h3>
+          <div class="footer-links">
+            <a href="mailto:hello@tridentwear.com"
+              ><i class="fa-regular fa-envelope footer-link-icon"></i
+              >hello@tridentwear.com</a
+            >
+            <a href="tel:+919876543210"
+              ><i class="fa-solid fa-phone footer-link-icon"></i>+91 98765
+              43210</a
+            >
+            <a
+              href="https://wa.me/919876543210"
+              target="_blank"
+              rel="noreferrer"
+              ><i class="fa-brands fa-whatsapp footer-link-icon"></i>WhatsApp</a
+            >
+          </div>
+          <div class="footer-app-badges">
+            <a class="footer-app-btn" href="#"
+              ><i class="fa-brands fa-google-play"></i> Google Play</a
+            >
+            <a class="footer-app-btn" href="#"
+              ><i class="fa-brands fa-apple"></i> App Store</a
+            >
+          </div>
+        </div>
+      </div>
+      <div class="footer-middle">
+        <div class="container footer-middle-inner">
+          <div class="footer-payment">
+            <span class="footer-payment-label">100% Secure Payment:</span>
+            <div class="footer-payment-icons">
+              <span class="payment-pill"
+                ><i class="fa-brands fa-google-pay"></i> GPay</span
+              >
+              <span class="payment-pill"
+                ><i class="fa-brands fa-cc-mastercard"></i> Mastercard</span
+              >
+              <span class="payment-pill"
+                ><i class="fa-brands fa-cc-visa"></i> Visa</span
+              >
+              <span class="payment-pill"
+                ><i class="fa-solid fa-money-bill-wave"></i> COD</span
+              >
+              <span class="payment-pill">UPI</span>
+            </div>
+          </div>
+          <div class="footer-social-wrap">
+            <span class="footer-payment-label">Follow Us:</span>
+            <div class="footer-socials">
+              <a
+                class="footer-social-link"
+                href="https://www.instagram.com/trident_wear/"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Instagram"
+                ><i class="fa-brands fa-instagram"></i
+              ></a>
+              <a
+                class="footer-social-link"
+                href="https://twitter.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Twitter/X"
+                ><i class="fa-brands fa-x-twitter"></i
+              ></a>
+              <a
+                class="footer-social-link"
+                href="https://youtube.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="YouTube"
+                ><i class="fa-brands fa-youtube"></i
+              ></a>
+              <a
+                class="footer-social-link"
+                href="https://facebook.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Facebook"
+                ><i class="fa-brands fa-facebook-f"></i
+              ></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="footer-bottom">
+          <span class="footer-copy"
+            >&copy; 2026 TridentWear. All rights reserved.</span
+          >
+          <div class="footer-bottom-links">
+            <a href="privacy.html">Privacy</a>
+            <a href="terms.html">Terms</a>
+            <a href="shipping.html">Shipping</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <button
+      class="back-to-top"
+      type="button"
+      data-back-to-top
+      aria-label="Back to top"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="18 15 12 9 6 15" />
+      </svg>
+    </button>
+
+    <script type="module" src="../js/pages/wishlist.js"></script>
+  </body>
+</html>
