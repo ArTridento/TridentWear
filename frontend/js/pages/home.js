@@ -84,25 +84,63 @@ async function loadTrendingProducts() {
 
 /* ─── Customer Count Ticker ─── */
 async function loadStats() {
-  const el = document.getElementById("customerCount");
-  if (!el) return;
+  const statNumbers = document.querySelectorAll("[data-count], [data-rating]");
+  if (!statNumbers.length) return;
 
-  let target = 151;
+  // Get stats from API or use defaults
+  let statsData = {
+    customers: 15000,
+    orders: 25000,
+    rating: 4.8
+  };
+
   try {
     const data = await get("/api/stats");
-    if (data?.customers) target = data.customers;
-  } catch { /* use fallback */ }
+    if (data?.customers) statsData.customers = data.customers;
+    if (data?.orders) statsData.orders = data.orders;
+    if (data?.rating) statsData.rating = data.rating;
+  } catch { /* use defaults */ }
 
-  const start = performance.now();
-  const duration = 1200;
+  const animateNumber = (element, target, duration = 1800) => {
+    const isRating = element.hasAttribute("data-rating");
+    if (isRating) {
+      // For rating, just set it directly since it's typically 4-5
+      element.textContent = target;
+      return;
+    }
 
-  (function tick(now) {
-    const p   = Math.min((now - start) / duration, 1);
-    const val = Math.floor(p * (2 - p) * target);   // ease-out quad
-    el.textContent = val;
-    if (p < 1) requestAnimationFrame(tick);
-    else el.textContent = target;
-  })(start);
+    const start = performance.now();
+    const startVal = 0;
+
+    const animate = (now) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Ease-out cubic for smooth deceleration
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      const currentVal = Math.floor(easeProgress * target);
+      
+      element.textContent = currentVal;
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        element.textContent = target;
+      }
+    };
+
+    requestAnimationFrame(animate);
+  };
+
+  // Animate each stat
+  statNumbers.forEach((el) => {
+    if (el.hasAttribute("data-count")) {
+      const target = parseInt(el.getAttribute("data-count"));
+      animateNumber(el, target);
+    } else if (el.hasAttribute("data-rating")) {
+      animateNumber(el, parseFloat(el.getAttribute("data-rating")));
+    }
+  });
 }
 
 /* ─── Newsletter ─── */

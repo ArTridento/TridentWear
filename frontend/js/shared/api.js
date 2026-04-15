@@ -1,4 +1,4 @@
-export const API_BASE = "";
+export const API_BASE = "http://127.0.0.1:8000";
 const AUTH_STORAGE_KEY = "tridentwear-auth-session";
 
 function resolveUrl(path) {

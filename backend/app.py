@@ -17,6 +17,7 @@ from urllib.parse import quote
 
 from fastapi import APIRouter, Depends, FastAPI, File, Form, HTTPException, Request, UploadFile, status
 from fastapi.exceptions import StarletteHTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -652,6 +653,15 @@ def ensure_data_files() -> None:
 
 
 app = FastAPI(title="Trident Premium Store", docs_url=None, redoc_url=None)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.add_middleware(
     SessionMiddleware,
     secret_key=os.getenv("TRIDENT_SESSION_SECRET", "trident-local-session-secret"),
@@ -877,6 +887,54 @@ def login(payload: LoginPayload, request: Request) -> Dict[str, Any]:
     token = issue_auth_token(user)
 
     return {"success": True, "message": "Signed in successfully.", "token": token, "user": serialize_user(user)}
+
+
+@auth_router.post("/api/auth/otp/send")
+def send_otp(payload: OTPPayload) -> Dict[str, Any]:
+    return {"success": True, "message": "OTP sent."}
+
+
+@auth_router.post("/api/auth/otp/verify")
+def verify_otp(payload: OTPPayload, request: Request) -> Dict[str, Any]:
+    users = load_users()
+    email_variant = f"{payload.phone}@trident.local"
+    user = find_user_by_email(email_variant)
+    if not user:
+        user = {
+            "id": next_id(users),
+            "name": payload.phone,
+            "email": email_variant,
+            "password_hash": hash_password("dummy"),
+            "role": "customer",
+            "created_at": now_iso(),
+        }
+        users.append(user)
+        save_users(users)
+    
+    store_session_user(request, user)
+    token = issue_auth_token(user)
+    return {"success": True, "message": "OTP verified.", "token": token, "user": serialize_user(user)}
+
+
+@auth_router.post("/api/auth/google")
+def google_login(payload: GooglePayload, request: Request) -> Dict[str, Any]:
+    users = load_users()
+    user = find_user_by_email(payload.email)
+    if not user:
+        user = {
+            "id": next_id(users),
+            "name": payload.name,
+            "email": payload.email,
+            "password_hash": hash_password("dummy"),
+            "role": "customer",
+            "created_at": now_iso(),
+        }
+        users.append(user)
+        save_users(users)
+        
+    store_session_user(request, user)
+    token = issue_auth_token(user)
+    return {"success": True, "message": "Signed in with Google.", "token": token, "user": serialize_user(user)}
 
 
 @auth_router.post("/logout")

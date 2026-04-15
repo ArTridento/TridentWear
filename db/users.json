@@ -1,18 +1,44 @@
 [
   {
     "id": 1,
-    "name": "Trident Admin",
+    "name": "Admin",
     "email": "admin@trident.local",
-    "password_hash": "$2b$12$WFEmCRsMJ7EFr3/jF8mzU.Jf9Zgugmz5A2GS/m0qZnr8hsO2lGEt6",
+    "phone": "9999999999",
+    "password_hash": "$2b$12$bbojbjDa29RszscabEaCnO6mRyieE6f3G0yVCCtzYSp/PM2PPonMe",
     "role": "admin",
-    "created_at": "2026-04-12T00:00:00+00:00"
+    "created_at": "2026-04-15T17:47:46.734200"
   },
   {
     "id": 2,
-    "name": "Test User",
-    "email": "test@trident.local",
-    "password_hash": "$2b$12$.3lKuVhrgExlHhky135yqeUrCusML5UO4uN9aiPgd1AJsd0LPvWmG",
+    "name": "Test Customer",
+    "email": "customer@trident.local",
+    "phone": "9876543210",
+    "password_hash": "$2b$12$c3NQfqvG71UbnEfbrswtye1JRQOBwxByYx8Ymw9nkeYZz1kH2EoPC",
     "role": "customer",
-    "created_at": "2026-04-13T12:14:15.128124+00:00"
+    "created_at": "2026-04-15T17:47:46.991501"
+  },
+  {
+    "id": 3,
+    "name": "Test User",
+    "email": "testlogin@test.com",
+    "password_hash": "$2b$12$U/orSl7vc2PP4VhLrNgxv.ixBFZkP9wFNiQkKkVWO5ktKF9LrJSA2",
+    "role": "customer",
+    "created_at": "2026-04-15T14:56:41.393654+00:00"
+  },
+  {
+    "id": 4,
+    "name": "John Doe",
+    "email": "johndoe123@example.com",
+    "password_hash": "$2b$12$ivE1BuPjXpypiWQgC20Zs.ELddNXzzGYb8w8BSra3EuNidqt3f0z6",
+    "role": "customer",
+    "created_at": "2026-04-15T14:58:17.202762+00:00"
+  },
+  {
+    "id": 5,
+    "name": "Jane Smith",
+    "email": "janesmith999@example.com",
+    "password_hash": "$2b$12$Z2qdq/anvr6r53YPUmirzOcMWKR5eUbsX9XItEFloFfrD9zTO6aBO",
+    "role": "customer",
+    "created_at": "2026-04-15T15:01:05.975278+00:00"
   }
 ]

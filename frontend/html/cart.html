@@ -1,217 +1,503 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Review your TridentWear cart and checkout securely. Free shipping over ₹999.">
-  <title>Your Cart | TridentWear</title>
-  <link rel="stylesheet" href="../css/styles.css">
-  <link rel="icon" type="image/png" href="../images/Logo.png">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-</head>
-<body data-page="cart">
-  
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="index.html">
-        <span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span>
-      </a>
-      <button class="mobile-toggle" type="button" data-mobile-toggle aria-label="Open navigation">
-        <span class="mobile-toggle-line"></span>
-        <span class="mobile-toggle-line"></span>
-        <span class="mobile-toggle-line"></span>
-      </button>
-      <nav class="site-nav" data-mobile-nav>
-        <a class="nav-link" href="index.html" data-nav-link="home">Home</a>
-        <a class="nav-link" href="products.html" data-nav-link="products">Shop</a>
-        <a class="nav-link" href="about.html" data-nav-link="about">About</a>
-        <a class="nav-link" href="contact.html" data-nav-link="contact">Contact</a>
-        <a class="nav-link" href="admin.html" data-nav-link="admin" data-admin-link hidden>Admin</a>
-      </nav>
-      <div class="search-wrapper" data-search-wrapper>
-        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input class="search-input" type="text" placeholder="Search products..." data-search-input>
-        <div class="search-results" data-search-results hidden></div>
-      </div>
-      <div class="header-tools">
-        <a class="utility-pill" href="login.html" data-login-link title="Login"><i class="fa-sharp-duotone fa-solid fa-arrow-right-to-bracket"></i></a>
-        <a class="utility-pill" href="register.html" data-register-link title="Register"><i class="fa-solid fa-user-plus"></i></a>
-        <a class="utility-pill cart-pill" href="cart.html" title="Cart"><i class="fa-sharp fa-solid fa-cart-shopping"></i><span class="cart-badge" data-cart-count>0</span></a>
-        <button class="utility-pill" type="button" data-logout-button title="Logout" hidden><i class="fa-sharp-duotone fa-solid fa-arrow-left-from-bracket"></i></button>
-      </div>
-    </div>
-  </header>
-
-  <main>
-    <div class="page-header" style="background:#f8f9fa; border-bottom:1px solid #dee2e6; padding: 2rem 0; margin-bottom: 2rem;">
-      <div class="container">
-        <h1 class="page-title" style="font-family:var(--font-display); font-size:2rem; font-weight:800; color:var(--dark);">Your Cart</h1>
-        <p style="color:var(--gray);">Review your items and proceed to checkout.</p>
-      </div>
-    </div>
-
-    <section class="section">
-      <div class="container cart-layout" style="display:grid; grid-template-columns: 1fr 340px; gap: 2rem; align-items:start;">
-        
-        <!-- Cart Items -->
-        <div>
-          <div class="cart-list" data-cart-list></div>
-          <a class="btn-link" href="products.html" style="margin-top: 1.5rem; display:inline-block;"><i class="fa-solid fa-arrow-left"></i> Continue Shopping</a>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Review your TridentWear cart and checkout securely. Free shipping over ₹999."
+    />
+    <title>Your Cart | TridentWear</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+    <link rel="icon" type="image/png" href="../images/Logo.png" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+  </head>
+  <body data-page="cart">
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="index.html">
+          <img src="../images/Logo.png" alt="TridentWear Logo" class="brand-logo" />
+          <span class="brand-name"
+            ><span class="brand-trident">Trident</span
+            ><span class="brand-wear">Wear</span></span
+          >
+        </a>
+        <button
+          class="mobile-toggle"
+          type="button"
+          data-mobile-toggle
+          aria-label="Open navigation"
+        >
+          <span class="mobile-toggle-line"></span>
+          <span class="mobile-toggle-line"></span>
+          <span class="mobile-toggle-line"></span>
+        </button>
+        <nav class="site-nav" data-mobile-nav>
+          <a class="nav-link" href="index.html" data-nav-link="home">Home</a>
+          <a class="nav-link" href="products.html" data-nav-link="products"
+            >Shop</a
+          >
+          <a class="nav-link" href="about.html" data-nav-link="about">About</a>
+          <a class="nav-link" href="contact.html" data-nav-link="contact"
+            >Contact</a
+          >
+          <a
+            class="nav-link"
+            href="admin.html"
+            data-nav-link="admin"
+            data-admin-link
+            hidden
+            >Admin</a
+          >
+        </nav>
+        <div class="search-wrapper" data-search-wrapper>
+          <svg
+            class="search-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            class="search-input"
+            type="text"
+            placeholder="Search products..."
+            data-search-input
+          />
+          <div class="search-results" data-search-results hidden></div>
         </div>
+        <div class="header-tools">
+          <a
+            class="utility-pill"
+            href="login.html"
+            data-login-link
+            title="Login"
+            ><i class="fa-sharp-duotone fa-solid fa-arrow-right-to-bracket"></i
+          ></a>
+          <a
+            class="utility-pill"
+            href="register.html"
+            data-register-link
+            title="Register"
+            ><i class="fa-solid fa-user-plus"></i
+          ></a>
+          <a class="utility-pill cart-pill" href="cart.html" title="Cart"
+            ><i class="fa-sharp fa-solid fa-cart-shopping"></i
+            ><span class="cart-badge" data-cart-count>0</span></a
+          >
+          <button
+            class="utility-pill"
+            type="button"
+            data-logout-button
+            title="Logout"
+            hidden
+          >
+            <i class="fa-sharp-duotone fa-solid fa-arrow-left-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+    </header>
 
-        <!-- Order Summary -->
-        <div class="checkout-panel" style="background:var(--light); padding: 1.5rem; border:1px solid #dee2e6; border-radius:var(--radius); position:sticky; top: 80px;">
-          <h2 style="font-family:var(--font-display); font-size:1.25rem; font-weight:700; margin-bottom:1rem; border-bottom:1px solid #e9ecef; padding-bottom:0.5rem;">Order Summary</h2>
-          <div data-cart-summary></div>
-          
-          <div style="margin-top:1.5rem; padding-top:1rem; border-top:1px dashed #dee2e6;">
-            <p style="font-size:0.8rem; color:var(--gray); display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem;">
-              <i class="fa-solid fa-shield-check" style="color:var(--success);"></i> Secure checkout powered by SSL
-            </p>
-            <div data-order-status></div>
-            <a class="btn btn-primary" href="checkout.html" style="display:flex; justify-content:center; width:100%; font-size:1rem; padding:0.85rem;"><i class="fa-solid fa-lock" style="margin-right:0.5rem;"></i> Checkout Securely</a>
+    <main>
+      <div
+        class="page-header"
+        style="
+          background: #f8f9fa;
+          border-bottom: 1px solid #dee2e6;
+          padding: 2rem 0;
+          margin-bottom: 2rem;
+        "
+      >
+        <div class="container">
+          <h1
+            class="page-title"
+            style="
+              font-family: var(--font-display);
+              font-size: 2rem;
+              font-weight: 800;
+              color: var(--dark);
+            "
+          >
+            Your Cart
+          </h1>
+          <p style="color: var(--gray)">
+            Review your items and proceed to checkout.
+          </p>
+        </div>
+      </div>
+
+      <section class="section">
+        <div
+          class="container cart-layout"
+          style="
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 2rem;
+            align-items: start;
+          "
+        >
+          <!-- Cart Items -->
+          <div>
+            <div class="cart-list" data-cart-list></div>
+            <a
+              class="btn-link"
+              href="products.html"
+              style="margin-top: 1.5rem; display: inline-block"
+              ><i class="fa-solid fa-arrow-left"></i> Continue Shopping</a
+            >
           </div>
 
-          <div style="margin-top:1.5rem; background:#fff; padding:1rem; border-radius:var(--radius-sm); border:1px solid #e9ecef;">
-             <h4 style="font-size:0.85rem; font-weight:700; margin-bottom:0.5rem;"><i class="fa-solid fa-tags" style="color:var(--secondary);"></i> Got a Promo Code?</h4>
-             <div style="display:flex; gap:0.5rem;">
-               <input type="text" placeholder="Enter code" style="flex:1; padding:0.5rem; border:1px solid #dee2e6; border-radius:var(--radius-sm); font-size:0.85rem;">
-               <button class="btn btn-dark" style="padding:0.5rem 1rem;">Apply</button>
-             </div>
+          <!-- Order Summary -->
+          <div
+            class="checkout-panel"
+            style="
+              background: var(--light);
+              padding: 1.5rem;
+              border: 1px solid #dee2e6;
+              border-radius: var(--radius);
+              position: sticky;
+              top: 80px;
+            "
+          >
+            <h2
+              style="
+                font-family: var(--font-display);
+                font-size: 1.25rem;
+                font-weight: 700;
+                margin-bottom: 1rem;
+                border-bottom: 1px solid #e9ecef;
+                padding-bottom: 0.5rem;
+              "
+            >
+              Order Summary
+            </h2>
+            <div data-cart-summary></div>
+
+            <div
+              style="
+                margin-top: 1.5rem;
+                padding-top: 1rem;
+                border-top: 1px dashed #dee2e6;
+              "
+            >
+              <p
+                style="
+                  font-size: 0.8rem;
+                  color: var(--gray);
+                  display: flex;
+                  align-items: center;
+                  gap: 0.5rem;
+                  margin-bottom: 1rem;
+                "
+              >
+                <i
+                  class="fa-solid fa-shield-check"
+                  style="color: var(--success)"
+                ></i>
+                Secure checkout powered by SSL
+              </p>
+              <div data-order-status></div>
+              <a
+                class="btn btn-primary"
+                href="checkout.html"
+                style="
+                  display: flex;
+                  justify-content: center;
+                  width: 100%;
+                  font-size: 1rem;
+                  padding: 0.85rem;
+                "
+                ><i class="fa-solid fa-lock" style="margin-right: 0.5rem"></i>
+                Checkout Securely</a
+              >
+            </div>
+
+            <div
+              style="
+                margin-top: 1.5rem;
+                background: #fff;
+                padding: 1rem;
+                border-radius: var(--radius-sm);
+                border: 1px solid #e9ecef;
+              "
+            >
+              <h4
+                style="
+                  font-size: 0.85rem;
+                  font-weight: 700;
+                  margin-bottom: 0.5rem;
+                "
+              >
+                <i class="fa-solid fa-tags" style="color: var(--secondary)"></i>
+                Got a Promo Code?
+              </h4>
+              <div style="display: flex; gap: 0.5rem">
+                <input
+                  type="text"
+                  placeholder="Enter code"
+                  style="
+                    flex: 1;
+                    padding: 0.5rem;
+                    border: 1px solid #dee2e6;
+                    border-radius: var(--radius-sm);
+                    font-size: 0.85rem;
+                  "
+                />
+                <button class="btn btn-dark" style="padding: 0.5rem 1rem">
+                  Apply
+                </button>
+              </div>
+            </div>
           </div>
-
         </div>
+      </section>
 
-      </div>
-    </section>
-
-    <!-- Cross-sell Strip -->
-    <section style="padding: 3rem 0; border-top:1px solid #dee2e6; margin-top:2rem;">
-      <div class="container">
-        <h3 style="font-family:var(--font-display); font-size:1.5rem; font-weight:800; margin-bottom:1.5rem;">You might also <span style="color:var(--primary);">like</span></h3>
-        <div class="trending-scroll" data-trending-cross-sell>
-           <!-- Populate with trending items via JS -->
+      <!-- Cross-sell Strip -->
+      <section
+        style="padding: 3rem 0; border-top: 1px solid #dee2e6; margin-top: 2rem"
+      >
+        <div class="container">
+          <h3
+            style="
+              font-family: var(--font-display);
+              font-size: 1.5rem;
+              font-weight: 800;
+              margin-bottom: 1.5rem;
+            "
+          >
+            You might also <span style="color: var(--primary)">like</span>
+          </h3>
+          <div class="trending-scroll" data-trending-cross-sell>
+            <!-- Populate with trending items via JS -->
+          </div>
         </div>
-      </div>
-    </section>
-  </main>
+      </section>
+    </main>
 
-    <footer class="site-footer">
     <div class="footer-top-strip">
       <div class="container">
         <span>🇮🇳 Proudly Made in India — Wear the Pride</span>
       </div>
     </div>
-    <div class="container footer-main">
-      <div class="footer-brand-col">
-        <div class="brand">
-          <span class="brand-name"><span class="brand-trident">Trident</span><span class="brand-wear">Wear</span></span>
-          <span class="brand-tagline">T-Shirt Collections</span>
-        </div>
-        <p class="footer-note">Premium men's clothing built for India's everyday uniform. Heritage quality, modern fit.</p>
-        <div class="footer-trust-badges">
-          <span class="footer-badge"><i class="fa-solid fa-indian-rupee-sign"></i> COD Available</span>
-          <span class="footer-badge"><i class="fa-solid fa-rotate-left"></i> 30-Day Returns</span>
-        </div>
-      </div>
-      <div class="footer-col">
-        <h3 class="footer-title">Need Help</h3>
-        <div class="footer-links">
-          <a href="contact.html"><i class="fa-regular fa-envelope footer-link-icon"></i>Contact Us</a>
-          <a href="track.html"><i class="fa-solid fa-location-dot footer-link-icon"></i>Track Order</a>
-          <a href="returns.html"><i class="fa-solid fa-rotate-left footer-link-icon"></i>Returns &amp; Refunds</a>
-          <a href="contact.html"><i class="fa-regular fa-circle-question footer-link-icon"></i>FAQs</a>
-        </div>
-      </div>
-      <div class="footer-col">
-        <h3 class="footer-title">Company</h3>
-        <div class="footer-links">
-          <a href="about.html">About Us</a>
-          <a href="products.html">Shop All</a>
-          <a href="wishlist.html">Wishlist</a>
-          <a href="contact.html">Careers</a>
-        </div>
-      </div>
-      <div class="footer-col">
-        <h3 class="footer-title">More Info</h3>
-        <div class="footer-links">
-          <a href="terms.html">T&amp;C</a>
-          <a href="privacy.html">Privacy Policy</a>
-          <a href="shipping.html">Shipping Policy</a>
-          <a href="returns.html">Returns Policy</a>
-        </div>
-      </div>
-      <div class="footer-col">
-        <h3 class="footer-title">Contact Us</h3>
-        <div class="footer-links">
-          <a href="mailto:hello@tridentwear.com"><i class="fa-regular fa-envelope footer-link-icon"></i>hello@tridentwear.com</a>
-          <a href="tel:+919876543210"><i class="fa-solid fa-phone footer-link-icon"></i>+91 98765 43210</a>
-          <a href="https://wa.me/919876543210" target="_blank" rel="noreferrer"><i class="fa-brands fa-whatsapp footer-link-icon"></i>WhatsApp</a>
-        </div>
-        <div class="footer-app-badges">
-          <a class="footer-app-btn" href="#"><i class="fa-brands fa-google-play"></i> Google Play</a>
-          <a class="footer-app-btn" href="#"><i class="fa-brands fa-apple"></i> App Store</a>
-        </div>
-      </div>
-    </div>
-    <div class="footer-middle">
-      <div class="container footer-middle-inner">
-        <div class="footer-payment">
-          <span class="footer-payment-label">100% Secure Payment:</span>
-          <div class="footer-payment-icons">
-            <span class="payment-pill"><i class="fa-brands fa-google-pay"></i> GPay</span>
-            <span class="payment-pill"><i class="fa-brands fa-cc-mastercard"></i> Mastercard</span>
-            <span class="payment-pill"><i class="fa-brands fa-cc-visa"></i> Visa</span>
-            <span class="payment-pill"><i class="fa-solid fa-money-bill-wave"></i> COD</span>
-            <span class="payment-pill">UPI</span>
+    <footer class="site-footer">
+      <div class="container footer-main">
+        <div class="footer-brand-col">
+          <div class="brand">
+            <span class="brand-name"
+              ><span class="brand-trident">Trident</span
+              ><span class="brand-wear">Wear</span></span
+            >
+            <span class="brand-tagline">T-Shirt Collections</span>
+          </div>
+          <p class="footer-note">
+            Premium men's clothing built for India's everyday uniform. Heritage
+            quality, modern fit.
+          </p>
+          <div class="footer-trust-badges">
+            <span class="footer-badge"
+              ><i class="fa-solid fa-indian-rupee-sign"></i> COD Available</span
+            >
+            <span class="footer-badge"
+              ><i class="fa-solid fa-rotate-left"></i> 30-Day Returns</span
+            >
           </div>
         </div>
-        <div class="footer-social-wrap">
-          <span class="footer-payment-label">Follow Us:</span>
-          <div class="footer-socials">
-            <a class="footer-social-link" href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-            <a class="footer-social-link" href="https://twitter.com" target="_blank" rel="noreferrer" aria-label="Twitter/X"><i class="fa-brands fa-x-twitter"></i></a>
-            <a class="footer-social-link" href="https://youtube.com" target="_blank" rel="noreferrer" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
-            <a class="footer-social-link" href="https://facebook.com" target="_blank" rel="noreferrer" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        <div class="footer-col">
+          <h3 class="footer-title">Need Help</h3>
+          <div class="footer-links">
+            <a href="contact.html"
+              ><i class="fa-regular fa-envelope footer-link-icon"></i>Contact
+              Us</a
+            >
+            <a href="track.html"
+              ><i class="fa-solid fa-location-dot footer-link-icon"></i>Track
+              Order</a
+            >
+            <a href="returns.html"
+              ><i class="fa-solid fa-rotate-left footer-link-icon"></i>Returns
+              &amp; Refunds</a
+            >
+            <a href="contact.html"
+              ><i class="fa-regular fa-circle-question footer-link-icon"></i
+              >FAQs</a
+            >
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-title">Company</h3>
+          <div class="footer-links">
+            <a href="about.html">About Us</a>
+            <a href="products.html">Shop All</a>
+            <a href="wishlist.html">Wishlist</a>
+            <a href="contact.html">Careers</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-title">More Info</h3>
+          <div class="footer-links">
+            <a href="terms.html">T&amp;C</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="shipping.html">Shipping Policy</a>
+            <a href="returns.html">Returns Policy</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-title">Contact Us</h3>
+          <div class="footer-links">
+            <a href="mailto:hello@tridentwear.com"
+              ><i class="fa-regular fa-envelope footer-link-icon"></i
+              >hello@tridentwear.com</a
+            >
+            <a href="tel:+919876543210"
+              ><i class="fa-solid fa-phone footer-link-icon"></i>+91 98765
+              43210</a
+            >
+            <a
+              href="https://wa.me/919876543210"
+              target="_blank"
+              rel="noreferrer"
+              ><i class="fa-brands fa-whatsapp footer-link-icon"></i>WhatsApp</a
+            >
+          </div>
+          <div class="footer-app-badges">
+            <a class="footer-app-btn" href="#"
+              ><i class="fa-brands fa-google-play"></i> Google Play</a
+            >
+            <a class="footer-app-btn" href="#"
+              ><i class="fa-brands fa-apple"></i> App Store</a
+            >
           </div>
         </div>
       </div>
-    </div>
-    <div class="container">
-      <div class="footer-bottom">
-        <span class="footer-copy">&copy; 2026 TridentWear. All rights reserved.</span>
-        <div class="footer-bottom-links">
-          <a href="privacy.html">Privacy</a>
-          <a href="terms.html">Terms</a>
-          <a href="shipping.html">Shipping</a>
+      <div class="footer-middle">
+        <div class="container footer-middle-inner">
+          <div class="footer-payment">
+            <span class="footer-payment-label">100% Secure Payment:</span>
+            <div class="footer-payment-icons">
+              <span class="payment-pill"
+                ><i class="fa-brands fa-google-pay"></i> GPay</span
+              >
+              <span class="payment-pill"
+                ><i class="fa-brands fa-cc-mastercard"></i> Mastercard</span
+              >
+              <span class="payment-pill"
+                ><i class="fa-brands fa-cc-visa"></i> Visa</span
+              >
+              <span class="payment-pill"
+                ><i class="fa-solid fa-money-bill-wave"></i> COD</span
+              >
+              <span class="payment-pill">UPI</span>
+            </div>
+          </div>
+          <div class="footer-social-wrap">
+            <span class="footer-payment-label">Follow Us:</span>
+            <div class="footer-socials">
+              <a
+                class="footer-social-link"
+                href="https://www.instagram.com/trident_wear/"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Instagram"
+                ><i class="fa-brands fa-instagram"></i
+              ></a>
+              <a
+                class="footer-social-link"
+                href="https://twitter.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Twitter/X"
+                ><i class="fa-brands fa-x-twitter"></i
+              ></a>
+              <a
+                class="footer-social-link"
+                href="https://youtube.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="YouTube"
+                ><i class="fa-brands fa-youtube"></i
+              ></a>
+              <a
+                class="footer-social-link"
+                href="https://facebook.com"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Facebook"
+                ><i class="fa-brands fa-facebook-f"></i
+              ></a>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </footer>
+      <div class="container">
+        <div class="footer-bottom">
+          <span class="footer-copy"
+            >&copy; 2026 TridentWear. All rights reserved.</span
+          >
+          <div class="footer-bottom-links">
+            <a href="privacy.html">Privacy</a>
+            <a href="terms.html">Terms</a>
+            <a href="shipping.html">Shipping</a>
+          </div>
+        </div>
+      </div>
+    </footer>
 
-  <button class="back-to-top" type="button" data-back-to-top aria-label="Back to top">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
-  </button>
+    <button
+      class="back-to-top"
+      type="button"
+      data-back-to-top
+      aria-label="Back to top"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="18 15 12 9 6 15" />
+      </svg>
+    </button>
 
-  <script type="module" src="../js/pages/cart.js"></script>
-  <script type="module">
-     import { get } from "../shared/api.js";
-     import { productCardMarkup, bindProductCardActions, createSkeletonCards } from "../shared/site.js";
-     
-     // Quick script for cross-sells
-     async function loadCrossSells() {
+    <script type="module" src="../js/pages/cart.js"></script>
+    <script type="module">
+      import { get } from "../shared/api.js";
+      import {
+        productCardMarkup,
+        bindProductCardActions,
+        createSkeletonCards,
+      } from "../shared/site.js";
+
+      // Quick script for cross-sells
+      async function loadCrossSells() {
         const wrap = document.querySelector("[data-trending-cross-sell]");
-        if(!wrap) return;
+        if (!wrap) return;
         wrap.innerHTML = createSkeletonCards(4);
         try {
-           const data = await get("/api/products");
-           const products = (Array.isArray(data) ? data : data.products || []).slice(0, 5);
-           if (!products.length) { wrap.innerHTML = ''; return; }
-           wrap.innerHTML = products.map(productCardMarkup).join("");
-           bindProductCardActions(wrap, products);
-        } catch { wrap.innerHTML = ''; }
-     }
-     window.addEventListener("DOMContentLoaded", loadCrossSells);
-  </script>
-</body>
+          const data = await get("/api/products");
+          const products = (
+            Array.isArray(data) ? data : data.products || []
+          ).slice(0, 5);
+          if (!products.length) {
+            wrap.innerHTML = "";
+            return;
+          }
+          wrap.innerHTML = products.map(productCardMarkup).join("");
+          bindProductCardActions(wrap, products);
+        } catch {
+          wrap.innerHTML = "";
+        }
+      }
+      window.addEventListener("DOMContentLoaded", loadCrossSells);
+    </script>
+  </body>
 </html>
