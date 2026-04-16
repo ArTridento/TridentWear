@@ -479,6 +479,7 @@ h1, h2, h3, h4,
 .utility-pill {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.4rem;
   padding: clamp(0.4rem, 0.8vw, 0.5rem) clamp(0.65rem, 1vw, 0.85rem);
   font-size: clamp(0.75rem, 1.5vw, 0.85rem);
@@ -487,8 +488,8 @@ h1, h2, h3, h4,
   border: 1px solid #e9ecef;
   background: var(--white);
   border-radius: var(--radius);
-  min-height: clamp(2rem, 4vw, auto);
-  min-width: clamp(2rem, 4vw, auto);
+  min-height: clamp(2.4rem, 4vw, 2.8rem);
+  min-width: clamp(2.4rem, 4vw, 2.8rem);
   transition: border-color var(--transition), color var(--transition);
 }
 
@@ -540,7 +541,7 @@ h1, h2, h3, h4,
 /* Cards grid - Mobile first approach */
 .cards-grid, .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(clamp(150px, 100%, 280px), 1fr));
+  grid-template-columns: 1fr;
   gap: clamp(0.75rem, 2vw, 1.25rem);
 }
 
@@ -616,7 +617,7 @@ h1, h2, h3, h4,
 /* Categories grid */
 .categories-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(clamp(100px, 100%, 150px), 1fr));
+  grid-template-columns: 1fr;
   gap: clamp(0.5rem, 1.5vw, 0.75rem);
 }
 
@@ -1161,8 +1162,9 @@ h1, h2, h3, h4,
 
 .toast {
   position: relative;
-  min-width: clamp(90vw, 100%, 22rem);
-  max-width: min(90vw, 22rem);
+  min-width: auto;
+  max-width: min(calc(100vw - 1rem), 22rem);
+  width: min(calc(100vw - 1rem), 22rem);
   padding: 0.75rem 1rem;
   font-size: clamp(0.75rem, 1.5vw, 0.88rem);
   font-weight: 500;
@@ -1221,7 +1223,7 @@ h1, h2, h3, h4,
   position: absolute;
   bottom: 74px;
   right: 0;
-  width: min(100vw, 320px);
+  width: clamp(280px, 90vw, 320px);
   height: clamp(300px, 60vh, 440px);
   background: var(--white);
   border-radius: var(--radius);
