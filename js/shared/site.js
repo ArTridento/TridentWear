@@ -338,8 +338,69 @@ function bindMobileMenu() {
   const toggle = document.querySelector("[data-mobile-toggle]");
   const nav = document.querySelector("[data-mobile-nav]");
   if (!toggle || !nav) return;
-  toggle.addEventListener("click", () => nav.classList.toggle("is-open"));
-  nav.querySelectorAll("a").forEach((link) => { link.addEventListener("click", () => nav.classList.remove("is-open")); });
+
+  const mobileQuery = window.matchMedia("(max-width: 56rem)");
+  const dropdowns = Array.from(nav.querySelectorAll(".nav-dropdown"));
+  const setExpanded = (element, expanded) => {
+    element?.setAttribute("aria-expanded", String(Boolean(expanded)));
+  };
+
+  const closeMenu = () => {
+    nav.classList.remove("is-open");
+    setExpanded(toggle, false);
+    dropdowns.forEach((dropdown) => {
+      dropdown.classList.remove("is-open");
+      setExpanded(dropdown.querySelector(".nav-dropdown-trigger"), false);
+    });
+  };
+
+  toggle.setAttribute("aria-expanded", "false");
+  toggle.addEventListener("click", () => {
+    const isOpen = nav.classList.toggle("is-open");
+    setExpanded(toggle, isOpen);
+  });
+
+  dropdowns.forEach((dropdown) => {
+    const trigger = dropdown.querySelector(".nav-dropdown-trigger");
+    if (!trigger) return;
+    trigger.setAttribute("aria-expanded", "false");
+    trigger.addEventListener("click", (event) => {
+      if (!mobileQuery.matches) return;
+      event.preventDefault();
+      const willOpen = !dropdown.classList.contains("is-open");
+      dropdowns.forEach((item) => {
+        if (item !== dropdown) {
+          item.classList.remove("is-open");
+          setExpanded(item.querySelector(".nav-dropdown-trigger"), false);
+        }
+      });
+      dropdown.classList.toggle("is-open", willOpen);
+      setExpanded(trigger, willOpen);
+    });
+  });
+
+  nav.querySelectorAll("a").forEach((link) => {
+    if (link.classList.contains("nav-dropdown-trigger")) return;
+    link.addEventListener("click", closeMenu);
+  });
+
+  document.addEventListener("click", (event) => {
+    if (mobileQuery.matches && !event.target.closest("[data-mobile-nav]") && !event.target.closest("[data-mobile-toggle]")) {
+      closeMenu();
+    }
+  });
+
+  const syncDesktopState = () => {
+    if (!mobileQuery.matches) {
+      closeMenu();
+    }
+  };
+
+  if (typeof mobileQuery.addEventListener === "function") {
+    mobileQuery.addEventListener("change", syncDesktopState);
+  } else {
+    mobileQuery.addListener(syncDesktopState);
+  }
 }
 
 function bindLogout() {

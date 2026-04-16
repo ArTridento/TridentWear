@@ -104,50 +104,39 @@
       </section>
 
       <section class="section-tight">
-        <div class="container" style="max-width: 860px; margin: 0 auto">
+        <div class="container checkout-shell">
           <div data-order-status></div>
 
           <!-- Order Summary -->
-          <div class="checkout-panel reveal-scale" style="margin-bottom: 1rem">
-            <div class="section-header" style="margin-bottom: 0.75rem">
+          <div class="checkout-panel reveal-scale checkout-stack">
+            <div class="section-header checkout-section-header">
               <span class="eyebrow">Order Summary</span>
             </div>
             <div data-cart-summary></div>
           </div>
 
           <!-- Coupon -->
-          <div class="checkout-panel reveal-scale" style="margin-bottom: 1rem">
-            <div class="section-header" style="margin-bottom: 0.75rem">
+          <div class="checkout-panel reveal-scale checkout-stack">
+            <div class="section-header checkout-section-header">
               <span class="eyebrow">Have a Coupon?</span>
             </div>
-            <div
-              style="
-                display: flex;
-                gap: 0.5rem;
-                flex-wrap: wrap;
-                align-items: center;
-              "
-            >
+            <div class="checkout-inline">
               <input
-                class="field"
+                class="field checkout-code-input"
                 id="coupon-code"
                 type="text"
                 placeholder="Enter coupon code"
-                style="flex: 1; min-width: 10rem; text-transform: uppercase"
               />
               <button class="btn btn-outline" type="button" data-coupon-apply>
                 Apply
               </button>
             </div>
-            <p
-              data-coupon-msg
-              style="font-size: 0.85rem; margin-top: 0.4rem"
-            ></p>
+            <p data-coupon-msg class="checkout-note"></p>
           </div>
 
           <!-- Payment Method -->
-          <div class="checkout-panel reveal-scale" style="margin-bottom: 1rem">
-            <div class="section-header" style="margin-bottom: 0.75rem">
+          <div class="checkout-panel reveal-scale checkout-stack">
+            <div class="section-header checkout-section-header">
               <span class="eyebrow">Payment Method</span>
             </div>
             <div class="payment-options">
@@ -180,7 +169,7 @@
 
           <!-- Shipping Form -->
           <div class="checkout-panel reveal-scale">
-            <div class="section-header" style="margin-bottom: 0.75rem">
+            <div class="section-header checkout-section-header">
               <span class="eyebrow">Shipping Details</span>
               <h2 class="section-title">Where should we send it?</h2>
             </div>
@@ -237,10 +226,9 @@
               </div>
               <div class="form-group full">
                 <button
-                  class="btn btn-primary"
+                  class="btn btn-primary checkout-submit"
                   type="submit"
                   data-checkout-button
-                  style="width: 100%; justify-content: center; padding: 0.85rem"
                 >
                   Place Order (COD)
                 </button>

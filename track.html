@@ -101,17 +101,13 @@
       </section>
 
       <section class="section-tight">
-        <div
-          class="container"
-          style="max-width: 600px; margin: 0 auto; min-height: 40vh"
-        >
+        <div class="container track-shell">
           <form
-            class="checkout-panel reveal-scale"
+            class="checkout-panel reveal-scale track-form-card"
             data-track-form
-            style="margin-bottom: 2rem"
           >
-            <div style="display: flex; gap: 0.5rem; align-items: flex-end">
-              <div class="form-group" style="flex: 1; margin: 0">
+            <div class="track-form-row">
+              <div class="form-group track-form-field">
                 <label class="label" for="track-order-id"
                   >Order Reference ID</label
                 >
@@ -131,12 +127,7 @@
 
           <div id="track-result" style="display: none">
             <div class="checkout-panel reveal-scale">
-              <h2
-                class="section-title"
-                style="margin-bottom: 1.5rem; font-size: 1.4rem"
-              >
-                Status Overview
-              </h2>
+              <h2 class="section-title track-status-title">Status Overview</h2>
 
               <div class="track-progress-bar">
                 <div class="track-step" data-step="placed">
@@ -160,11 +151,7 @@
               <div class="track-details-card">
                 <div class="track-row">
                   <span class="track-muted">Current Status</span>
-                  <strong
-                    id="res-status"
-                    style="color: var(--primary); font-size: 1.1rem"
-                    >-</strong
-                  >
+                  <strong id="res-status" class="track-status-value">-</strong>
                 </div>
                 <div class="track-row">
                   <span class="track-muted">Courier</span>

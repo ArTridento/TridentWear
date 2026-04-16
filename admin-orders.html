@@ -109,7 +109,7 @@
             <a class="nav-pill" href="./admin-analytics.html">ðŸ“Š Analytics</a>
           </nav>
 
-          <div class="admin-summary-grid" style="margin-bottom: 1.5rem">
+          <div class="admin-summary-grid admin-summary-spacing">
             <article class="summary-card reveal reveal-delay-1">
               <span class="label">Total Orders</span>
               <strong class="stat-value" data-stat-total>â€”</strong>
@@ -124,26 +124,13 @@
             </article>
           </div>
 
-          <div
-            style="
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              gap: 1rem;
-              margin-bottom: 1rem;
-              flex-wrap: wrap;
-            "
-          >
-            <div class="section-header" style="margin: 0">
+          <div class="admin-toolbar">
+            <div class="section-header admin-toolbar-header">
               <span class="eyebrow">Live Orders</span>
               <h2 class="section-title">All customer orders</h2>
             </div>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap">
-              <select
-                class="status-select"
-                id="filter-status"
-                style="font-size: 0.85rem; padding: 0.45rem 0.75rem"
-              >
+            <div class="admin-toolbar-actions">
+              <select class="status-select" id="filter-status">
                 <option value="">All Statuses</option>
                 <option value="pending">Pending</option>
                 <option value="confirmed">Confirmed</option>
@@ -151,15 +138,10 @@
                 <option value="delivered">Delivered</option>
               </select>
               <input
-                class="field"
+                class="field admin-toolbar-search"
                 id="filter-search"
                 type="text"
                 placeholder="Search order ID or nameâ€¦"
-                style="
-                  width: auto;
-                  font-size: 0.85rem;
-                  padding: 0.45rem 0.75rem;
-                "
               />
             </div>
           </div>
@@ -179,16 +161,7 @@
               </thead>
               <tbody data-orders-body>
                 <tr>
-                  <td
-                    colspan="7"
-                    style="
-                      text-align: center;
-                      padding: 2rem;
-                      color: var(--gray);
-                    "
-                  >
-                    Loading ordersâ€¦
-                  </td>
+                  <td colspan="7" class="admin-loading-cell">Loading ordersâ€¦</td>
                 </tr>
               </tbody>
             </table>

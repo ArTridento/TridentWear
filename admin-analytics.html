@@ -135,48 +135,23 @@
             <div class="chart-card reveal">
               <div class="chart-title">Top Products by Units Sold</div>
               <div class="bar-chart" data-bar-chart>
-                <div
-                  style="
-                    color: var(--gray);
-                    font-size: 0.88rem;
-                    align-self: center;
-                  "
-                >
-                  Loadingâ€¦
-                </div>
+                <div class="chart-loading-copy">Loadingâ€¦</div>
               </div>
             </div>
 
             <div class="chart-card reveal reveal-delay-1">
               <div class="chart-title">Revenue Breakdown</div>
-              <div
-                data-revenue-breakdown
-                style="display: grid; gap: 0.6rem; margin-top: 0.5rem"
-              >
-                <div style="color: var(--gray); font-size: 0.88rem">
-                  Loadingâ€¦
-                </div>
+              <div data-revenue-breakdown class="analytics-breakdown">
+                <div class="chart-loading-copy">Loadingâ€¦</div>
               </div>
             </div>
           </div>
 
           <!-- Recent orders teaser -->
           <div class="chart-card reveal">
-            <div
-              style="
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                margin-bottom: 1rem;
-                flex-wrap: wrap;
-                gap: 0.5rem;
-              "
-            >
-              <div class="chart-title" style="margin: 0">Recent Orders</div>
-              <a
-                class="btn btn-outline"
-                href="./admin-orders.html"
-                style="font-size: 0.82rem; padding: 0.4rem 0.85rem"
+            <div class="analytics-card-actions">
+              <div class="chart-title chart-title-inline">Recent Orders</div>
+              <a class="btn btn-outline btn-compact" href="./admin-orders.html"
                 >View All â†’</a
               >
             </div>
@@ -192,18 +167,7 @@
                   </tr>
                 </thead>
                 <tbody data-recent-orders>
-                  <tr>
-                    <td
-                      colspan="5"
-                      style="
-                        text-align: center;
-                        padding: 1.5rem;
-                        color: var(--gray);
-                      "
-                    >
-                      Loadingâ€¦
-                    </td>
-                  </tr>
+                  <tr><td colspan="5" class="admin-loading-cell">Loadingâ€¦</td></tr>
                 </tbody>
               </table>
             </div>

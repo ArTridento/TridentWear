@@ -107,153 +107,48 @@
     </header>
 
     <main>
-      <div
-        class="page-header"
-        style="
-          background: #f8f9fa;
-          border-bottom: 1px solid #dee2e6;
-          padding: 2rem 0;
-          margin-bottom: 2rem;
-        "
-      >
+      <div class="page-header cart-page-header">
         <div class="container">
-          <h1
-            class="page-title"
-            style="
-              font-family: var(--font-display);
-              font-size: 2rem;
-              font-weight: 800;
-              color: var(--dark);
-            "
-          >
-            Your Cart
-          </h1>
-          <p style="color: var(--gray)">
-            Review your items and proceed to checkout.
-          </p>
+          <h1 class="page-title cart-page-title">Your Cart</h1>
+          <p class="cart-page-lead">Review your items and proceed to checkout.</p>
         </div>
       </div>
 
       <section class="section">
-        <div
-          class="container cart-layout"
-          style="
-            display: grid;
-            grid-template-columns: 1fr 340px;
-            gap: 2rem;
-            align-items: start;
-          "
-        >
+        <div class="container cart-layout cart-page-layout">
           <!-- Cart Items -->
           <div>
             <div class="cart-list" data-cart-list></div>
-            <a
-              class="btn-link"
-              href="products.html"
-              style="margin-top: 1.5rem; display: inline-block"
+            <a class="btn-link cart-continue-link" href="products.html"
               ><i class="fa-solid fa-arrow-left"></i> Continue Shopping</a
             >
           </div>
 
           <!-- Order Summary -->
-          <div
-            class="checkout-panel"
-            style="
-              background: var(--light);
-              padding: 1.5rem;
-              border: 1px solid #dee2e6;
-              border-radius: var(--radius);
-              position: sticky;
-              top: 80px;
-            "
-          >
-            <h2
-              style="
-                font-family: var(--font-display);
-                font-size: 1.25rem;
-                font-weight: 700;
-                margin-bottom: 1rem;
-                border-bottom: 1px solid #e9ecef;
-                padding-bottom: 0.5rem;
-              "
-            >
-              Order Summary
-            </h2>
+          <div class="checkout-panel cart-summary-card">
+            <h2 class="cart-summary-heading">Order Summary</h2>
             <div data-cart-summary></div>
 
-            <div
-              style="
-                margin-top: 1.5rem;
-                padding-top: 1rem;
-                border-top: 1px dashed #dee2e6;
-              "
-            >
-              <p
-                style="
-                  font-size: 0.8rem;
-                  color: var(--gray);
-                  display: flex;
-                  align-items: center;
-                  gap: 0.5rem;
-                  margin-bottom: 1rem;
-                "
-              >
-                <i
-                  class="fa-solid fa-shield-check"
-                  style="color: var(--success)"
-                ></i>
+            <div class="cart-summary-divider">
+              <p class="cart-security-note">
+                <i class="fa-solid fa-shield-check"></i>
                 Secure checkout powered by SSL
               </p>
               <div data-order-status></div>
-              <a
-                class="btn btn-primary"
-                href="checkout.html"
-                style="
-                  display: flex;
-                  justify-content: center;
-                  width: 100%;
-                  font-size: 1rem;
-                  padding: 0.85rem;
-                "
-                ><i class="fa-solid fa-lock" style="margin-right: 0.5rem"></i>
+              <a class="btn btn-primary cart-cta" href="checkout.html"
+                ><i class="fa-solid fa-lock"></i>
                 Checkout Securely</a
               >
             </div>
 
-            <div
-              style="
-                margin-top: 1.5rem;
-                background: #fff;
-                padding: 1rem;
-                border-radius: var(--radius-sm);
-                border: 1px solid #e9ecef;
-              "
-            >
-              <h4
-                style="
-                  font-size: 0.85rem;
-                  font-weight: 700;
-                  margin-bottom: 0.5rem;
-                "
-              >
-                <i class="fa-solid fa-tags" style="color: var(--secondary)"></i>
+            <div class="cart-promo-card">
+              <h4 class="cart-promo-title">
+                <i class="fa-solid fa-tags"></i>
                 Got a Promo Code?
               </h4>
-              <div style="display: flex; gap: 0.5rem">
-                <input
-                  type="text"
-                  placeholder="Enter code"
-                  style="
-                    flex: 1;
-                    padding: 0.5rem;
-                    border: 1px solid #dee2e6;
-                    border-radius: var(--radius-sm);
-                    font-size: 0.85rem;
-                  "
-                />
-                <button class="btn btn-dark" style="padding: 0.5rem 1rem">
-                  Apply
-                </button>
+              <div class="cart-promo-inputs">
+                <input class="field cart-promo-input" type="text" placeholder="Enter code" />
+                <button class="btn btn-dark cart-promo-apply">Apply</button>
               </div>
             </div>
           </div>
@@ -261,18 +156,9 @@
       </section>
 
       <!-- Cross-sell Strip -->
-      <section
-        style="padding: 3rem 0; border-top: 1px solid #dee2e6; margin-top: 2rem"
-      >
+      <section class="cart-cross-sell">
         <div class="container">
-          <h3
-            style="
-              font-family: var(--font-display);
-              font-size: 1.5rem;
-              font-weight: 800;
-              margin-bottom: 1.5rem;
-            "
-          >
+          <h3 class="cart-cross-sell-title">
             You might also <span style="color: var(--primary)">like</span>
           </h3>
           <div class="trending-scroll" data-trending-cross-sell>
