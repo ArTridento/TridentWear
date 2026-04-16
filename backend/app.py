@@ -666,7 +666,7 @@ app.add_middleware(
     SessionMiddleware,
     secret_key=os.getenv("TRIDENT_SESSION_SECRET", "trident-local-session-secret"),
     same_site="lax",
-    https_only=False,
+    https_only=os.getenv("ENVIRONMENT", "development") == "production",
 )
 
 ensure_data_files()

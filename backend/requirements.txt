@@ -1,5 +1,0 @@
-fastapi
-uvicorn
-bcrypt
-PyJWT
-python-multipart

@@ -1,4 +1,15 @@
-export const API_BASE = "http://127.0.0.1:8000";
+// Auto-detect API URL based on environment
+const API_BASE = (() => {
+  // For production (deployed on Railway)
+  if (window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
+    return window.location.protocol + "//" + window.location.host;
+  }
+  // For local development
+  return "http://127.0.0.1:8000";
+})();
+
+// Or manually override: export const API_BASE = "https://your-railway-domain.railway.app";
+
 const AUTH_STORAGE_KEY = "tridentwear-auth-session";
 
 function resolveUrl(path) {
