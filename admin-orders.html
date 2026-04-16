@@ -1,26 +1,26 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Complete your TridentWear order — choose COD or online payment, apply coupons."
+      content="Admin Orders Dashboard â€” view and manage all TridentWear customer orders."
     />
-    <title>Checkout | TridentWear</title>
-    <link rel="stylesheet" href="../css/styles.css" />
-    <link rel="icon" type="image/png" href="../images/Logo.png" />
-    <!-- Razorpay SDK - loads only when needed -->
-    <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
+    <title>Orders Dashboard | TridentWear Admin</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="icon" type="image/png" href="./images/Logo.png" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     />
   </head>
-  <body data-page="checkout">
+  <body data-page="admin">
     <header class="site-header">
       <div class="container header-inner">
-        <a class="brand" href="index.html"          <img src="../images/Logo.png" alt="TridentWear Logo" class="brand-logo" />          ><span class="brand-name"
+        <a class="brand" href="index.html"
+          ><img src="./images/Logo.png" alt="TridentWear Logo" class="brand-logo" />
+          <span class="brand-name"
             ><span class="brand-trident">Trident</span
             ><span class="brand-wear">Wear</span></span
           ><span class="brand-tagline">T-Shirt Collections</span></a
@@ -89,160 +89,109 @@
       <section class="page-hero">
         <div class="container">
           <div class="page-hero-panel reveal-scale">
-            <span class="eyebrow">Checkout</span>
+            <span class="eyebrow">Admin Panel</span>
             <h1 class="page-title">
-              Complete your <span class="accent">order</span>.
+              Orders <span class="accent">Dashboard</span>.
             </h1>
             <p class="page-copy">
-              Secure checkout with Cash on Delivery or Online Payment.
+              View, filter, and update the status of every customer order placed
+              on the storefront.
             </p>
           </div>
         </div>
       </section>
 
       <section class="section-tight">
-        <div class="container" style="max-width: 860px; margin: 0 auto">
-          <div data-order-status></div>
+        <div class="container">
+          <nav class="admin-panel-nav">
+            <a class="nav-pill" href="admin.html">ðŸ“¦ Products</a>
+            <a class="nav-pill is-active" href="./admin-orders.html">ðŸ§¾ Orders</a>
+            <a class="nav-pill" href="./admin-analytics.html">ðŸ“Š Analytics</a>
+          </nav>
 
-          <!-- Order Summary -->
-          <div class="checkout-panel reveal-scale" style="margin-bottom: 1rem">
-            <div class="section-header" style="margin-bottom: 0.75rem">
-              <span class="eyebrow">Order Summary</span>
-            </div>
-            <div data-cart-summary></div>
+          <div class="admin-summary-grid" style="margin-bottom: 1.5rem">
+            <article class="summary-card reveal reveal-delay-1">
+              <span class="label">Total Orders</span>
+              <strong class="stat-value" data-stat-total>â€”</strong>
+            </article>
+            <article class="summary-card reveal reveal-delay-2">
+              <span class="label">Pending</span>
+              <strong class="stat-value" data-stat-pending>â€”</strong>
+            </article>
+            <article class="summary-card reveal reveal-delay-3">
+              <span class="label">Delivered</span>
+              <strong class="stat-value" data-stat-delivered>â€”</strong>
+            </article>
           </div>
 
-          <!-- Coupon -->
-          <div class="checkout-panel reveal-scale" style="margin-bottom: 1rem">
-            <div class="section-header" style="margin-bottom: 0.75rem">
-              <span class="eyebrow">Have a Coupon?</span>
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              gap: 1rem;
+              margin-bottom: 1rem;
+              flex-wrap: wrap;
+            "
+          >
+            <div class="section-header" style="margin: 0">
+              <span class="eyebrow">Live Orders</span>
+              <h2 class="section-title">All customer orders</h2>
             </div>
-            <div
-              style="
-                display: flex;
-                gap: 0.5rem;
-                flex-wrap: wrap;
-                align-items: center;
-              "
-            >
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap">
+              <select
+                class="status-select"
+                id="filter-status"
+                style="font-size: 0.85rem; padding: 0.45rem 0.75rem"
+              >
+                <option value="">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="shipped">Shipped</option>
+                <option value="delivered">Delivered</option>
+              </select>
               <input
                 class="field"
-                id="coupon-code"
+                id="filter-search"
                 type="text"
-                placeholder="Enter coupon code"
-                style="flex: 1; min-width: 10rem; text-transform: uppercase"
+                placeholder="Search order ID or nameâ€¦"
+                style="
+                  width: auto;
+                  font-size: 0.85rem;
+                  padding: 0.45rem 0.75rem;
+                "
               />
-              <button class="btn btn-outline" type="button" data-coupon-apply>
-                Apply
-              </button>
-            </div>
-            <p
-              data-coupon-msg
-              style="font-size: 0.85rem; margin-top: 0.4rem"
-            ></p>
-          </div>
-
-          <!-- Payment Method -->
-          <div class="checkout-panel reveal-scale" style="margin-bottom: 1rem">
-            <div class="section-header" style="margin-bottom: 0.75rem">
-              <span class="eyebrow">Payment Method</span>
-            </div>
-            <div class="payment-options">
-              <label class="payment-option" id="opt-cod">
-                <input type="radio" name="payment" value="cod" checked />
-                <div class="payment-option-content">
-                  <div class="payment-option-icon">🏦</div>
-                  <div>
-                    <div class="payment-option-title">Cash on Delivery</div>
-                    <div class="payment-option-desc">
-                      Pay when your order arrives
-                    </div>
-                  </div>
-                </div>
-              </label>
-              <label class="payment-option" id="opt-online">
-                <input type="radio" name="payment" value="online" />
-                <div class="payment-option-content">
-                  <div class="payment-option-icon">💳</div>
-                  <div>
-                    <div class="payment-option-title">Pay Online</div>
-                    <div class="payment-option-desc">
-                      UPI, Cards, Net Banking via Razorpay
-                    </div>
-                  </div>
-                </div>
-              </label>
             </div>
           </div>
 
-          <!-- Shipping Form -->
-          <div class="checkout-panel reveal-scale">
-            <div class="section-header" style="margin-bottom: 0.75rem">
-              <span class="eyebrow">Shipping Details</span>
-              <h2 class="section-title">Where should we send it?</h2>
-            </div>
-            <form class="form-grid" data-checkout-form>
-              <div class="form-group">
-                <label class="label" for="checkout-name">Full Name</label
-                ><input class="field" id="checkout-name" type="text" required />
-              </div>
-              <div class="form-group">
-                <label class="label" for="checkout-email">Email</label
-                ><input
-                  class="field"
-                  id="checkout-email"
-                  type="email"
-                  required
-                />
-              </div>
-              <div class="form-group">
-                <label class="label" for="checkout-phone">Phone</label
-                ><input class="field" id="checkout-phone" type="tel" required />
-              </div>
-              <div class="form-group">
-                <label class="label" for="checkout-city">City</label
-                ><input class="field" id="checkout-city" type="text" required />
-              </div>
-              <div class="form-group full">
-                <label class="label" for="checkout-address">Address</label
-                ><textarea
-                  class="textarea"
-                  id="checkout-address"
-                  required
-                ></textarea>
-              </div>
-              <div class="form-group">
-                <label class="label" for="checkout-postal">Postal Code</label
-                ><input class="field" id="checkout-postal" type="text" />
-              </div>
-              <div class="form-group">
-                <label class="label" for="checkout-country">Country</label
-                ><input
-                  class="field"
-                  id="checkout-country"
-                  type="text"
-                  value="India"
-                />
-              </div>
-              <div class="form-group full">
-                <label class="label" for="checkout-notes">Order Notes</label
-                ><textarea
-                  class="textarea"
-                  id="checkout-notes"
-                  placeholder="Any delivery notes or fit preferences?"
-                ></textarea>
-              </div>
-              <div class="form-group full">
-                <button
-                  class="btn btn-primary"
-                  type="submit"
-                  data-checkout-button
-                  style="width: 100%; justify-content: center; padding: 0.85rem"
-                >
-                  Place Order (COD)
-                </button>
-              </div>
-            </form>
+          <div class="table-wrap reveal">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Items</th>
+                  <th>Total</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody data-orders-body>
+                <tr>
+                  <td
+                    colspan="7"
+                    style="
+                      text-align: center;
+                      padding: 2rem;
+                      color: var(--gray);
+                    "
+                  >
+                    Loading ordersâ€¦
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
@@ -250,7 +199,7 @@
 
     <div class="footer-top-strip">
       <div class="container">
-        <span>🇮🇳 Proudly Made in India — Wear the Pride</span>
+        <span>ðŸ‡®ðŸ‡³ Proudly Made in India â€” Wear the Pride</span>
       </div>
     </div>
     <footer class="site-footer">
@@ -434,16 +383,7 @@
       </svg>
     </button>
 
-    <script type="module" src="../js/pages/checkout.js"></script>
-    <script>
-      // Update button label when payment method changes
-      document.addEventListener("change", (e) => {
-        if (e.target.name === "payment") {
-          const btn = document.querySelector("[data-checkout-button]");
-          btn.textContent =
-            e.target.value === "cod" ? "Place Order (COD)" : "Pay Online";
-        }
-      });
-    </script>
+    <script type="module" src="./js/pages/admin-orders.js"></script>
   </body>
 </html>
+

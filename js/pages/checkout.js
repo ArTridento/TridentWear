@@ -1,4 +1,4 @@
-import { post, postWithFallback } from "../shared/api.js";
+import { STATIC_MODE, post } from "../shared/api.js";
 import { clearCart, getCartSubtotal, loadCart } from "../shared/cart.js";
 import { formatCurrency, getCurrentUser, initSite, showToast } from "../shared/site.js";
 
@@ -147,6 +147,17 @@ function bindCheckout(items) {
         showSuccess(data.order_id, form);
 
       } else {
+        if (STATIC_MODE) {
+          const verifyData = await post("/api/payment/verify", {
+            razorpay_order_id: `order_${Date.now()}`,
+            razorpay_payment_id: `pay_${Date.now()}`,
+            razorpay_signature: "static-demo-signature",
+            order_data: orderData,
+          });
+          showSuccess(verifyData.order_id, form);
+          return;
+        }
+
         // Razorpay online payment
         const rzResp = await post("/api/payment/create-order", {
           amount: Math.round(finalTotal * 100), // paise

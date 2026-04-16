@@ -200,7 +200,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   await initSite();
   const user = getCurrentUser();
   if (!user || user.role !== "admin") {
-    window.location.href = "login.html?next=%2Fadmin";
+    window.location.href = "login.html?next=admin.html";
     return;
   }
 

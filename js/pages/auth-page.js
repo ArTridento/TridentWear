@@ -3,7 +3,38 @@ import { escapeHtml, getCurrentUser, initSite, refreshAuthState, showToast } fro
 
 function nextPath() {
   const params = new URLSearchParams(window.location.search);
-  return params.get("next") || "";
+  return normalizeNextPath(params.get("next") || "");
+}
+
+function normalizeNextPath(path) {
+  const raw = String(path || "").trim();
+  if (!raw) {
+    return "";
+  }
+
+  const normalized = raw.startsWith("/") ? raw.slice(1) : raw;
+  const routeMap = {
+    "": "index.html",
+    admin: "admin.html",
+    "admin/orders": "admin-orders.html",
+    "admin/analytics": "admin-analytics.html",
+    wishlist: "wishlist.html",
+    login: "login.html",
+    register: "register.html",
+    products: "products.html",
+    product: "product.html",
+    cart: "cart.html",
+    checkout: "checkout.html",
+    about: "about.html",
+    contact: "contact.html",
+    privacy: "privacy.html",
+    terms: "terms.html",
+    returns: "returns.html",
+    shipping: "shipping.html",
+    track: "track.html",
+  };
+
+  return routeMap[normalized] || normalized;
 }
 
 function buildPath(path) {

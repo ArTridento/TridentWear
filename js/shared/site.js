@@ -191,7 +191,7 @@ export async function toggleWishlist(id) {
   const user = getCurrentUser();
   if (!user) {
     showToast("Please login to use wishlist.", "error");
-    window.location.href = "login.html?next=/wishlist";
+    window.location.href = "login.html?next=wishlist.html";
     throw new Error("unauthorized");
   }
 
@@ -512,7 +512,8 @@ export function getCurrentUser() { return currentUser; }
 
 export async function initSite() {
   setActiveNav();
-  
+  await refreshAuthState();
+
   const user = getCurrentUser();
   if (user) {
     try {
@@ -534,5 +535,4 @@ export async function initSite() {
   import("./chat.js").then(m => m.initChatWidget());
   syncCart();
   observeReveals();
-  refreshAuthState(); // Not awaited to prevent blocking
 }
