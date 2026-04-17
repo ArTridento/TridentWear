@@ -2904,8 +2904,9 @@ h1, h2, h3, h4, .hero-title, .page-title, .section-title, .detail-title,
 }
 
 .stats-headline {
-  padding: 3.5rem 0;
+  padding: 3.5rem 0 2rem 0;
   text-align: center;
+  border-bottom: 1px solid rgba(18,20,29,0.06);
 }
 
 .stats-count {
@@ -2924,6 +2925,74 @@ h1, h2, h3, h4, .hero-title, .page-title, .section-title, .detail-title,
   font-weight: 800;
   color: var(--dark);
   letter-spacing: -0.01em;
+  margin-top: 0.5rem;
+}
+
+.stats-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  padding: 2.5rem 0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.stats-card-mini {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(18,20,29,0.08);
+  border-radius: 8px;
+  background: rgba(18,20,29,0.02);
+  transition: all 0.3s ease;
+}
+
+.stats-card-mini:hover {
+  border-color: var(--primary);
+  background: rgba(98,68,197,0.04);
+  transform: translateY(-2px);
+}
+
+.stats-card-mini-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(98,68,197,0.12), rgba(255,196,72,0.08));
+  color: var(--primary);
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.stats-card-mini-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.stats-card-mini-number {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--dark);
+  line-height: 1;
+}
+
+.stats-stars {
+  font-size: 0.9em;
+  color: var(--secondary);
+  margin-left: 0.3rem;
+}
+
+.stats-card-mini-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--gray);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 /* Old stats-grid removed - replaced with new design */
@@ -3822,7 +3891,8 @@ h1, h2, h3, h4, .hero-title, .page-title, .section-title, .detail-title,
   .hero-slide { position: relative; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
   .stats-section { padding: 0; }
-  .stats-headline { padding: 2rem 0; }
+  .stats-headline { padding: 2rem 0 1.5rem 0; }
+  .stats-cards-grid { grid-template-columns: 1fr; gap: 1rem; padding: 1.5rem 0; }
   .category-tiles { grid-template-columns: repeat(2, 1fr); height: auto; }
   .cat-tile-wide { grid-column: span 2; }
   .offer-banners { grid-template-columns: 1fr; }
