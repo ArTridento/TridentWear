@@ -43,7 +43,6 @@ TridentWear/
 │   │   ├── login.html         # 3-method auth page
 │   │   ├── register.html      # User registration
 │   │   ├── products.html      # Product catalog
-│   │   ├── product.html       # Product detail
 │   │   ├── cart.html          # Shopping cart
 │   │   ├── checkout.html      # Order checkout
 │   │   ├── admin.html         # Admin panel
@@ -254,7 +253,6 @@ python backend/app.py --port 8001
 |------|----------|
 | `index.html` | Hero banner, statistics, featured products, categories |
 | `products.html` | Product grid, filtering, sorting, search |
-| `product.html` | Product details, image gallery, size selection, reviews |
 | `cart.html` | Cart items, quantities, remove/update, totals, checkout |
 | `checkout.html` | Shipping form, payment details, order summary |
 | `login.html` | Email, OTP, Google login tabs, password reset |

@@ -703,10 +703,6 @@ def serve_home() -> FileResponse:
 def serve_products_page() -> FileResponse:
     return html_response("products.html")
 
-@pages_router.get("/product", include_in_schema=False)
-def serve_product_page() -> FileResponse:
-    return html_response("product.html")
-
 
 @pages_router.get("/cart", include_in_schema=False)
 def serve_cart_page() -> FileResponse:
@@ -793,7 +789,6 @@ def legacy_html_routes(page_name: str, request: Request):
         "index": "/",
         "shop": "/products",
         "products": "/products",
-        "product": "/product",
         "cart": "/cart",
         "checkout": "/checkout",
         "auth": "/login",
