@@ -47,8 +47,6 @@ TridentWear/
 │   │   ├── cart.html          # Shopping cart
 │   │   ├── checkout.html      # Order checkout
 │   │   ├── admin.html         # Admin panel
-│   │   ├── admin-orders.html  # Order management
-│   │   ├── admin-analytics.html # Analytics dashboard
 │   │   ├── wishlist.html      # Saved items
 │   │   ├── track.html         # Order tracking
 │   │   ├── contact.html       # Contact form
@@ -262,8 +260,6 @@ python backend/app.py --port 8001
 | `login.html` | Email, OTP, Google login tabs, password reset |
 | `register.html` | Sign up form, terms acceptance, auto-login |
 | `admin.html` | Product CRUD, featured toggle, image upload |
-| `admin-orders.html` | Order management, status updates, shipping |
-| `admin-analytics.html` | Sales graphs, revenue, customer analytics |
 | `wishlist.html` | Saved items, move to cart, email wishlist |
 | `track.html` | Order tracking, delivery status, support |
 | `contact.html` | Contact form, support chat, inquiry tickets |

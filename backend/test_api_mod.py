@@ -32,18 +32,9 @@ class OrderStatusUpdate(BaseModel):
 """
     text = text.replace('class ContactPayload(BaseModel):', models + '\nclass ContactPayload(BaseModel):')
 
-# 3. Add Frontend Routes for admin-orders and admin-analytics
-routes = """
-@pages_router.get("/admin/orders", include_in_schema=False)
-def serve_admin_orders() -> FileResponse:
-    return html_response("admin-orders.html")
+# 3. Add Frontend Routes (removed admin-orders and admin-analytics - pages deleted)
+# These pages are no longer needed in the application
 
-@pages_router.get("/admin/analytics", include_in_schema=False)
-def serve_admin_analytics() -> FileResponse:
-    return html_response("admin-analytics.html")
-"""
-if "def serve_admin_orders" not in text:
-    text = text.replace('def serve_admin() -> FileResponse:\n    return html_response("admin.html")', 'def serve_admin() -> FileResponse:\n    return html_response("admin.html")' + routes)
 
 # 4. Add Reviews API (POST & GET)
 if "def create_review" not in text:

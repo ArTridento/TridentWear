@@ -753,25 +753,6 @@ def serve_admin_page(request: Request):
     return html_response("admin.html")
 
 
-@pages_router.get("/admin/orders", include_in_schema=False, response_model=None)
-def serve_admin_orders_page(request: Request):
-    user = get_session_user(request)
-    if not user or user.get("role") != "admin":
-        next_path = quote("/admin/orders", safe="")
-        return RedirectResponse(url=f"/login?next={next_path}", status_code=status.HTTP_303_SEE_OTHER)
-    return html_response("admin-orders.html")
-
-
-@pages_router.get("/admin/analytics", include_in_schema=False, response_model=None)
-def serve_admin_analytics_page(request: Request):
-    user = get_session_user(request)
-    if not user or user.get("role") != "admin":
-        next_path = quote("/admin/analytics", safe="")
-        return RedirectResponse(url=f"/login?next={next_path}", status_code=status.HTTP_303_SEE_OTHER)
-    return html_response("admin-analytics.html")
-
-
-
 @pages_router.get("/wishlist", include_in_schema=False)
 def serve_wishlist_page() -> FileResponse:
     return html_response("wishlist.html")

@@ -16,8 +16,6 @@ function normalizeNextPath(path) {
   const routeMap = {
     "": "index.html",
     admin: "admin.html",
-    "admin/orders": "admin-orders.html",
-    "admin/analytics": "admin-analytics.html",
     wishlist: "wishlist.html",
     login: "login.html",
     register: "register.html",
