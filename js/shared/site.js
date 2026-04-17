@@ -87,37 +87,26 @@ export function createEmptyMarkup(title, copy, href = "products.html", label = "
 export function productCardMarkup(product) {
   const item = normalizeProduct(product);
   const productImage = resolveAssetUrl(item.image);
-  const cardTags = item.card_tags.map((tag) => `<span>${escapeHtml(tag)}</span>`).join('<span class="tag-separator">&#8226;</span>');
+  const imagesJson = JSON.stringify(product.images || [item.image]);
   const wishlisted = isWishlisted(item.id);
+  const subcategoryLabel = product.subcategory ? product.subcategory.replace(/-/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'T-Shirt';
 
   return `
-    <article class="product-card reveal">
-      <a class="product-media" href="product.html?id=${item.id}">
-        <img src="${escapeHtml(productImage)}" alt="${escapeHtml(item.name)}" loading="lazy">
+    <article class="product-card reveal" data-product-card data-product-id="${item.id}">
+      <div class="product-media" data-product-hover-gallery data-images='${escapeHtml(imagesJson)}'>
+        <img src="${escapeHtml(productImage)}" alt="${escapeHtml(item.name)}" loading="lazy" class="product-image">
         <div class="product-media-overlay">
-          <button class="btn btn-primary" type="button" data-quick-view data-product-id="${item.id}">Quick View</button>
+          <span class="hover-hint">Hover for more</span>
         </div>
         <button class="wishlist-btn${wishlisted ? " is-wishlisted" : ""}" type="button" data-wishlist-toggle data-product-id="${item.id}" aria-label="Toggle wishlist">
           <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         </button>
-      </a>
+      </div>
       <div class="product-body">
-        <div class="product-topline">
-          <span class="product-label">T-Shirt</span>
-          ${item.tag ? `<span class="pill product-tag">${escapeHtml(item.tag)}</span>` : ""}
-        </div>
+        <span class="product-type">${escapeHtml(subcategoryLabel)}</span>
         <h3 class="product-name">${escapeHtml(item.name)}</h3>
-        <p class="product-description">${escapeHtml(item.description)}</p>
-        <div class="product-card-tags">${cardTags}</div>
-        <div class="product-category-list">
-          ${item.category_labels.slice(0, 3).map((label) => `<span class="pill">${escapeHtml(label)}</span>`).join("")}
-        </div>
         <div class="product-footer">
           <strong class="product-price">${formatCurrency(item.price)}</strong>
-          <div class="cart-row-actions">
-            <a class="btn btn-outline" href="product.html?id=${item.id}">View</a>
-            <button class="btn btn-primary" type="button" data-add-to-cart data-product-id="${item.id}">Add to Cart</button>
-          </div>
         </div>
       </div>
     </article>
@@ -129,24 +118,52 @@ export function productCardMarkup(product) {
 export function bindProductCardActions(container, products) {
   const lookup = new Map(products.map((product) => {
     const item = normalizeProduct(product);
-    return [String(item.id), item];
+    return [String(item.id), product];
   }));
 
-  container.querySelectorAll("[data-add-to-cart]").forEach((button) => {
-    button.addEventListener("click", (event) => {
+  // Hover image cycling
+  container.querySelectorAll("[data-product-hover-gallery]").forEach((gallery) => {
+    const imageElement = gallery.querySelector(".product-image");
+    try {
+      const images = JSON.parse(gallery.dataset.images);
+      let currentIndex = 0;
+      
+      gallery.addEventListener("mouseenter", () => {
+        const cycleInterval = setInterval(() => {
+          if (!gallery.matches(":hover")) {
+            clearInterval(cycleInterval);
+            return;
+          }
+          currentIndex = (currentIndex + 1) % images.length;
+          imageElement.style.opacity = "0.7";
+          setTimeout(() => {
+            imageElement.src = images[currentIndex];
+            imageElement.style.opacity = "1";
+          }, 150);
+        }, 800);
+        
+        gallery._cycleInterval = cycleInterval;
+      });
+      
+      gallery.addEventListener("mouseleave", () => {
+        if (gallery._cycleInterval) clearInterval(gallery._cycleInterval);
+        currentIndex = 0;
+        imageElement.src = images[0];
+      });
+    } catch (e) {
+      console.warn("Could not parse images", e);
+    }
+  });
+
+  // Click to open product detail
+  container.querySelectorAll("[data-product-card]").forEach((card) => {
+    card.addEventListener("click", (event) => {
+      if (event.target.closest("[data-wishlist-toggle]")) return;
       event.preventDefault();
       event.stopPropagation();
-      const product = lookup.get(button.dataset.productId);
-      if (!product) return;
-      const defaultSize = product.sizes?.[0] || "M";
-      try {
-        addCartItem(product, { size: defaultSize });
-        showToast(`${product.name} (${defaultSize}) added to cart.`);
-        button.textContent = "Added ✓";
-        window.setTimeout(() => { button.textContent = "Add to Cart"; }, 1200);
-      } catch (err) {
-        showToast(err.message, "error");
-      }
+      const productId = card.dataset.productId;
+      const product = lookup.get(productId);
+      if (product) openProductDetail(product);
     });
   });
 
@@ -166,16 +183,118 @@ export function bindProductCardActions(container, products) {
     });
   });
 
-  container.querySelectorAll("[data-quick-view]").forEach((button) => {
-    button.addEventListener("click", (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      const product = lookup.get(button.dataset.productId);
-      if (product) openQuickView(product);
+  observeReveals(container);
+}
+
+// Product detail modal
+function openProductDetail(product) {
+  const modal = document.createElement("div");
+  modal.className = "product-detail-modal";
+  modal.innerHTML = `
+    <div class="product-detail-backdrop"></div>
+    <div class="product-detail-content">
+      <button class="product-detail-close" type="button" aria-label="Close">✕</button>
+      <div class="product-detail-gallery">
+        <div class="product-detail-main-image">
+          <img src="${resolveAssetUrl(product.image)}" alt="${escapeHtml(product.name)}" id="detail-main-image">
+        </div>
+        <div class="product-detail-thumbnails">
+          ${(product.images || [product.image]).map((img, i) => `
+            <button class="detail-thumbnail ${i === 0 ? 'is-active' : ''}" data-image="${escapeHtml(img)}" style="background-image: url('${resolveAssetUrl(img)}')"></button>
+          `).join('')}
+        </div>
+      </div>
+      <div class="product-detail-info">
+        <span class="detail-type">${escapeHtml(product.subcategory?.replace(/-/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') || 'T-Shirt')}</span>
+        <h2 class="detail-name">${escapeHtml(product.name)}</h2>
+        <strong class="detail-price">${formatCurrency(product.price)}</strong>
+        <div class="detail-tabs">
+          <button class="detail-tab is-active" data-tab="description">Description</button>
+          <button class="detail-tab" data-tab="details">Details</button>
+        </div>
+        <div class="detail-tab-content">
+          <div class="detail-description" data-tab-panel="description">
+            <p>${escapeHtml(product.description)}</p>
+          </div>
+          <div class="detail-details" data-tab-panel="details" hidden>
+            <dl>
+              <dt>Material:</dt><dd>${escapeHtml(product.material || 'N/A')}</dd>
+              <dt>Weight:</dt><dd>${escapeHtml(product.weight || 'N/A')}</dd>
+              <dt>Fit:</dt><dd>${escapeHtml(product.fit || 'N/A')}</dd>
+              <dt>Care:</dt><dd>${escapeHtml(product.care || 'N/A')}</dd>
+              <dt>Origin:</dt><dd>${escapeHtml(product.origin || 'N/A')}</dd>
+            </dl>
+          </div>
+        </div>
+        <div class="detail-sizes">
+          <label>Size:</label>
+          <div class="size-options">
+            ${(product.sizes || ['M']).map(size => `
+              <button class="size-btn ${size === (product.sizes?.[0] || 'M') ? 'is-selected' : ''}" data-size="${escapeHtml(size)}">${escapeHtml(size)}</button>
+            `).join('')}
+          </div>
+        </div>
+        <div class="detail-actions">
+          <button class="btn btn-primary detail-add-to-cart" data-product-id="${product.id}">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  // Tab switching
+  modal.querySelectorAll(".detail-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      const tabName = tab.dataset.tab;
+      modal.querySelectorAll(".detail-tab").forEach(t => t.classList.remove("is-active"));
+      modal.querySelectorAll("[data-tab-panel]").forEach(p => p.hidden = true);
+      tab.classList.add("is-active");
+      modal.querySelector(`[data-tab-panel="${tabName}"]`).hidden = false;
     });
   });
 
-  observeReveals(container);
+  // Image gallery
+  modal.querySelectorAll(".detail-thumbnail").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const img = btn.dataset.image;
+      modal.querySelector("#detail-main-image").src = resolveAssetUrl(img);
+      modal.querySelectorAll(".detail-thumbnail").forEach(b => b.classList.remove("is-active"));
+      btn.classList.add("is-active");
+    });
+  });
+
+  // Size selection
+  let selectedSize = product.sizes?.[0] || 'M';
+  modal.querySelectorAll(".size-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      modal.querySelectorAll(".size-btn").forEach(b => b.classList.remove("is-selected"));
+      btn.classList.add("is-selected");
+      selectedSize = btn.dataset.size;
+    });
+  });
+
+  // Add to cart
+  modal.querySelector(".detail-add-to-cart").addEventListener("click", () => {
+    try {
+      addCartItem(product, { size: selectedSize });
+      showToast(`${product.name} (${selectedSize}) added to cart.`);
+      modal.remove();
+    } catch (err) {
+      showToast(err.message, "error");
+    }
+  });
+
+  // Close modal
+  const closeBtn = modal.querySelector(".product-detail-close");
+  const backdrop = modal.querySelector(".product-detail-backdrop");
+  
+  const closeModal = () => modal.remove();
+  closeBtn.addEventListener("click", closeModal);
+  backdrop.addEventListener("click", closeModal);
+  
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeModal();
+  });
 }
 
 /* ───────── Wishlist (localStorage) ───────── */

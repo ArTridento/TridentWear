@@ -3,17 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Shop all premium T-shirts at TridentWear. Browse crew neck, oversized, polo, graphic tees and more — made in India."
-    />
+    <meta name="description" content="Shop all premium T-shirts at TridentWear. Browse crew neck, oversized, polo, graphic tees and more — made in India."/>
     <title>Shop All | TridentWear</title>
     <link rel="stylesheet" href="./css/styles.css?v=20260417-1" />
     <link rel="icon" type="image/png" href="./images/Logo.png" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
   </head>
   <body data-page="products">
 
@@ -22,17 +16,11 @@
       <div class="container header-inner">
         <a class="brand" href="index.html">
           <img src="./images/Logo.png" alt="TridentWear Logo" class="brand-logo" />
-          <span class="brand-name"
-            ><span class="brand-trident">Trident</span
-            ><span class="brand-wear">Wear</span></span
-          >
+          <span class="brand-name">
+            <span class="brand-trident">Trident</span>
+            <span class="brand-wear">Wear</span></span>
         </a>
-        <button
-          class="mobile-toggle"
-          type="button"
-          data-mobile-toggle
-          aria-label="Open navigation"
-        >
+        <button class="mobile-toggle" type="button" data-mobile-toggle aria-label="Open navigation">
           <span class="mobile-toggle-line"></span>
           <span class="mobile-toggle-line"></span>
           <span class="mobile-toggle-line"></span>
@@ -42,62 +30,22 @@
           <a class="nav-link is-active" href="products.html" data-nav-link="products">Products</a>
           <a class="nav-link" href="about.html" data-nav-link="about">About</a>
           <a class="nav-link" href="contact.html" data-nav-link="contact">Contact</a>
-          <a
-            class="nav-link"
-            href="admin.html"
-            data-nav-link="admin"
-            data-admin-link
-            hidden
-            >Admin</a
-          >
+          <a class="nav-link" href="admin.html" data-nav-link="admin" data-admin-link hidden>Admin</a>
         </nav>
         <div class="search-wrapper" data-search-wrapper>
-          <svg
-            class="search-icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
-          <input
-            class="search-input"
-            type="text"
-            placeholder="Search products..."
-            data-search-input
-          />
+          <input class="search-input" type="text" placeholder="Search products..." data-search-input/>
           <div class="search-results" data-search-results hidden></div>
         </div>
         <div class="header-tools">
-          <a
-            class="utility-pill"
-            href="login.html"
-            data-login-link
-            title="Login"
-            ><i class="fa-sharp-duotone fa-solid fa-arrow-right-to-bracket"></i
-          ></a>
-          <a
-            class="utility-pill"
-            href="register.html"
-            data-register-link
-            title="Register"
-            ><i class="fa-solid fa-user-plus"></i
-          ></a>
-          <a class="utility-pill" href="cart.html" title="Cart"
-            ><i class="fa-sharp fa-solid fa-cart-shopping"></i>
-            <span class="cart-badge" data-cart-count>0</span></a
-          >
-          <button
-            class="utility-pill"
-            type="button"
-            data-logout-button
-            title="Logout"
-            hidden
-          >
+          <a class="utility-pill" href="login.html" data-login-link title="Login"><i class="fa-sharp-duotone fa-solid fa-arrow-right-to-bracket"></i></a>
+          <a class="utility-pill" href="register.html" data-register-link title="Register"><i class="fa-solid fa-user-plus"></i ></a>
+          <a class="utility-pill" href="cart.html" title="Cart"><i class="fa-sharp fa-solid fa-cart-shopping"></i>
+            <span class="cart-badge" data-cart-count>0</span></a>
+          <button class="utility-pill" type="button" data-logout-button title="Logout" hidden>
             <i class="fa-sharp-duotone fa-solid fa-arrow-left-from-bracket"></i>
           </button>
         </div>
@@ -116,9 +64,7 @@
             </nav>
             <span class="eyebrow">Collections</span>
             <h1 class="page-title" data-active-category-label-h1">All T-Shirts</h1>
-            <p class="page-copy">
-              Premium heavyweight cotton tees made in India — <span data-product-count>0</span> styles available.
-            </p>
+            <p class="page-copy"> Premium heavyweight cotton tees made in India — <span data-product-count>0</span> styles available.</p>
           </div>
         </div>
       </section>
@@ -126,10 +72,7 @@
       <!-- ─── CATEGORY FILTER BAR ─── -->
       <section style="padding: 0.75rem 0; border-bottom: 1px solid #e9ecef; position: sticky; top: 3.6rem; z-index: 30; background: var(--white);">
         <div class="container">
-          <div
-            data-category-scroll
-            style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.35rem; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;"
-          >
+          <div data-category-scroll style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.35rem; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;">
             <button class="filter-chip is-active" type="button" data-category="all">All</button>
             <button class="filter-chip" type="button" data-category="crew-neck">Crew Neck</button>
             <button class="filter-chip" type="button" data-category="polo">Polo</button>
@@ -173,40 +116,22 @@
       <div class="container footer-main">
         <div class="footer-brand-col">
           <div class="brand">
-            <span class="brand-name"
-              ><span class="brand-trident">Trident</span
-              ><span class="brand-wear">Wear</span></span
-            >
-            <span class="brand-tagline">T-Shirt Collections</span>
+            <span class="brand-name"><span class="brand-trident">Trident</span>
+            <span class="brand-wear">Wear</span></span>
           </div>
-          <p class="footer-note">
-            Premium men's clothing built for India's everyday uniform. Heritage
-            quality, modern fit.
-          </p>
+          <p class="footer-note">Premium men's clothing built for India's everyday uniform. Heritage quality, modern fit.</p>
           <div class="footer-trust-badges">
-            <span class="footer-badge"
-              ><i class="fa-solid fa-indian-rupee-sign"></i> COD Available</span
-            >
-            <span class="footer-badge"
-              ><i class="fa-solid fa-rotate-left"></i> 30-Day Returns</span
-            >
+            <span class="footer-badge"><i class="fa-solid fa-indian-rupee-sign"></i> COD Available</span>
+            <span class="footer-badge"><i class="fa-solid fa-rotate-left"></i> 30-Day Returns</span>
           </div>
         </div>
         <div class="footer-col">
           <h3 class="footer-title">Need Help</h3>
           <div class="footer-links">
-            <a href="contact.html"
-              ><i class="fa-regular fa-envelope footer-link-icon"></i>Contact Us</a
-            >
-            <a href="track.html"
-              ><i class="fa-solid fa-location-dot footer-link-icon"></i>Track Order</a
-            >
-            <a href="returns.html"
-              ><i class="fa-solid fa-rotate-left footer-link-icon"></i>Returns &amp; Refunds</a
-            >
-            <a href="contact.html"
-              ><i class="fa-regular fa-circle-question footer-link-icon"></i>FAQs</a
-            >
+            <a href="contact.html"><i class="fa-regular fa-envelope footer-link-icon"></i>Contact Us</a>
+            <a href="track.html"><i class="fa-solid fa-location-dot footer-link-icon"></i>Track Order</a>
+            <a href="returns.html"><i class="fa-solid fa-rotate-left footer-link-icon"></i>Returns &amp; Refunds</a>
+            <a href="contact.html"><i class="fa-regular fa-circle-question footer-link-icon"></i>FAQs</a>
           </div>
         </div>
         <div class="footer-col">
@@ -230,27 +155,13 @@
         <div class="footer-col">
           <h3 class="footer-title">Contact Us</h3>
           <div class="footer-links">
-            <a href="mailto:hello@tridentwear.com"
-              ><i class="fa-regular fa-envelope footer-link-icon"></i
-              >hello@tridentwear.com</a
-            >
-            <a href="tel:+919876543210"
-              ><i class="fa-solid fa-phone footer-link-icon"></i>+91 98765 43210</a
-            >
-            <a
-              href="https://wa.me/919876543210"
-              target="_blank"
-              rel="noreferrer"
-              ><i class="fa-brands fa-whatsapp footer-link-icon"></i>WhatsApp</a
-            >
+            <a href="mailto:hello@tridentwear.com"><i class="fa-regular fa-envelope footer-link-icon"></i>hello@tridentwear.com</a>
+            <a href="tel:+919876543210"><i class="fa-solid fa-phone footer-link-icon"></i>+91 98765 43210</a>
+            <a href="https://wa.me/919876543210" target="_blank" rel="noreferrer"><i class="fa-brands fa-whatsapp footer-link-icon"></i>WhatsApp</a>
           </div>
           <div class="footer-app-badges">
-            <a class="footer-app-btn" href="#"
-              ><i class="fa-brands fa-google-play"></i> Google Play</a
-            >
-            <a class="footer-app-btn" href="#"
-              ><i class="fa-brands fa-apple"></i> App Store</a
-            >
+            <a class="footer-app-btn" href="#"><i class="fa-brands fa-google-play"></i> Google Play</a>
+            <a class="footer-app-btn" href="#"><i class="fa-brands fa-apple"></i> App Store</a>
           </div>
         </div>
       </div>
@@ -259,56 +170,20 @@
           <div class="footer-payment">
             <span class="footer-payment-label">100% Secure Payment:</span>
             <div class="footer-payment-icons">
-              <span class="payment-pill"
-                ><i class="fa-brands fa-google-pay"></i> GPay</span
-              >
-              <span class="payment-pill"
-                ><i class="fa-brands fa-cc-mastercard"></i> Mastercard</span
-              >
-              <span class="payment-pill"
-                ><i class="fa-brands fa-cc-visa"></i> Visa</span
-              >
-              <span class="payment-pill"
-                ><i class="fa-solid fa-money-bill-wave"></i> COD</span
-              >
+              <span class="payment-pill"><i class="fa-brands fa-google-pay"></i> GPay</span>
+              <span class="payment-pill"><i class="fa-brands fa-cc-mastercard"></i> Mastercard</span>
+              <span class="payment-pill"><i class="fa-brands fa-cc-visa"></i> Visa</span>
+              <span class="payment-pill"><i class="fa-solid fa-money-bill-wave"></i> COD</span>
               <span class="payment-pill">UPI</span>
             </div>
           </div>
           <div class="footer-social-wrap">
             <span class="footer-payment-label">Follow Us:</span>
             <div class="footer-socials">
-              <a
-                class="footer-social-link"
-                href="https://www.instagram.com/trident_wear/"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Instagram"
-                ><i class="fa-brands fa-instagram"></i
-              ></a>
-              <a
-                class="footer-social-link"
-                href="https://wa.me/919876543210"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="WhatsApp"
-                ><i class="fa-brands fa-whatsapp"></i
-              ></a>
-              <a
-                class="footer-social-link"
-                href="https://www.youtube.com/@TridentWear"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="YouTube"
-                ><i class="fa-brands fa-youtube"></i
-              ></a>
-              <a
-                class="footer-social-link"
-                href="https://in.pinterest.com/artridento/"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Pinterest"
-                ><i class="fa-brands fa-pinterest"></i
-              ></a>
+              <a class="footer-social-link" href="https://www.instagram.com/trident_wear/" target="_blank" rel="noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+              <a class="footer-social-link" href="https://wa.me/919876543210" target="_blank" rel="noreferrer" aria-label="WhatsApp" ><i class="fa-brands fa-whatsapp"></i></a>
+              <a class="footer-social-link" href="https://www.youtube.com/@TridentWear" target="_blank" rel="noreferrer" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+              <a class="footer-social-link" href="https://in.pinterest.com/artridento/" target="_blank" rel="noreferrer" aria-label="Pinterest"><i class="fa-brands fa-pinterest"></i></a>
             </div>
           </div>
         </div>
@@ -325,20 +200,8 @@
       </div>
     </footer>
 
-    <button
-      class="back-to-top"
-      type="button"
-      data-back-to-top
-      aria-label="Back to top"
-    >
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
+    <button class="back-to-top" type="button" data-back-to-top aria-label="Back to top">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" >
         <polyline points="18 15 12 9 6 15" />
       </svg>
     </button>
