@@ -610,9 +610,6 @@ export async function initSite() {
   initBackToTop();
   setCartCount(getCartCount(loadCart()));
   window.addEventListener("trident:cart-change", (event) => { setCartCount(event.detail.count); });
-  
-  // Initialize Global Chat Widget
-  import("./chat.js").then(m => m.initChatWidget());
   syncCart();
   observeReveals();
 }
