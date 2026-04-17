@@ -171,30 +171,3 @@ document.addEventListener("DOMContentLoaded", async () => {
   await initSite();
   await loadAndRender();
 });
-  const grid = document.querySelector("[data-products-grid]");
-  if (!grid) return;
-
-  grid.innerHTML = createSkeletonCards(12);
-  startProgress();
-
-  try {
-    const data   = await getWithFallback(["/api/products"]);
-    allProducts  = (Array.isArray(data) ? data : data.products || []).map(normalizeProduct);
-    renderProducts();
-  } catch (err) {
-    grid.innerHTML = createEmptyMarkup("Failed to load products", err.message);
-  } finally {
-    endProgress();
-  }
-}
-
-/* ───────────────────────────────────────────
-   BOOT
-─────────────────────────────────────────── */
-window.addEventListener("DOMContentLoaded", async () => {
-  readURLParams();
-  await initSite();
-  initFilters();
-  initControls();
-  loadProducts();
-});
