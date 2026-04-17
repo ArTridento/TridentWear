@@ -271,6 +271,25 @@ function setActiveNav() {
   document.querySelectorAll("[data-nav-link]").forEach((link) => {
     link.classList.toggle("is-active", link.dataset.navLink === currentPage);
   });
+  
+  /* Set active bottom nav item */
+  const navMap = {
+    home: "home",
+    products: "shop",
+    product: "shop",
+    cart: "cart",
+    wishlist: "wishlist",
+    about: "home",
+    contact: "home",
+  };
+  
+  const bottomNav = document.querySelector(".bottom-nav");
+  if (bottomNav) {
+    const page = navMap[currentPage] || currentPage;
+    bottomNav.querySelectorAll("[data-nav]").forEach((item) => {
+      item.classList.toggle("is-active", item.dataset.nav === page);
+    });
+  }
 }
 
 function setCartCount(count) {
