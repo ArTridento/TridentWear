@@ -151,7 +151,7 @@ function initCategoryTabs() {
 async function loadAndRender() {
   try {
     startProgress();
-    allProducts = await getWithFallback(["/api/products", "products.html?format=json"]);
+    allProducts = await getWithFallback(["/db/products.json", "/api/products"]);
     if (!Array.isArray(allProducts)) allProducts = allProducts.products || [];
     
     if (allProducts.length) {
