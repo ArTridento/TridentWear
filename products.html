@@ -1,299 +1,369 @@
-﻿<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Shop all premium T-shirts and apparel at TridentWear. Discover our latest collections of high-quality clothing.">
-    <meta name="keywords" content="t-shirts, apparel, clothing, fashion, streetwear">
-    <meta name="author" content="TridentWear">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Shop all premium T-shirts at TridentWear. Browse crew neck, oversized, polo, graphic tees and more — made in India."
+    />
     <title>Shop All | TridentWear</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <!-- Announcement Bar -->
-    <div class="announcement-bar">
-        <p>🔥 NEW DROP - Check out our latest collection!</p>
-    </div>
+    <link rel="stylesheet" href="./css/styles.css?v=20260417-1" />
+    <link rel="icon" type="image/png" href="./images/Logo.png" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+  </head>
+  <body data-page="products">
 
-    <!-- Header/Navigation -->
-    <header class="header">
-        <div class="header-top">
-            <div class="logo-section">
-                <h1 class="logo"><i class="fas fa-trident"></i> TridentWear</h1>
-            </div>
-            
-            <nav class="main-nav">
-                <ul class="nav-menu">
-                    <li><a href="index.html">Home</a></li>
-                    <li class="dropdown">
-                        <a href="products.html">Shop <i class="fas fa-chevron-down"></i></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="products.html?category=t-shirts">T-Shirts</a></li>
-                            <li><a href="products.html?category=oversized">Oversized</a></li>
-                            <li><a href="products.html?category=hoodies">Hoodies</a></li>
-                            <li><a href="products.html?category=shirts">Shirts</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="about.html">About</a></li>
-                    <li><a href="contact.html">Contact</a></li>
-                </ul>
-            </nav>
-
-            <div class="search-bar">
-                <input type="text" placeholder="Search products..." id="search-input">
-                <button class="search-btn"><i class="fas fa-search"></i></button>
-            </div>
-
-            <div class="utility-buttons">
-                <button class="utility-btn wishlist-btn" title="Wishlist">
-                    <i class="far fa-heart"></i>
-                    <span class="badge">0</span>
-                </button>
-                <button class="utility-btn login-btn" title="Login">
-                    <i class="fas fa-sign-in-alt"></i>
-                </button>
-                <button class="utility-btn register-btn" title="Register">
-                    <i class="fas fa-user-plus"></i>
-                </button>
-                <button class="utility-btn cart-btn" title="Shopping Cart">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span class="badge">0</span>
-                </button>
-                <button class="utility-btn logout-btn hidden" title="Logout">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
-            </div>
+    <!-- ─── HEADER ─── -->
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="index.html">
+          <img src="./images/Logo.png" alt="TridentWear Logo" class="brand-logo" />
+          <span class="brand-name"
+            ><span class="brand-trident">Trident</span
+            ><span class="brand-wear">Wear</span></span
+          >
+          <span class="brand-tagline">T-Shirt Collections</span>
+        </a>
+        <button
+          class="mobile-toggle"
+          type="button"
+          data-mobile-toggle
+          aria-label="Open navigation"
+        >
+          <span class="mobile-toggle-line"></span>
+          <span class="mobile-toggle-line"></span>
+          <span class="mobile-toggle-line"></span>
+        </button>
+        <nav class="site-nav" data-mobile-nav>
+          <a class="nav-link" href="index.html" data-nav-link="home">Home</a>
+          <a class="nav-link is-active" href="products.html" data-nav-link="products">Products</a>
+          <a class="nav-link" href="about.html" data-nav-link="about">About</a>
+          <a class="nav-link" href="contact.html" data-nav-link="contact">Contact</a>
+          <a
+            class="nav-link"
+            href="admin.html"
+            data-nav-link="admin"
+            data-admin-link
+            hidden
+            >Admin</a
+          >
+        </nav>
+        <div class="search-wrapper" data-search-wrapper>
+          <svg
+            class="search-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            class="search-input"
+            type="text"
+            placeholder="Search products..."
+            data-search-input
+          />
+          <div class="search-results" data-search-results hidden></div>
         </div>
+        <div class="header-tools">
+          <a
+            class="utility-pill"
+            href="login.html"
+            data-login-link
+            title="Login"
+            ><i class="fa-sharp-duotone fa-solid fa-arrow-right-to-bracket"></i
+          ></a>
+          <a
+            class="utility-pill"
+            href="register.html"
+            data-register-link
+            title="Register"
+            ><i class="fa-solid fa-user-plus"></i
+          ></a>
+          <a class="utility-pill" href="cart.html" title="Cart"
+            ><i class="fa-sharp fa-solid fa-cart-shopping"></i>
+            <span class="cart-badge" data-cart-count>0</span></a
+          >
+          <button
+            class="utility-pill"
+            type="button"
+            data-logout-button
+            title="Logout"
+            hidden
+          >
+            <i class="fa-sharp-duotone fa-solid fa-arrow-left-from-bracket"></i>
+          </button>
+        </div>
+      </div>
     </header>
 
-    <!-- Shop Header Section -->
-    <section class="shop-header">
+    <main>
+      <!-- ─── PAGE HERO ─── -->
+      <section class="page-hero">
         <div class="container">
-            <!-- Breadcrumb -->
-            <div class="breadcrumb">
-                <a href="index.html">Home</a>
-                <span class="separator">/</span>
-                <span>All T-Shirts</span>
-            </div>
-
-            <!-- Section Title -->
-            <div class="shop-header-content">
-                <h2 class="shop-title">Premium T-Shirts</h2>
-                <p class="product-count">Showing <span id="product-count">0</span> products</p>
-            </div>
+          <div class="page-hero-panel">
+            <nav aria-label="Breadcrumb" style="margin-bottom: 0.5rem; font-size: 0.82rem; color: var(--gray);">
+              <a href="index.html" style="color: var(--gray);">Home</a>
+              <span style="margin: 0 0.4rem;">/</span>
+              <span data-active-category-label>All T-Shirts</span>
+            </nav>
+            <span class="eyebrow">Collections</span>
+            <h1 class="page-title" data-active-category-label-h1">All T-Shirts</h1>
+            <p class="page-copy">
+              Premium heavyweight cotton tees made in India — <span data-product-count>0</span> styles available.
+            </p>
+          </div>
         </div>
-    </section>
+      </section>
 
-    <!-- Category Menu Wrapper -->
-    <section class="category-menu-wrapper">
-        <div class="category-scroll-container">
-            <button class="category-item active" data-category="all">
-                <i class="fas fa-th"></i>
-                <span>All</span>
-            </button>
-            <button class="category-item" data-category="crew-neck">
-                <i class="fas fa-shirt"></i>
-                <span>Crew Neck</span>
-            </button>
-            <button class="category-item" data-category="polo">
-                <i class="fas fa-golf-ball"></i>
-                <span>Polo</span>
-            </button>
-            <button class="category-item" data-category="v-neck">
-                <i class="fas fa-cut"></i>
-                <span>V-Neck</span>
-            </button>
-            <button class="category-item" data-category="henley">
-                <i class="fas fa-layer-group"></i>
-                <span>Henley</span>
-            </button>
-            <button class="category-item" data-category="graphic">
-                <i class="fas fa-image"></i>
-                <span>Graphic</span>
-            </button>
-            <button class="category-item" data-category="plain">
-                <i class="fas fa-square"></i>
-                <span>Plain</span>
-            </button>
-            <button class="category-item" data-category="printed">
-                <i class="fas fa-print"></i>
-                <span>Printed</span>
-            </button>
-            <button class="category-item" data-category="typography">
-                <i class="fas fa-font"></i>
-                <span>Typography</span>
-            </button>
-            <button class="category-item" data-category="striped">
-                <i class="fas fa-bars"></i>
-                <span>Striped</span>
-            </button>
-            <button class="category-item" data-category="color-block">
-                <i class="fas fa-palette"></i>
-                <span>Color Block</span>
-            </button>
-            <button class="category-item" data-category="washed">
-                <i class="fas fa-droplet"></i>
-                <span>Washed</span>
-            </button>
-            <button class="category-item" data-category="tie-dye">
-                <i class="fas fa-swatchbook"></i>
-                <span>Tie-Dye</span>
-            </button>
-            <button class="category-item" data-category="full-sleeve">
-                <i class="fas fa-arrow-right"></i>
-                <span>Full Sleeve</span>
-            </button>
-            <button class="category-item" data-category="half-sleeve">
-                <i class="fas fa-tshirt"></i>
-                <span>Half Sleeve</span>
-            </button>
-            <button class="category-item" data-category="slim-fit">
-                <i class="fas fa-star"></i>
-                <span>Slim Fit</span>
-            </button>
-            <button class="category-item" data-category="regular-fit">
-                <i class="fas fa-expand"></i>
-                <span>Regular Fit</span>
-            </button>
-            <button class="category-item" data-category="oversized">
-                <i class="fas fa-arrows-alt"></i>
-                <span>Oversized</span>
-            </button>
-            <button class="category-item" data-category="gym-wear">
-                <i class="fas fa-dumbbell"></i>
-                <span>Gym Wear</span>
-            </button>
-            <button class="category-item" data-category="streetwear">
-                <i class="fas fa-city"></i>
-                <span>Streetwear</span>
-            </button>
-            <button class="category-item" data-category="new-arrivals">
-                <i class="fas fa-sparkles"></i>
-                <span>New Arrivals</span>
-            </button>
-        </div>
-    </section>
-
-    <!-- Main Content -->
-    <main class="main-content">
+      <!-- ─── CATEGORY FILTER BAR ─── -->
+      <section style="padding: 0.75rem 0; border-bottom: 1px solid #e9ecef; position: sticky; top: 3.6rem; z-index: 30; background: var(--white);">
         <div class="container">
-            <div class="product-grid" id="product-grid">
-                <!-- Products will be dynamically loaded here -->
-            </div>
+          <div
+            data-category-scroll
+            style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.35rem; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;"
+          >
+            <button class="filter-chip is-active" type="button" data-category="all">All</button>
+            <button class="filter-chip" type="button" data-category="crew-neck">Crew Neck</button>
+            <button class="filter-chip" type="button" data-category="polo">Polo</button>
+            <button class="filter-chip" type="button" data-category="v-neck">V-Neck</button>
+            <button class="filter-chip" type="button" data-category="henley">Henley</button>
+            <button class="filter-chip" type="button" data-category="graphic">Graphic</button>
+            <button class="filter-chip" type="button" data-category="plain">Plain</button>
+            <button class="filter-chip" type="button" data-category="printed">Printed</button>
+            <button class="filter-chip" type="button" data-category="typography">Typography</button>
+            <button class="filter-chip" type="button" data-category="striped">Striped</button>
+            <button class="filter-chip" type="button" data-category="color-block">Color Block</button>
+            <button class="filter-chip" type="button" data-category="washed">Washed</button>
+            <button class="filter-chip" type="button" data-category="tie-dye">Tie-Dye</button>
+            <button class="filter-chip" type="button" data-category="full-sleeve">Full Sleeve</button>
+            <button class="filter-chip" type="button" data-category="half-sleeve">Half Sleeve</button>
+            <button class="filter-chip" type="button" data-category="slim-fit">Slim Fit</button>
+            <button class="filter-chip" type="button" data-category="regular-fit">Regular Fit</button>
+            <button class="filter-chip" type="button" data-category="oversized-fit">Oversized</button>
+            <button class="filter-chip" type="button" data-category="gym-wear">Gym Wear</button>
+            <button class="filter-chip" type="button" data-category="streetwear">Streetwear</button>
+            <button class="filter-chip" type="button" data-category="new-arrivals">New Arrivals</button>
+          </div>
         </div>
+      </section>
+
+      <!-- ─── PRODUCT GRID ─── -->
+      <section class="section-tight">
+        <div class="container">
+          <div class="product-grid" data-products-grid></div>
+        </div>
+      </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4 class="footer-title">About TridentWear</h4>
-                <p>Premium quality apparel designed for the modern lifestyle. Discover comfort, style, and innovation.</p>
-            </div>
-
-            <div class="footer-section">
-                <h4 class="footer-title">Help & Support</h4>
-                <ul class="footer-links">
-                    <li><a href="#">FAQ</a></li>
-                    <li><a href="#">Shipping Info</a></li>
-                    <li><a href="#">Returns</a></li>
-                    <li><a href="#">Size Guide</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-section">
-                <h4 class="footer-title">Company</h4>
-                <ul class="footer-links">
-                    <li><a href="about.html">About Us</a></li>
-                    <li><a href="#">Careers</a></li>
-                    <li><a href="#">Press</a></li>
-                    <li><a href="#">Blog</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-section">
-                <h4 class="footer-title">More Info</h4>
-                <ul class="footer-links">
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Terms & Conditions</a></li>
-                    <li><a href="#">Cookies</a></li>
-                    <li><a href="#">Accessibility</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-section">
-                <h4 class="footer-title">Contact Info</h4>
-                <p><i class="fas fa-map-marker-alt"></i> 123 Fashion Street, Style City, SC 12345</p>
-                <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
-                <p><i class="fas fa-envelope"></i> support@tridentwear.com</p>
-            </div>
-
-            <div class="footer-section">
-                <h4 class="footer-title">Download App</h4>
-                <div class="app-badges">
-                    <a href="#" class="app-badge">
-                        <i class="fab fa-apple"></i> App Store
-                    </a>
-                    <a href="#" class="app-badge">
-                        <i class="fab fa-google-play"></i> Play Store
-                    </a>
-                </div>
-            </div>
-
-            <div class="footer-section">
-                <h4 class="footer-title">Payment Methods</h4>
-                <div class="payment-methods">
-                    <i class="fab fa-cc-visa"></i>
-                    <i class="fab fa-cc-mastercard"></i>
-                    <i class="fab fa-cc-paypal"></i>
-                    <i class="fab fa-cc-amex"></i>
-                </div>
-            </div>
-
-            <div class="footer-section">
-                <h4 class="footer-title">Follow Us</h4>
-                <div class="social-links">
-                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
-                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
-                </div>
-            </div>
+    <!-- ─── FOOTER ─── -->
+    <div class="footer-top-strip">
+      <div class="container">
+        <span>🇮🇳 Proudly Made in India — Wear the Pride</span>
+      </div>
+    </div>
+    <footer class="site-footer">
+      <div class="container footer-main">
+        <div class="footer-brand-col">
+          <div class="brand">
+            <span class="brand-name"
+              ><span class="brand-trident">Trident</span
+              ><span class="brand-wear">Wear</span></span
+            >
+            <span class="brand-tagline">T-Shirt Collections</span>
+          </div>
+          <p class="footer-note">
+            Premium men's clothing built for India's everyday uniform. Heritage
+            quality, modern fit.
+          </p>
+          <div class="footer-trust-badges">
+            <span class="footer-badge"
+              ><i class="fa-solid fa-indian-rupee-sign"></i> COD Available</span
+            >
+            <span class="footer-badge"
+              ><i class="fa-solid fa-rotate-left"></i> 30-Day Returns</span
+            >
+          </div>
         </div>
-
+        <div class="footer-col">
+          <h3 class="footer-title">Need Help</h3>
+          <div class="footer-links">
+            <a href="contact.html"
+              ><i class="fa-regular fa-envelope footer-link-icon"></i>Contact Us</a
+            >
+            <a href="track.html"
+              ><i class="fa-solid fa-location-dot footer-link-icon"></i>Track Order</a
+            >
+            <a href="returns.html"
+              ><i class="fa-solid fa-rotate-left footer-link-icon"></i>Returns &amp; Refunds</a
+            >
+            <a href="contact.html"
+              ><i class="fa-regular fa-circle-question footer-link-icon"></i>FAQs</a
+            >
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-title">Company</h3>
+          <div class="footer-links">
+            <a href="about.html">About Us</a>
+            <a href="products.html">Shop All</a>
+            <a href="wishlist.html">Wishlist</a>
+            <a href="contact.html">Careers</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-title">More Info</h3>
+          <div class="footer-links">
+            <a href="terms.html">T&amp;C</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="shipping.html">Shipping Policy</a>
+            <a href="returns.html">Returns Policy</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-title">Contact Us</h3>
+          <div class="footer-links">
+            <a href="mailto:hello@tridentwear.com"
+              ><i class="fa-regular fa-envelope footer-link-icon"></i
+              >hello@tridentwear.com</a
+            >
+            <a href="tel:+919876543210"
+              ><i class="fa-solid fa-phone footer-link-icon"></i>+91 98765 43210</a
+            >
+            <a
+              href="https://wa.me/919876543210"
+              target="_blank"
+              rel="noreferrer"
+              ><i class="fa-brands fa-whatsapp footer-link-icon"></i>WhatsApp</a
+            >
+          </div>
+          <div class="footer-app-badges">
+            <a class="footer-app-btn" href="#"
+              ><i class="fa-brands fa-google-play"></i> Google Play</a
+            >
+            <a class="footer-app-btn" href="#"
+              ><i class="fa-brands fa-apple"></i> App Store</a
+            >
+          </div>
+        </div>
+      </div>
+      <div class="footer-middle">
+        <div class="container footer-middle-inner">
+          <div class="footer-payment">
+            <span class="footer-payment-label">100% Secure Payment:</span>
+            <div class="footer-payment-icons">
+              <span class="payment-pill"
+                ><i class="fa-brands fa-google-pay"></i> GPay</span
+              >
+              <span class="payment-pill"
+                ><i class="fa-brands fa-cc-mastercard"></i> Mastercard</span
+              >
+              <span class="payment-pill"
+                ><i class="fa-brands fa-cc-visa"></i> Visa</span
+              >
+              <span class="payment-pill"
+                ><i class="fa-solid fa-money-bill-wave"></i> COD</span
+              >
+              <span class="payment-pill">UPI</span>
+            </div>
+          </div>
+          <div class="footer-social-wrap">
+            <span class="footer-payment-label">Follow Us:</span>
+            <div class="footer-socials">
+              <a
+                class="footer-social-link"
+                href="https://www.instagram.com/trident_wear/"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Instagram"
+                ><i class="fa-brands fa-instagram"></i
+              ></a>
+              <a
+                class="footer-social-link"
+                href="https://wa.me/919876543210"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="WhatsApp"
+                ><i class="fa-brands fa-whatsapp"></i
+              ></a>
+              <a
+                class="footer-social-link"
+                href="https://www.youtube.com/@TridentWear"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="YouTube"
+                ><i class="fa-brands fa-youtube"></i
+              ></a>
+              <a
+                class="footer-social-link"
+                href="https://in.pinterest.com/artridento/"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Pinterest"
+                ><i class="fa-brands fa-pinterest"></i
+              ></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container">
         <div class="footer-bottom">
-            <p>&copy; 2024 TridentWear. All rights reserved.</p>
+          <span class="footer-copy">&copy; 2026 TridentWear. All rights reserved.</span>
+          <div class="footer-bottom-links">
+            <a href="privacy.html">Privacy</a>
+            <a href="terms.html">Terms</a>
+            <a href="shipping.html">Shipping</a>
+          </div>
         </div>
+      </div>
     </footer>
 
-    <!-- Back to Top Button -->
-    <button class="back-to-top" id="back-to-top" title="Back to Top">
-        <i class="fas fa-arrow-up"></i>
+    <button
+      class="back-to-top"
+      type="button"
+      data-back-to-top
+      aria-label="Back to top"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="18 15 12 9 6 15" />
+      </svg>
     </button>
 
-    <!-- Bottom Navigation -->
+    <!-- ─── BOTTOM NAV (mobile) ─── -->
     <nav class="bottom-nav">
-        <a href="index.html" class="bottom-nav-item">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
-        </a>
-        <a href="products.html" class="bottom-nav-item active">
-            <i class="fas fa-shopping-bag"></i>
-            <span>Shop</span>
-        </a>
-        <a href="cart.html" class="bottom-nav-item">
-            <i class="fas fa-shopping-cart"></i>
-            <span>Cart</span>
-        </a>
-        <a href="wishlist.html" class="bottom-nav-item">
-            <i class="far fa-heart"></i>
-            <span>Wishlist</span>
-        </a>
+      <a href="index.html" class="bottom-nav-item" data-nav="home">
+        <span class="bottom-nav-icon"><i class="fa-solid fa-house"></i></span>
+        <span class="bottom-nav-label">Home</span>
+      </a>
+      <a href="products.html" class="bottom-nav-item is-active" data-nav="shop">
+        <span class="bottom-nav-icon"><i class="fa-solid fa-bag-shopping"></i></span>
+        <span class="bottom-nav-label">Shop</span>
+      </a>
+      <a href="cart.html" class="bottom-nav-item" data-nav="cart">
+        <span class="bottom-nav-icon"><i class="fa-solid fa-cart-shopping"></i></span>
+        <span class="bottom-nav-label">Cart</span>
+      </a>
+      <a href="wishlist.html" class="bottom-nav-item" data-nav="wishlist">
+        <span class="bottom-nav-icon"><i class="fa-solid fa-heart"></i></span>
+        <span class="bottom-nav-label">Wishlist</span>
+      </a>
     </nav>
 
-    <!-- Scripts -->
-    <script src="js/pages/products.js"></script>
-</body>
+    <script type="module" src="./js/pages/products.js"></script>
+  </body>
 </html>
