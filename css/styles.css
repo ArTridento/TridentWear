@@ -3192,7 +3192,211 @@ h1, h2, h3, h4, .hero-title, .page-title, .section-title, .detail-title,
 .shop-count { font-size: 0.82rem; color: var(--gray); }
 .shop-controls { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
 
-.sort-wrapper { display: flex; align-items: center; gap: 0.4rem; }
+/* ═══ CATEGORY MENU - HORIZONTAL SCROLLABLE ═══ */
+.category-menu-wrapper {
+  background: var(--white);
+  border-bottom: 1px solid #e9ecef;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+.category-menu-inner {
+  display: contents;
+}
+
+.category-scroll-container {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+.category-scroll-container::-webkit-scrollbar {
+  height: 3px;
+}
+
+.category-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.category-scroll-container::-webkit-scrollbar-thumb {
+  background: var(--gray);
+  border-radius: 3px;
+}
+
+.category-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.6rem 1rem;
+  background: transparent;
+  border: 1px solid #e9ecef;
+  border-radius: 999px;
+  color: var(--gray);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+
+.category-tab:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: rgba(98, 68, 197, 0.05);
+}
+
+.category-tab.is-active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+
+.category-tab i {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* ═══ PRODUCT GRID WITH SMOOTH TRANSITIONS ═══ */
+.product-grid {
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.product-grid.fade-out {
+  opacity: 0.5;
+  transform: scale(0.98);
+}
+
+/* ═══ RESPONSIVE CATEGORY MENU ═══ */
+@media (max-width: 767px) {
+  .category-menu-wrapper {
+    border-bottom: 1px solid #e9ecef;
+  }
+  
+  .category-scroll-container {
+    padding: 0.6rem 0.75rem;
+    gap: 0.4rem;
+  }
+  
+  .category-tab {
+    padding: 0.5rem 0.85rem;
+    font-size: 0.75rem;
+    gap: 0.25rem;
+  }
+  
+  .category-tab i {
+    font-size: 0.75rem;
+  }
+}
+
+
+.category-menu-wrapper {
+  background: var(--white);
+  border-bottom: 1px solid #e9ecef;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+.category-menu-inner {
+  display: contents;
+}
+
+.category-scroll-container {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+.category-scroll-container::-webkit-scrollbar {
+  height: 3px;
+}
+
+.category-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.category-scroll-container::-webkit-scrollbar-thumb {
+  background: var(--gray);
+  border-radius: 3px;
+}
+
+.category-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.6rem 1rem;
+  background: transparent;
+  border: 1px solid #e9ecef;
+  border-radius: 999px;
+  color: var(--gray);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+
+.category-tab:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: rgba(98, 68, 197, 0.05);
+}
+
+.category-tab.is-active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+
+.category-tab i {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* ═══ PRODUCT GRID WITH SMOOTH TRANSITIONS ═══ */
+.product-grid {
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.product-grid.fade-out {
+  opacity: 0.5;
+  transform: scale(0.98);
+}
+
+/* ═══ RESPONSIVE CATEGORY MENU ═══ */
+@media (max-width: 767px) {
+  .category-menu-wrapper {
+    border-bottom: 1px solid #e9ecef;
+  }
+  
+  .category-scroll-container {
+    padding: 0.6rem 0.75rem;
+    gap: 0.4rem;
+  }
+  
+  .category-tab {
+    padding: 0.5rem 0.85rem;
+    font-size: 0.75rem;
+    gap: 0.25rem;
+  }
+  
+  .category-tab i {
+    font-size: 0.75rem;
+  }
+}
+
+
 .sort-label { font-size: 0.82rem; color: var(--gray); white-space: nowrap; }
 .sort-select {
   padding: 0.5rem 0.75rem;
