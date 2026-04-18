@@ -5155,12 +5155,12 @@ iframe {
   position: relative;
   background: var(--white);
   border-radius: 1rem;
-  max-width: 480px;
+  max-width: 860px;
   width: 100%;
   max-height: 90vh;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 0;
   padding: 0;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
@@ -5208,13 +5208,15 @@ iframe {
   display: flex;
   flex-direction: column;
   gap: 0;
+  background: #f1f3f5;
+  border-radius: 1rem 0 0 1rem;
+  overflow: hidden;
 }
 
 .product-detail-main-image {
-  width: 100%;
-  aspect-ratio: 1 / 1;
+  flex: 1;
+  min-height: 0;
   background: #f1f3f5;
-  border-radius: 1rem 1rem 0 0;
   overflow: hidden;
 }
 
@@ -5229,16 +5231,16 @@ iframe {
   display: flex;
   gap: 0.5rem;
   padding: 0.65rem 1rem;
-  background: #f8f9fa;
-  border-bottom: 1px solid #e9ecef;
+  background: rgba(0,0,0,0.04);
   overflow-x: auto;
+  flex-shrink: 0;
 }
 
 .detail-thumbnail {
   flex-shrink: 0;
-  width: 54px;
-  height: 54px;
-  border: 2px solid transparent;
+  width: 52px;
+  height: 52px;
+  border: 2px solid rgba(255,255,255,0.6);
   border-radius: 0.4rem;
   background-size: cover;
   background-position: center;
@@ -5247,19 +5249,20 @@ iframe {
 }
 
 .detail-thumbnail:hover {
-  border-color: var(--primary);
+  border-color: var(--white);
 }
 
 .detail-thumbnail.is-active {
   border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(98, 68, 197, 0.2);
+  box-shadow: 0 0 0 2px rgba(98, 68, 197, 0.3);
 }
 
 .product-detail-info {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding: 1.25rem 1.25rem 1.5rem;
+  padding: 2rem 1.75rem 2rem;
+  overflow-y: auto;
 }
 
 .detail-type {
@@ -5403,11 +5406,16 @@ iframe {
 }
 
 /* Mobile responsive */
-@media (max-width: 540px) {
+@media (max-width: 640px) {
   .product-detail-content {
+    grid-template-columns: 1fr;
     max-width: 100%;
-    border-radius: 1rem 1rem 0 0;
     max-height: 92vh;
+    border-radius: 1rem 1rem 0 0;
+  }
+  .product-detail-gallery {
+    border-radius: 1rem 1rem 0 0;
+    max-height: 280px;
   }
   .product-detail-modal {
     align-items: flex-end;
