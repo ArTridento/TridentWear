@@ -192,8 +192,8 @@ function openProductDetail(product) {
   modal.className = "product-detail-modal";
   modal.innerHTML = `
     <div class="product-detail-backdrop"></div>
-    <button class="product-detail-close" type="button" aria-label="Close">✕</button>
     <div class="product-detail-content">
+      <button class="product-detail-close" type="button" aria-label="Close">✕</button>
       <div class="product-detail-gallery">
         <div class="product-detail-main-image">
           <img src="${resolveAssetUrl(product.image)}" alt="${escapeHtml(product.name)}" id="detail-main-image">
