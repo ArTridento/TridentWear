@@ -219,17 +219,35 @@ function openProductDetail(product) {
           <span class="detail-size-label">Please select a size.</span>
           <button class="detail-size-chart-btn" type="button" data-size-chart>SIZE CHART</button>
         </div>
+        <div class="detail-size-chart-panel" hidden>
+          <table class="size-chart-table">
+            <thead><tr><th>Size</th><th>Chest (in)</th><th>Length (in)</th></tr></thead>
+            <tbody>
+              <tr><td>XS</td><td>36</td><td>27</td></tr>
+              <tr><td>S</td><td>38</td><td>28</td></tr>
+              <tr><td>M</td><td>40</td><td>29</td></tr>
+              <tr><td>L</td><td>42</td><td>30</td></tr>
+              <tr><td>XL</td><td>44</td><td>31</td></tr>
+              <tr><td>XXL</td><td>46</td><td>32</td></tr>
+              <tr><td>XXXL</td><td>48</td><td>33</td></tr>
+            </tbody>
+          </table>
+        </div>
         <div class="size-options">
           ${(product.sizes || ['S','M','L','XL']).map((size, i) => `<button class="size-btn ${i === 0 ? 'is-selected' : ''}" data-size="${escapeHtml(size)}">${escapeHtml(size)}</button>`).join('')}
         </div>
         <div class="detail-qty-row">
-          <label class="detail-qty-label">Quantity</label>
-          <select class="detail-qty-select" id="detail-qty">${Array.from({length:10},(_,i)=>`<option value="${i+1}">${String(i+1).padStart(2,'0')}</option>`).join('')}</select>
+          <span class="detail-qty-label">Quantity</span>
+          <div class="detail-qty-counter">
+            <button class="qty-btn qty-minus" type="button" aria-label="Decrease">&minus;</button>
+            <span class="qty-value" id="detail-qty-val">0</span>
+            <button class="qty-btn qty-plus" type="button" aria-label="Increase">+</button>
+          </div>
         </div>
-        <div class="detail-cta-stack">
-          <button class="btn btn-primary detail-add-to-cart" data-product-id="${product.id}"><i class="fa-solid fa-cart-shopping"></i> ADD TO CART</button>
-          <button class="btn detail-wishlist-btn" type="button" data-product-id="${product.id}"><i class="fa-regular fa-heart"></i> ADD TO WISHLIST</button>
-          <button class="btn detail-buy-now" type="button" data-product-id="${product.id}">BUY NOW</button>
+        <div class="detail-cta-row">
+          <button class="detail-icon-btn detail-add-to-cart" type="button" data-product-id="${product.id}" title="Add to Cart" aria-label="Add to Cart"><i class="fa-solid fa-cart-shopping"></i></button>
+          <button class="detail-icon-btn detail-wishlist-btn" type="button" data-product-id="${product.id}" title="Add to Wishlist" aria-label="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
+          <button class="detail-icon-btn detail-buy-now" type="button" data-product-id="${product.id}" title="Buy Now" aria-label="Buy Now"><i class="fa-solid fa-bolt"></i></button>
         </div>
         <div class="detail-delivery">
           <strong class="detail-delivery-title">Delivery Details</strong>
@@ -265,6 +283,14 @@ function openProductDetail(product) {
               <p>${escapeHtml(product.description || 'No description available.')}</p>
             </div>
           </div>
+          <div class="detail-accordion">
+            <button class="detail-accordion-header" type="button" data-accordion>
+              <span>Artist's Details</span><i class="fa-solid fa-chevron-down detail-accordion-icon"></i>
+            </button>
+            <div class="detail-accordion-body" hidden>
+              <p>${escapeHtml(product.artist_details || 'Designed by the TridentWear in-house design team. Inspired by Indian heritage, culture, and street fashion.')}</p>
+            </div>
+          </div>
         </div>
         <a class="btn btn-outline detail-full-link" href="product.html?id=${product.id}">View Full Details <i class="fa-solid fa-arrow-right"></i></a>
       </div>
@@ -296,12 +322,19 @@ function openProductDetail(product) {
     });
   });
 
+  // Qty counter
+  let qty = 0;
+  const qtyValEl = modal.querySelector("#detail-qty-val");
+  modal.querySelector(".qty-plus").addEventListener("click", () => { qty++; qtyValEl.textContent = qty; });
+  modal.querySelector(".qty-minus").addEventListener("click", () => { if (qty > 0) qty--; qtyValEl.textContent = qty; });
+  const getQty = () => Math.max(1, qty);
+
   // Add to cart
   modal.querySelector(".detail-add-to-cart").addEventListener("click", () => {
     try {
-      const qty = Number(modal.querySelector("#detail-qty")?.value || 1);
-      for (let i = 0; i < qty; i++) addCartItem(product, { size: selectedSize });
-      showToast(`${product.name} (${selectedSize}) \xd7${qty} added to cart.`);
+      const q = getQty();
+      for (let i = 0; i < q; i++) addCartItem(product, { size: selectedSize });
+      showToast(`${product.name} (${selectedSize}) \xd7${q} added to cart.`);
       closeModal();
     } catch (err) { showToast(err.message, "error"); }
   });
@@ -309,8 +342,8 @@ function openProductDetail(product) {
   // Buy Now
   modal.querySelector(".detail-buy-now").addEventListener("click", () => {
     try {
-      const qty = Number(modal.querySelector("#detail-qty")?.value || 1);
-      for (let i = 0; i < qty; i++) addCartItem(product, { size: selectedSize });
+      const q = getQty();
+      for (let i = 0; i < q; i++) addCartItem(product, { size: selectedSize });
       closeModal();
       window.location.href = "checkout.html";
     } catch (err) { showToast(err.message, "error"); }
@@ -340,9 +373,12 @@ function openProductDetail(product) {
     result.hidden = false;
   });
 
-  // Size chart
-  modal.querySelector("[data-size-chart]")?.addEventListener("click", () => {
-    showToast("XS=38 | S=40 | M=42 | L=44 | XL=46 | XXL=48 cm (chest)");
+  // Size chart toggle (inline)
+  const sizeChartBtn = modal.querySelector("[data-size-chart]");
+  const sizeChartPanel = modal.querySelector(".detail-size-chart-panel");
+  sizeChartBtn?.addEventListener("click", () => {
+    sizeChartPanel.hidden = !sizeChartPanel.hidden;
+    sizeChartBtn.textContent = sizeChartPanel.hidden ? "SIZE CHART" : "HIDE CHART";
   });
 
   // Accordions
