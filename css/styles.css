@@ -5386,12 +5386,13 @@ iframe {
 }
 
 .size-btn {
-  padding: 0.5rem 1rem;
-  border: 2px solid #e9ecef;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.8rem;
+  border: 1.5px solid #e9ecef;
   background: var(--white);
   color: var(--dark);
   font-weight: 600;
-  border-radius: 0.4rem;
+  border-radius: 0.3rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -5439,9 +5440,9 @@ iframe {
   background: none;
   border: none;
   color: var(--primary);
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   cursor: pointer;
   text-decoration: underline;
   padding: 0;
