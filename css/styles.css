@@ -34,7 +34,7 @@
   --radius: 6px;
   --radius-sm: 4px;
   --radius-pill: 999px;
-  --shadow-sm: 0 1px 3px rgba(18,20,29,0.06);
+  --shadow-sm: 0 1px 3px #12141d0f;
   --shadow-md: 0 4px 12px rgba(18,20,29,0.08);
   --shadow-lg: 0 8px 24px rgba(18,20,29,0.1);
   --transition: 200ms ease;
@@ -5550,8 +5550,8 @@ iframe {
 .detail-wishlist-btn:hover { background: #fef2f2; border-color: #e11d48; color: #e11d48; }
 .detail-wishlist-btn.is-wishlisted { background: #fef2f2; border-color: #e11d48; color: #e11d48; }
 .detail-buy-now {
-  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-  color: var(--white);
+  background: #ffc448;
+  color: var(--dark);
 }
 .detail-buy-now:hover { opacity: 0.9; transform: translateY(-1px); }
 
