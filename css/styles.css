@@ -5180,24 +5180,28 @@ iframe {
 
 .product-detail-close {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  width: 2rem;
-  height: 2rem;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border: none;
-  background: #f1f3f5;
+  background: var(--white);
   border-radius: 50%;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  z-index: 1001;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: var(--dark);
 }
 
 .product-detail-close:hover {
-  background: #e9ecef;
+  background: #f1f3f5;
   transform: rotate(90deg);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 .product-detail-gallery {
