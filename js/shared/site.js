@@ -215,8 +215,23 @@ function openProductDetail(product) {
           <strong class="detail-price">${formatCurrency(product.price)}</strong>
           <span class="detail-price-note">Price incl. of all taxes</span>
         </div>
-        <div class="detail-size-header">
-          <span class="detail-size-label">Please select a size.</span>
+        <div class="detail-selection-row" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+          <div class="detail-qty-row" style="display: flex; align-items: center; gap: 0.75rem;">
+            <span class="detail-qty-label" style="font-size: 0.85rem;">Quantity</span>
+            <div class="detail-qty-counter">
+              <button class="qty-btn qty-minus" type="button" aria-label="Decrease">&minus;</button>
+              <span class="qty-value" id="detail-qty-val">0</span>
+              <button class="qty-btn qty-plus" type="button" aria-label="Increase">+</button>
+            </div>
+          </div>
+          <div class="detail-size-row" style="display: flex; align-items: center; gap: 0.75rem; flex: 1; justify-content: flex-end;">
+            <span class="detail-size-label" style="font-size: 0.85rem;">Size</span>
+            <div class="size-options">
+              ${(product.sizes || ['S','M','L','XL']).map((size, i) => `<button class="size-btn ${i === 0 ? 'is-selected' : ''}" data-size="${escapeHtml(size)}">${escapeHtml(size)}</button>`).join('')}
+            </div>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end;">
           <button class="detail-size-chart-btn" type="button" data-size-chart>SIZE CHART</button>
         </div>
         <div class="detail-size-chart-panel" hidden>
@@ -232,17 +247,6 @@ function openProductDetail(product) {
               <tr><td>XXXL</td><td>48</td><td>33</td></tr>
             </tbody>
           </table>
-        </div>
-        <div class="size-options">
-          ${(product.sizes || ['S','M','L','XL']).map((size, i) => `<button class="size-btn ${i === 0 ? 'is-selected' : ''}" data-size="${escapeHtml(size)}">${escapeHtml(size)}</button>`).join('')}
-        </div>
-        <div class="detail-qty-row">
-          <span class="detail-qty-label">Quantity</span>
-          <div class="detail-qty-counter">
-            <button class="qty-btn qty-minus" type="button" aria-label="Decrease">&minus;</button>
-            <span class="qty-value" id="detail-qty-val">0</span>
-            <button class="qty-btn qty-plus" type="button" aria-label="Increase">+</button>
-          </div>
         </div>
         <div class="detail-cta-row">
           <button class="detail-icon-btn detail-add-to-cart" type="button" data-product-id="${product.id}" title="Add to Cart" aria-label="Add to Cart"><i class="fa-solid fa-cart-shopping"></i></button>
