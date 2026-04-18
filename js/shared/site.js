@@ -226,7 +226,7 @@ function openProductDetail(product) {
           </div>
           <div class="detail-size-row" style="display: flex; align-items: center; gap: 0.75rem; flex: 1; justify-content: flex-end;">
             <div class="size-options">
-              ${(product.sizes || ['S','M','L','XL']).filter(s => s !== 'XXL' && s !== 'XXXL').map((size, i) => `<button class="size-btn ${i === 0 ? 'is-selected' : ''}" data-size="${escapeHtml(size)}">${escapeHtml(size)}</button>`).join('')}
+              ${['S','M','L','XL'].map((size, i) => `<button class="size-btn ${i === 0 ? 'is-selected' : ''}" data-size="${escapeHtml(size)}">${escapeHtml(size)}</button>`).join('')}
             </div>
           </div>
         </div>
