@@ -190,80 +190,103 @@ export function bindProductCardActions(container, products) {
 function openProductDetail(product) {
   const modal = document.createElement("div");
   modal.className = "product-detail-modal";
+  const images = [product.image, ...(product.images || [])].filter((v, i, a) => v && a.indexOf(v) === i);
+  const typeLabel = (product.subcategory || '').replace(/-/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') || 'T-Shirt';
+
   modal.innerHTML = `
     <div class="product-detail-backdrop"></div>
     <div class="product-detail-content">
-      <button class="product-detail-close" type="button" aria-label="Close">✕</button>
+      <button class="product-detail-close" type="button" aria-label="Close">&#x2715;</button>
+
       <div class="product-detail-gallery">
         <div class="product-detail-main-image">
           <img src="${resolveAssetUrl(product.image)}" alt="${escapeHtml(product.name)}" id="detail-main-image">
         </div>
-        <div class="product-detail-thumbnails">
-          ${(product.images || [product.image]).map((img, i) => `
-            <button class="detail-thumbnail ${i === 0 ? 'is-active' : ''}" data-image="${escapeHtml(img)}" style="background-image: url('${resolveAssetUrl(img)}')"></button>
-          `).join('')}
-        </div>
+        ${images.length > 1 ? `<div class="product-detail-thumbnails">${images.map((img, i) => `<button class="detail-thumbnail ${i === 0 ? 'is-active' : ''}" data-image="${escapeHtml(img)}" style="background-image:url('${resolveAssetUrl(img)}')"></button>`).join('')}</div>` : ''}
       </div>
+
       <div class="product-detail-info">
-        <span class="detail-type">${escapeHtml(product.subcategory?.replace(/-/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') || 'T-Shirt')}</span>
-        <h2 class="detail-name">${escapeHtml(product.name)}</h2>
-        <strong class="detail-price">${formatCurrency(product.price)}</strong>
-        <div class="detail-tabs">
-          <button class="detail-tab is-active" data-tab="description">Description</button>
-          <button class="detail-tab" data-tab="details">Details</button>
+        <div class="detail-header">
+          <h2 class="detail-name">${escapeHtml(product.name)}</h2>
+          <span class="detail-type">${escapeHtml(typeLabel)}</span>
         </div>
-        <div class="detail-tab-content">
-          <div class="detail-description" data-tab-panel="description">
-            <p>${escapeHtml(product.description)}</p>
+        <hr class="detail-divider">
+        <div class="detail-price-block">
+          <strong class="detail-price">${formatCurrency(product.price)}</strong>
+          <span class="detail-price-note">Price incl. of all taxes</span>
+        </div>
+        <div class="detail-size-header">
+          <span class="detail-size-label">Please select a size.</span>
+          <button class="detail-size-chart-btn" type="button" data-size-chart>SIZE CHART</button>
+        </div>
+        <div class="size-options">
+          ${(product.sizes || ['S','M','L','XL']).map((size, i) => `<button class="size-btn ${i === 0 ? 'is-selected' : ''}" data-size="${escapeHtml(size)}">${escapeHtml(size)}</button>`).join('')}
+        </div>
+        <div class="detail-qty-row">
+          <label class="detail-qty-label">Quantity</label>
+          <select class="detail-qty-select" id="detail-qty">${Array.from({length:10},(_,i)=>`<option value="${i+1}">${String(i+1).padStart(2,'0')}</option>`).join('')}</select>
+        </div>
+        <div class="detail-cta-stack">
+          <button class="btn btn-primary detail-add-to-cart" data-product-id="${product.id}"><i class="fa-solid fa-cart-shopping"></i> ADD TO CART</button>
+          <button class="btn detail-wishlist-btn" type="button" data-product-id="${product.id}"><i class="fa-regular fa-heart"></i> ADD TO WISHLIST</button>
+          <button class="btn detail-buy-now" type="button" data-product-id="${product.id}">BUY NOW</button>
+        </div>
+        <div class="detail-delivery">
+          <strong class="detail-delivery-title">Delivery Details</strong>
+          <div class="detail-pincode-row">
+            <input class="detail-pincode-input" type="text" placeholder="Enter Pincode" maxlength="6" inputmode="numeric">
+            <button class="detail-pincode-check" type="button">CHECK</button>
           </div>
-          <div class="detail-details" data-tab-panel="details" hidden>
-            <dl>
-              <dt>Material:</dt><dd>${escapeHtml(product.material || 'N/A')}</dd>
-              <dt>Weight:</dt><dd>${escapeHtml(product.weight || 'N/A')}</dd>
-              <dt>Fit:</dt><dd>${escapeHtml(product.fit || 'N/A')}</dd>
-              <dt>Care:</dt><dd>${escapeHtml(product.care || 'N/A')}</dd>
-              <dt>Origin:</dt><dd>${escapeHtml(product.origin || 'N/A')}</dd>
-            </dl>
+          <div class="detail-pincode-result" hidden></div>
+        </div>
+        <div class="detail-return-note">
+          <i class="fa-solid fa-rotate-left"></i>
+          <span>Eligible for <strong>30-day return or exchange</strong>. No questions asked.</span>
+        </div>
+        <div class="detail-accordions">
+          <div class="detail-accordion">
+            <button class="detail-accordion-header" type="button" data-accordion>
+              <span>Product Details</span><i class="fa-solid fa-chevron-down detail-accordion-icon"></i>
+            </button>
+            <div class="detail-accordion-body" hidden>
+              <dl class="detail-spec-list">
+                <dt>Material</dt><dd>${escapeHtml(product.material || 'Cotton')}</dd>
+                <dt>GSM</dt><dd>${product.gsm || 220} GSM</dd>
+                <dt>Fit Type</dt><dd>${escapeHtml(product.fit_type || 'Regular Fit')}</dd>
+                <dt>Neck Type</dt><dd>${escapeHtml(product.neck_type || 'Round Neck')}</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="detail-accordion">
+            <button class="detail-accordion-header" type="button" data-accordion>
+              <span>Product Description</span><i class="fa-solid fa-chevron-down detail-accordion-icon"></i>
+            </button>
+            <div class="detail-accordion-body" hidden>
+              <p>${escapeHtml(product.description || 'No description available.')}</p>
+            </div>
           </div>
         </div>
-        <div class="detail-sizes">
-          <label>Size:</label>
-          <div class="size-options">
-            ${(product.sizes || ['M']).map(size => `
-              <button class="size-btn ${size === (product.sizes?.[0] || 'M') ? 'is-selected' : ''}" data-size="${escapeHtml(size)}">${escapeHtml(size)}</button>
-            `).join('')}
-          </div>
-        </div>
-        <div class="detail-actions">
-          <button class="btn btn-primary detail-add-to-cart" data-product-id="${product.id}">Add to Cart</button>
-        </div>
+        <a class="btn btn-outline detail-full-link" href="product.html?id=${product.id}">View Full Details <i class="fa-solid fa-arrow-right"></i></a>
       </div>
     </div>
   `;
-  document.body.appendChild(modal);
 
-  // Tab switching
-  modal.querySelectorAll(".detail-tab").forEach(tab => {
-    tab.addEventListener("click", () => {
-      const tabName = tab.dataset.tab;
-      modal.querySelectorAll(".detail-tab").forEach(t => t.classList.remove("is-active"));
-      modal.querySelectorAll("[data-tab-panel]").forEach(p => p.hidden = true);
-      tab.classList.add("is-active");
-      modal.querySelector(`[data-tab-panel="${tabName}"]`).hidden = false;
-    });
-  });
+  document.body.appendChild(modal);
+  document.body.classList.add("modal-open");
+  const closeModal = () => { modal.remove(); document.body.classList.remove("modal-open"); };
 
   // Image gallery
   modal.querySelectorAll(".detail-thumbnail").forEach(btn => {
     btn.addEventListener("click", () => {
-      const img = btn.dataset.image;
-      modal.querySelector("#detail-main-image").src = resolveAssetUrl(img);
+      const mainImg = modal.querySelector("#detail-main-image");
+      mainImg.style.opacity = "0.5";
+      setTimeout(() => { mainImg.src = resolveAssetUrl(btn.dataset.image); mainImg.style.opacity = "1"; }, 150);
       modal.querySelectorAll(".detail-thumbnail").forEach(b => b.classList.remove("is-active"));
       btn.classList.add("is-active");
     });
   });
 
-  // Size selection
+  // Size
   let selectedSize = product.sizes?.[0] || 'M';
   modal.querySelectorAll(".size-btn").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -276,28 +299,68 @@ function openProductDetail(product) {
   // Add to cart
   modal.querySelector(".detail-add-to-cart").addEventListener("click", () => {
     try {
-      addCartItem(product, { size: selectedSize });
-      showToast(`${product.name} (${selectedSize}) added to cart.`);
-      modal.remove();
-    } catch (err) {
-      showToast(err.message, "error");
-    }
+      const qty = Number(modal.querySelector("#detail-qty")?.value || 1);
+      for (let i = 0; i < qty; i++) addCartItem(product, { size: selectedSize });
+      showToast(`${product.name} (${selectedSize}) \xd7${qty} added to cart.`);
+      closeModal();
+    } catch (err) { showToast(err.message, "error"); }
   });
 
-  // Close modal
-  const closeBtn = modal.querySelector(".product-detail-close");
-  const backdrop = modal.querySelector(".product-detail-backdrop");
-  
-  const closeModal = () => modal.remove();
-  closeBtn.addEventListener("click", closeModal);
-  backdrop.addEventListener("click", closeModal);
-  
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeModal();
+  // Buy Now
+  modal.querySelector(".detail-buy-now").addEventListener("click", () => {
+    try {
+      const qty = Number(modal.querySelector("#detail-qty")?.value || 1);
+      for (let i = 0; i < qty; i++) addCartItem(product, { size: selectedSize });
+      closeModal();
+      window.location.href = "checkout.html";
+    } catch (err) { showToast(err.message, "error"); }
   });
+
+  // Wishlist
+  modal.querySelector(".detail-wishlist-btn").addEventListener("click", async (e) => {
+    const btn = e.currentTarget;
+    try {
+      await toggleWishlist(product.id);
+      const wished = localWishlist.has(Number(product.id));
+      btn.classList.toggle("is-wishlisted", wished);
+      btn.querySelector("i").className = wished ? "fa-solid fa-heart" : "fa-regular fa-heart";
+      if (wished) showToast(`${product.name} added to wishlist.`);
+    } catch (err) { if (err.message !== "unauthorized") showToast(err.message, "error"); }
+  });
+
+  // Pincode
+  modal.querySelector(".detail-pincode-check").addEventListener("click", () => {
+    const input = modal.querySelector(".detail-pincode-input");
+    const result = modal.querySelector(".detail-pincode-result");
+    const pin = input.value.trim();
+    result.textContent = /^\d{6}$/.test(pin)
+      ? `\u2713 Delivery available to ${pin}. Estimated 3\u20135 business days.`
+      : "Please enter a valid 6-digit pincode.";
+    result.className = `detail-pincode-result ${/^\d{6}$/.test(pin) ? 'is-success' : 'is-error'}`;
+    result.hidden = false;
+  });
+
+  // Size chart
+  modal.querySelector("[data-size-chart]")?.addEventListener("click", () => {
+    showToast("XS=38 | S=40 | M=42 | L=44 | XL=46 | XXL=48 cm (chest)");
+  });
+
+  // Accordions
+  modal.querySelectorAll("[data-accordion]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const body = btn.nextElementSibling;
+      body.hidden = !body.hidden;
+      btn.querySelector(".detail-accordion-icon").style.transform = body.hidden ? "" : "rotate(180deg)";
+    });
+  });
+
+  modal.querySelector(".product-detail-close").addEventListener("click", closeModal);
+  modal.querySelector(".product-detail-backdrop").addEventListener("click", closeModal);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); }, { once: true });
 }
 
 /* ───────── Wishlist (localStorage) ───────── */
+
 
 export const localWishlist = new Set();
 
