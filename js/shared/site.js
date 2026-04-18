@@ -292,7 +292,9 @@ function openProductDetail(product) {
             </div>
           </div>
         </div>
-        <a class="btn btn-outline detail-full-link" href="product.html?id=${product.id}">View Full Details <i class="fa-solid fa-arrow-right"></i></a>
+        <a class="btn btn-outline-cart detail-cart-link" href="cart.html">
+          <i class="fa-solid fa-cart-shopping"></i> Go to Cart
+        </a>
       </div>
     </div>
   `;
