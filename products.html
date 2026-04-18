@@ -54,49 +54,61 @@
 
     <main>
       <!-- ─── PAGE HERO ─── -->
-      <section class="page-hero">
-        <div class="container">
-          <div class="page-hero-panel">
-            <nav aria-label="Breadcrumb" style="margin-bottom: 0.5rem; font-size: 0.82rem; color: var(--gray);">
-              <a href="index.html" style="color: var(--gray);">Home</a>
-              <span style="margin: 0 0.4rem;">/</span>
-              <span data-active-category-label>All T-Shirts</span>
-            </nav>
-            <span class="eyebrow">Collections</span>
-            <h1 class="page-title" data-active-category-label-h1">All T-Shirts</h1>
-            <p class="page-copy"> Premium heavyweight cotton tees made in India — <span data-product-count>0</span> styles available.</p>
-          </div>
-        </div>
-      </section>
+<section class="page-hero-combined" style="position: sticky; top: 3.6rem; z-index: 30; background: var(--white); border-bottom: 1px solid #e9ecef;">
+  <div class="container">
 
-      <!-- ─── CATEGORY FILTER BAR ─── -->
-      <section style="padding: 0.75rem 0; border-bottom: 1px solid #e9ecef; position: sticky; top: 3.6rem; z-index: 30; background: var(--white);">
-        <div class="container">
-          <div data-category-scroll style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.35rem; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;">
-            <button class="filter-chip is-active" type="button" data-category="all">All</button>
-            <button class="filter-chip" type="button" data-category="crew-neck">Crew Neck</button>
-            <button class="filter-chip" type="button" data-category="polo">Polo</button>
-            <button class="filter-chip" type="button" data-category="v-neck">V-Neck</button>
-            <button class="filter-chip" type="button" data-category="henley">Henley</button>
-            <button class="filter-chip" type="button" data-category="graphic">Graphic</button>
-            <button class="filter-chip" type="button" data-category="plain">Plain</button>
-            <button class="filter-chip" type="button" data-category="printed">Printed</button>
-            <button class="filter-chip" type="button" data-category="typography">Typography</button>
-            <button class="filter-chip" type="button" data-category="striped">Striped</button>
-            <button class="filter-chip" type="button" data-category="color-block">Color Block</button>
-            <button class="filter-chip" type="button" data-category="washed">Washed</button>
-            <button class="filter-chip" type="button" data-category="tie-dye">Tie-Dye</button>
-            <button class="filter-chip" type="button" data-category="full-sleeve">Full Sleeve</button>
-            <button class="filter-chip" type="button" data-category="half-sleeve">Half Sleeve</button>
-            <button class="filter-chip" type="button" data-category="slim-fit">Slim Fit</button>
-            <button class="filter-chip" type="button" data-category="regular-fit">Regular Fit</button>
-            <button class="filter-chip" type="button" data-category="oversized-fit">Oversized</button>
-            <button class="filter-chip" type="button" data-category="gym-wear">Gym Wear</button>
-            <button class="filter-chip" type="button" data-category="streetwear">Streetwear</button>
-            <button class="filter-chip" type="button" data-category="new-arrivals">New Arrivals</button>
-          </div>
-        </div>
-      </section>
+    <!-- TOP CONTENT -->
+    <div class="page-hero-panel" style="padding-bottom: 0.5rem;">
+      
+      <!-- Breadcrumb -->
+      <nav aria-label="Breadcrumb" style="margin-bottom: 0.4rem; font-size: 0.82rem; color: var(--gray);">
+        <a href="index.html" style="color: var(--gray);">Home</a>
+        <span style="margin: 0 0.4rem;">/</span>
+      </nav>
+
+      <!-- Title -->
+      <h1 class="page-title" data-active-category-label-h1>
+        All T-Shirts
+      </h1>
+
+      <!-- Description -->
+      <p class="page-copy">
+        Premium heavyweight cotton tees made in India —
+        <span data-product-count>0</span> styles available.
+      </p>
+
+    </div>
+
+    <!-- FILTER BAR -->
+    <div data-category-scroll 
+         style="display: flex; gap: 0.5rem; overflow-x: auto; padding: 0.5rem 0 0.6rem; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;">
+
+      <button class="filter-chip is-active" type="button" data-category="all">All</button>
+      <button class="filter-chip" type="button" data-category="crew-neck">Crew Neck</button>
+      <button class="filter-chip" type="button" data-category="polo">Polo</button>
+      <button class="filter-chip" type="button" data-category="v-neck">V-Neck</button>
+      <button class="filter-chip" type="button" data-category="henley">Henley</button>
+      <button class="filter-chip" type="button" data-category="graphic">Graphic</button>
+      <button class="filter-chip" type="button" data-category="plain">Plain</button>
+      <button class="filter-chip" type="button" data-category="printed">Printed</button>
+      <button class="filter-chip" type="button" data-category="typography">Typography</button>
+      <button class="filter-chip" type="button" data-category="striped">Striped</button>
+      <button class="filter-chip" type="button" data-category="color-block">Color Block</button>
+      <button class="filter-chip" type="button" data-category="washed">Washed</button>
+      <button class="filter-chip" type="button" data-category="tie-dye">Tie-Dye</button>
+      <button class="filter-chip" type="button" data-category="full-sleeve">Full Sleeve</button>
+      <button class="filter-chip" type="button" data-category="half-sleeve">Half Sleeve</button>
+      <button class="filter-chip" type="button" data-category="slim-fit">Slim Fit</button>
+      <button class="filter-chip" type="button" data-category="regular-fit">Regular Fit</button>
+      <button class="filter-chip" type="button" data-category="oversized-fit">Oversized</button>
+      <button class="filter-chip" type="button" data-category="gym-wear">Gym Wear</button>
+      <button class="filter-chip" type="button" data-category="streetwear">Streetwear</button>
+      <button class="filter-chip" type="button" data-category="new-arrivals">New Arrivals</button>
+
+    </div>
+
+  </div>
+</section>
 
       <!-- ─── PRODUCT GRID ─── -->
       <section class="section-tight">
