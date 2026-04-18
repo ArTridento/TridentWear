@@ -5045,6 +5045,8 @@ iframe {
 
 .product-card {
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
 }
 
 .product-media {
@@ -5052,7 +5054,7 @@ iframe {
   width: 100%;
   aspect-ratio: 1 / 1;
   background: #f1f3f5;
-  border-radius: 0.5rem;
+  border-radius: var(--radius) var(--radius) 0 0;
   overflow: hidden;
 }
 
@@ -5089,10 +5091,11 @@ iframe {
 }
 
 .product-body {
-  padding: 0.75rem 0;
+  padding: 1.25rem 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
+  flex: 1;
 }
 
 .product-type {
