@@ -196,7 +196,7 @@ function openProductDetail(product) {
   modal.innerHTML = `
     <div class="product-detail-backdrop"></div>
     <div class="product-detail-content">
-      <button class="product-detail-close" type="button" aria-label="Close">&#x2715;</button>
+      <button class="product-detail-close" type="button" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
 
       <div class="product-detail-gallery">
         <div class="product-detail-main-image">
