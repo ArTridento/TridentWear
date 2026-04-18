@@ -5537,7 +5537,7 @@ iframe {
   transition: all 0.2s ease;
 }
 .detail-add-to-cart {
-  background: var(--primary);
+  background: #198754;
   color: var(--white);
 }
 .detail-add-to-cart:hover { filter: brightness(1.12); transform: translateY(-1px); }
