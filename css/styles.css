@@ -5157,8 +5157,8 @@ iframe {
   border-radius: 1rem;
   max-width: 860px;
   width: 100%;
-  height: 88vh;
-  max-height: 88vh;
+  height: min(90vh, 600px);
+  max-height: 90vh;
   overflow: hidden;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -5262,15 +5262,16 @@ iframe {
 .product-detail-info {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding: 1.5rem 1.5rem 2rem;
-  overflow-y: auto;
+  gap: 0.75rem;
+  padding: 1.25rem 1.25rem 1.5rem;
+  overflow-y: scroll;
   height: 100%;
   scrollbar-width: thin;
-  scrollbar-color: var(--primary) transparent;
+  scrollbar-color: var(--primary) #e9ecef;
 }
-.product-detail-info::-webkit-scrollbar { width: 4px; }
-.product-detail-info::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 2px; }
+.product-detail-info::-webkit-scrollbar { width: 5px; }
+.product-detail-info::-webkit-scrollbar-track { background: #e9ecef; }
+.product-detail-info::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
 
 .detail-type {
   font-size: 0.75rem;
