@@ -5269,6 +5269,7 @@ iframe {
   scrollbar-width: thin;
   scrollbar-color: var(--primary) #e9ecef;
 }
+.product-detail-info > * { flex-shrink: 0; }
 .product-detail-info::-webkit-scrollbar { width: 5px; }
 .product-detail-info::-webkit-scrollbar-track { background: #e9ecef; }
 .product-detail-info::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
