@@ -801,6 +801,10 @@ def legacy_html_routes(page_name: str, request: Request):
         "terms": "/terms",
         "returns": "/returns",
         "shipping": "/shipping",
+        "profile": "/profile",
+        "dashboard": "/profile",
+        "profile-setup": "/profile-setup",
+        "verify": "/verify"
     }
     target = mapping.get(page_name)
     if not target:
@@ -808,6 +812,22 @@ def legacy_html_routes(page_name: str, request: Request):
     if target == "/admin":
         return serve_admin_page(request)
     return RedirectResponse(url=target, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
+
+@pages_router.get("/profile", include_in_schema=False)
+def serve_profile_page() -> FileResponse:
+    return html_response("profile.html")
+
+@pages_router.get("/dashboard", include_in_schema=False)
+def serve_dashboard_page() -> RedirectResponse:
+    return RedirectResponse(url="/profile", status_code=status.HTTP_307_TEMPORARY_REDIRECT)
+
+@pages_router.get("/profile-setup", include_in_schema=False)
+def serve_profile_setup_page() -> FileResponse:
+    return html_response("profile-setup.html")
+
+@pages_router.get("/verify", include_in_schema=False)
+def serve_verify_page() -> FileResponse:
+    return html_response("verify.html")
 
 
 @auth_router.get("/api/auth/me")

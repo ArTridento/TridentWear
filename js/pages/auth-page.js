@@ -52,7 +52,7 @@ function redirectAfterAuth(user) {
     return;
   }
 
-  window.location.href = user.role === "admin" ? "admin.html" : "products.html";
+  window.location.href = user.role === "admin" ? "admin.html" : "profile.html";
 }
 
 function renderAuthStatus() {
