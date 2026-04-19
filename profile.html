@@ -161,7 +161,95 @@
 
           <!-- RIGHT CONTENT AREA -->
           <div class="profile-content">
-            <h2 style="font-size: 1.1rem; color: var(--gray); font-weight: 600; margin-bottom: 1rem; text-transform: uppercase;">Edit Profile</h2>
+            
+            <!-- VOUCHERS TAB -->
+            <div id="section-vouchers" class="profile-section-tab" style="display: none;">
+              <h2 style="font-size: 0.95rem; color: #a0a0a0; font-weight: 600; margin-bottom: 1rem; text-transform: uppercase;">My Gift Voucher</h2>
+              <div class="profile-box" style="border-radius: 0; padding: 2.5rem; text-align: center; margin-bottom: 2rem;">
+                <p style="font-size: 1.15rem; color: #555;">My Voucher list is empty</p>
+              </div>
+              <div style="text-align: center;">
+                <button type="button" class="btn" style="background: #117864; color: #fff; font-weight: 700; padding: 0.85rem 3rem; border-radius: 2px; border: none; font-size: 0.9rem;">BUY GIFT VOUCHER</button>
+              </div>
+            </div>
+
+            <!-- POINTS TAB -->
+            <div id="section-points" class="profile-section-tab" style="display: none;">
+              <h2 style="font-size: 0.95rem; color: #a0a0a0; font-weight: 600; margin-bottom: 1rem; text-transform: uppercase;">My TSS Points</h2>
+              
+              <div class="profile-box" style="border-radius: 0; padding: 2rem; text-align: center; margin-bottom: 0; border-bottom: none;">
+                <div style="margin-bottom: 2rem;">
+                  <i class="fa-solid fa-ghost" style="font-size: 2rem; color: #117864; border: 2px solid #555; border-radius: 50%; padding: 0.75rem; margin-bottom: 0.5rem;"></i>
+                  <p style="font-size: 0.75rem; color: #999; text-transform: uppercase; letter-spacing: 0.5px;">A Quick and Convenient way to pay and refund</p>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                  <div>
+                    <i class="fa-solid fa-bolt" style="font-size: 1.8rem; color: #1ca58e; margin-bottom: 0.5rem;"></i>
+                    <h4 style="font-size: 0.85rem; font-weight: 700; color: #555; text-transform: uppercase; margin-bottom: 0.2rem;">Instant Checkout</h4>
+                    <p style="font-size: 0.75rem; color: #999;">One-click easy and fast checkout</p>
+                  </div>
+                  <div>
+                    <i class="fa-solid fa-rotate-left" style="font-size: 1.8rem; color: #1ca58e; margin-bottom: 0.5rem;"></i>
+                    <h4 style="font-size: 0.85rem; font-weight: 700; color: #555; text-transform: uppercase; margin-bottom: 0.2rem;">Prompt Rewards</h4>
+                    <p style="font-size: 0.75rem; color: #999;">Get instant prizes as TSS Points</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="profile-box" style="border-radius: 0; padding: 2.5rem; text-align: center; margin-bottom: 0; border-bottom: none;">
+                <h3 style="font-size: 0.9rem; font-weight: 700; color: #333; text-transform: uppercase; margin-bottom: 1rem;">Total TSS Points</h3>
+                <h1 style="font-size: 2.5rem; color: #353535; font-weight: 700;">0.00</h1>
+              </div>
+
+              <div class="profile-box" style="border-radius: 0; padding: 1.5rem; margin-bottom: 2rem;">
+                <h4 style="font-size: 0.9rem; font-weight: 700; color: #333; text-transform: uppercase; margin-bottom: 1rem;">Please Note</h4>
+                <ul style="font-size: 0.85rem; color: #777; padding-left: 1.2rem; margin: 0;">
+                  <li style="margin-bottom: 0.5rem;">You can use 10% of your total points for every order</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- MONEY TAB -->
+            <div id="section-money" class="profile-section-tab" style="display: none;">
+              <h2 style="font-size: 0.95rem; color: #a0a0a0; font-weight: 600; margin-bottom: 1rem; text-transform: uppercase;">My TSS Money</h2>
+              
+              <div class="profile-box" style="border-radius: 0; padding: 2rem; text-align: center; margin-bottom: 0; border-bottom: none;">
+                <div style="margin-bottom: 2rem;">
+                  <i class="fa-solid fa-wallet" style="font-size: 2.5rem; color: #1ca58e; margin-bottom: 0.5rem;"></i>
+                  <p style="font-size: 0.75rem; color: #999; text-transform: uppercase; letter-spacing: 0.5px;">A Quick and Convenient way to pay and refund</p>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                  <div>
+                    <i class="fa-solid fa-bolt" style="font-size: 1.8rem; color: #1ca58e; margin-bottom: 0.5rem;"></i>
+                    <h4 style="font-size: 0.85rem; font-weight: 700; color: #555; text-transform: uppercase; margin-bottom: 0.2rem;">Instant Checkout</h4>
+                    <p style="font-size: 0.75rem; color: #999;">One-click easy and fast checkout</p>
+                  </div>
+                  <div>
+                    <i class="fa-solid fa-rotate-left" style="font-size: 1.8rem; color: #1ca58e; margin-bottom: 0.5rem;"></i>
+                    <h4 style="font-size: 0.85rem; font-weight: 700; color: #555; text-transform: uppercase; margin-bottom: 0.2rem;">Faster Refunds</h4>
+                    <p style="font-size: 0.75rem; color: #999;">Get instant refunds as TSS Money</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="profile-box" style="border-radius: 0; padding: 2.5rem; text-align: center; margin-bottom: 0; border-bottom: none;">
+                <h3 style="font-size: 0.9rem; font-weight: 700; color: #333; text-transform: uppercase; margin-bottom: 1rem;">Total TSS Money</h3>
+                <h1 style="font-size: 2.5rem; color: #353535; font-weight: 700;">₹ 0.00</h1>
+              </div>
+
+              <div class="profile-box" style="border-radius: 0; padding: 1.5rem; margin-bottom: 2rem;">
+                <h4 style="font-size: 0.9rem; font-weight: 700; color: #333; text-transform: uppercase; margin-bottom: 1rem;">Please Note</h4>
+                <ul style="font-size: 0.85rem; color: #777; padding-left: 1.2rem; margin: 0;">
+                  <li style="margin-bottom: 0.5rem;">No minimum or maximum usage limit.</li>
+                  <li style="margin-bottom: 0.5rem;">Can be clubbed with gift vouchers and discount codes.</li>
+                  <li style="margin-bottom: 0.5rem;">Applicable on products on offer/sale.</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- PROFILE TAB (Original View) -->
+            <div id="section-profile" class="profile-section-tab">
+              <h2 style="font-size: 0.95rem; color: #a0a0a0; font-weight: 600; margin-bottom: 1rem; text-transform: uppercase;">Edit Profile</h2>
             
             <div class="profile-box">
               
@@ -237,6 +325,33 @@
             <div style="text-align: center; margin-top: 2rem;">
               <button type="button" class="btn" style="background: #117864; color: #fff; font-weight: 700; padding: 0.85rem 3rem; border-radius: var(--radius-sm); border: none;">SAVE</button>
             </div>
+            </div>
+            </div> <!-- End section-profile -->
+
+            <!-- ORDERS TAB -->
+            <div id="section-orders" class="profile-section-tab" style="display: none;">
+              <h2 style="font-size: 0.95rem; color: #a0a0a0; font-weight: 600; margin-bottom: 1rem; text-transform: uppercase;">My Orders</h2>
+              <div class="profile-box" style="border-radius: 0; padding: 2.5rem; text-align: center; margin-bottom: 2rem;">
+                <p style="font-size: 1.15rem; color: #555;">You have no recent orders.</p>
+              </div>
+            </div>
+
+            <!-- FAQS TAB -->
+            <div id="section-faqs" class="profile-section-tab" style="display: none;">
+              <h2 style="font-size: 0.95rem; color: #a0a0a0; font-weight: 600; margin-bottom: 1rem; text-transform: uppercase;">Frequently Asked Questions</h2>
+              <div class="profile-box" style="border-radius: 0; padding: 2.5rem; margin-bottom: 2rem;">
+                <h3 style="font-size: 1rem; color: #555; font-weight: 600; margin-bottom: 1rem;">TSS Points & Money</h3>
+                <p style="font-size: 0.85rem; color: #777; line-height: 1.5;">TSS Points are given to users as part of marketing campaigns and can be redeemed exclusively on our platform. The total points applied cannot exceed 10% of the cart value.</p>
+              </div>
+            </div>
+
+            <!-- MEMBERSHIP TAB -->
+            <div id="section-membership" class="profile-section-tab" style="display: none;">
+              <h2 style="font-size: 0.95rem; color: #a0a0a0; font-weight: 600; margin-bottom: 1rem; text-transform: uppercase;">My Membership</h2>
+              <div class="profile-box" style="border-radius: 0; padding: 2.5rem; text-align: center; margin-bottom: 2rem;">
+                <p style="font-size: 1.15rem; color: #555;">You are currently a Standard Member.</p>
+                <button type="button" class="btn" style="background: #117864; color: #fff; font-weight: 700; padding: 0.85rem 3rem; border-radius: 2px; border: none; font-size: 0.9rem; margin-top: 1rem;">UPGRADE MEMBERSHIP</button>
+              </div>
             </div>
 
           </div>
