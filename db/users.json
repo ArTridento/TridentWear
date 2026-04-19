@@ -40,5 +40,17 @@
     "password_hash": "$2b$12$Z2qdq/anvr6r53YPUmirzOcMWKR5eUbsX9XItEFloFfrD9zTO6aBO",
     "role": "customer",
     "created_at": "2026-04-15T15:01:05.975278+00:00"
+  },
+  {
+    "id": 6,
+    "user_id": "TW26-test",
+    "name": "Test Maams",
+    "email": "test@trident.com",
+    "password_hash": "$2b$12$7fjBeFUWRX93vx51XLYT..D5IKUM3BiDVDIcKt1YScr1qRDpY7jVy",
+    "role": "customer",
+    "gender": "Mr",
+    "otp_verification_status": true,
+    "profile_completed_status": true,
+    "created_at": "2026-04-19T14:10:34.718697+00:00"
   }
 ]
