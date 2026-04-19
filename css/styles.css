@@ -292,15 +292,12 @@ h4,
 }
 
 .header-inner {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
   padding: 0.75rem 0;
   background: none;
-  border: none;
-  box-shadow: none;
-  border-radius: 0;
 }
 
 /* Mobile Header */
@@ -324,6 +321,8 @@ h4,
   display: inline-flex;
   flex-direction: row;
   align-items: center;
+  justify-self: center;
+  order: 2;
   gap: 0.75rem;
 }
 .brand-logo {
@@ -388,40 +387,60 @@ h4,
   }
 }
 
-/* ───────── NAV ───────── */
+/* ───────── NAV (SIDEBAR DRAWER) ───────── */
 .site-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 300px;
+  max-width: 85vw;
+  background: var(--white);
+  z-index: 1050;
   display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  background: none;
-  border: none;
-  border-radius: 0;
-  padding: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 5rem 1.5rem 2rem;
+  box-shadow: var(--shadow-lg);
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+}
+.site-nav.is-open {
+  transform: translateX(0);
 }
 
 .nav-link {
-  display: inline-flex;
+  display: flex;
+  width: 100%;
   align-items: center;
-  padding: 0.5rem 0.85rem;
-  font-size: 0.88rem;
-  font-weight: 500;
-  color: var(--gray);
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gray-dark);
   border-radius: var(--radius);
   border: none;
   background: none;
   min-height: auto;
-  transition:
-    color var(--transition),
-    background var(--transition);
+  transition: all var(--transition);
+  border-bottom: 1px solid #f8f9fa;
+}
+.nav-link:last-child {
+  border-bottom: none;
 }
 .nav-link:hover {
   color: var(--primary);
-  background: rgba(98, 68, 197, 0.06);
+  background: rgba(98, 68, 197, 0.04);
 }
 .nav-link.is-active {
   color: var(--primary);
-  font-weight: 600;
+  font-weight: 700;
   background: rgba(98, 68, 197, 0.08);
+}
+.nav-link .nav-chevron {
+  margin-left: auto;
+  font-size: 0.8em;
 }
 
 /* ───────── HEADER TOOLS ───────── */
@@ -503,7 +522,9 @@ h4,
 
 /* ───────── MOBILE MENU ───────── */
 .mobile-toggle {
-  display: none !important;
+  display: flex !important;
+  justify-self: flex-start;
+  order: 1;
   width: 2.5rem;
   height: 2.5rem;
   flex-direction: column;
@@ -517,18 +538,10 @@ h4,
     background var(--transition),
     border-color var(--transition);
   cursor: pointer;
+  z-index: 1100;
 }
 
-/* Hide hamburger menu completely on mobile (use bottom nav instead) */
-@media (max-width: 767px) {
-  .mobile-toggle {
-    display: none !important;
-  }
-
-  .site-nav {
-    display: none !important;
-  }
-}
+/* Show hamburger menu on all devices to act as Sidebar toggle */
 
 .mobile-toggle:hover {
   border-color: var(--primary);
@@ -3887,40 +3900,35 @@ h4,
   color: var(--secondary);
 }
 
-/* ─── Nav Dropdown ─── */
+/* ─── Nav Dropdown (Accordion for Sidebar) ─── */
 .nav-dropdown {
   position: relative;
+  width: 100%;
 }
 .nav-chevron {
   font-size: 0.65rem;
   margin-left: 0.25rem;
   transition: transform var(--transition);
 }
-.nav-dropdown:hover .nav-chevron {
+.nav-dropdown.is-open .nav-chevron {
   transform: rotate(180deg);
 }
 .nav-dropdown-menu {
-  position: absolute;
-  top: calc(100% + 0.5rem);
-  left: 0;
-  min-width: 13rem;
-  background: var(--white);
-  border: 1px solid #e9ecef;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-lg);
-  padding: 0.4rem;
-  z-index: 100;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(-6px);
-  transition:
-    opacity 0.18s ease,
-    transform 0.18s ease;
-}
-.nav-dropdown:hover .nav-dropdown-menu {
+  position: static;
+  min-width: 0;
+  display: none;
   opacity: 1;
   pointer-events: auto;
-  transform: translateY(0);
+  transform: none;
+  box-shadow: none;
+  border: none;
+  padding: 0.2rem 0 0.2rem 1.25rem;
+  margin-top: 0;
+  background: var(--white);
+  width: 100%;
+}
+.nav-dropdown.is-open .nav-dropdown-menu {
+  display: grid;
 }
 .nav-dropdown-item {
   display: flex;

@@ -604,7 +604,6 @@ function bindMobileMenu() {
     if (!trigger) return;
     trigger.setAttribute("aria-expanded", "false");
     trigger.addEventListener("click", (event) => {
-      if (!mobileQuery.matches) return;
       event.preventDefault();
       const willOpen = !dropdown.classList.contains("is-open");
       dropdowns.forEach((item) => {
@@ -624,7 +623,7 @@ function bindMobileMenu() {
   });
 
   document.addEventListener("click", (event) => {
-    if (mobileQuery.matches && !event.target.closest("[data-mobile-nav]") && !event.target.closest("[data-mobile-toggle]")) {
+    if (!event.target.closest("[data-mobile-nav]") && !event.target.closest("[data-mobile-toggle]")) {
       closeMenu();
     }
   });
