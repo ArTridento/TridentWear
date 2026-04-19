@@ -5,18 +5,32 @@ async function loadProfile() {
   const user = getCurrentUser();
 
   if (!user) {
-    // If not logged in, redirect to login
     window.location.href = "login.html";
     return;
   }
 
-  const nameEl = document.getElementById("profile-name");
-  const emailEl = document.getElementById("profile-email");
-  const roleEl = document.getElementById("profile-role");
+  // Split name for firstname and lastname
+  const names = (user.name || "").split(" ");
+  const firstName = names[0] || "N/A";
+  const lastName = names.length > 1 ? names.slice(1).join(" ") : "";
 
-  if (nameEl) nameEl.textContent = user.name || "N/A";
-  if (emailEl) emailEl.textContent = user.email || "N/A";
-  if (roleEl) roleEl.textContent = user.role === "admin" ? "Administrator" : "Customer";
+  // Sidebar Updates
+  const sidebarName = document.getElementById("sidebar-name");
+  const sidebarEmail = document.getElementById("sidebar-email");
+  const sidebarRole = document.getElementById("sidebar-role");
+
+  if (sidebarName) sidebarName.textContent = user.name || "N/A";
+  if (sidebarEmail) sidebarEmail.textContent = user.email || "N/A";
+  if (sidebarRole) sidebarRole.textContent = user.role === "admin" ? "(Admin)" : "(Member)";
+
+  // Content Updates
+  const emailInput = document.getElementById("profile-email-input");
+  const firstNameInput = document.getElementById("profile-firstname");
+  const lastNameInput = document.getElementById("profile-lastname");
+
+  if (emailInput) emailInput.value = user.email || "N/A";
+  if (firstNameInput) firstNameInput.value = firstName;
+  if (lastNameInput) lastNameInput.value = lastName;
 }
 
 loadProfile();
