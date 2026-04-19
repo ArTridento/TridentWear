@@ -108,6 +108,10 @@ export function productCardMarkup(product) {
         <div class="product-footer">
           <strong class="product-price">${formatCurrency(item.price)}</strong>
         </div>
+        <div class="product-actions" style="display:flex; gap:0.5rem; margin-top:0.75rem;">
+          <a href="product-detail.html?id=${item.id}" class="btn btn-outline" style="flex:1; padding:0.5rem; font-size:0.8rem; text-align:center; display:flex; align-items:center; justify-content:center;">View Details</a>
+          <button class="btn btn-primary" type="button" data-add-cart-mock style="flex:1; padding:0.5rem; font-size:0.8rem; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-cart-shopping" style="margin-right:4px;"></i> Add to Cart</button>
+        </div>
       </div>
     </article>
   `;
@@ -155,15 +159,23 @@ export function bindProductCardActions(container, products) {
     }
   });
 
-  // Click to open product detail
+  // Click to open product detail page
   container.querySelectorAll("[data-product-card]").forEach((card) => {
     card.addEventListener("click", (event) => {
-      if (event.target.closest("[data-wishlist-toggle]")) return;
+      if (event.target.closest("[data-wishlist-toggle]") || event.target.closest("a") || event.target.closest("[data-add-cart-mock]")) return;
       event.preventDefault();
       event.stopPropagation();
       const productId = card.dataset.productId;
-      const product = lookup.get(productId);
-      if (product) openProductDetail(product);
+      if (productId) window.location.href = `product-detail.html?id=${productId}`;
+    });
+  });
+
+  // Mock add to cart button
+  container.querySelectorAll("[data-add-cart-mock]").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      showToast("Item ready to be added! Go to details page to select size.", "info");
     });
   });
 
