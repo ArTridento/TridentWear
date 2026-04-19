@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "name": "Classic Black Tee",
+    "name": "Classic Black Crew Neck",
     "category": "tshirt",
     "price": 799,
     "description": "Premium 220 GSM cotton crew neck tee in timeless black. Relaxed fit, pre-shrunk fabric.",
@@ -19,7 +19,7 @@
   },
   {
     "id": 2,
-    "name": "White Minimal Tee",
+    "name": "White Minimal Crew Neck",
     "category": "tshirt",
     "price": 699,
     "description": "Clean white tee with a minimal cut. 200 GSM bio-washed cotton for an ultra-soft feel.",
@@ -35,6 +35,199 @@
     "featured": true
   },
   {
+    "id": 7,
+    "name": "Navy Polo T-Shirt",
+    "category": "tshirt",
+    "price": 1099,
+    "description": "Classic polo collar tee in navy blue with premium cotton blend fabric.",
+    "image": "/images/navy-shirt.png",
+    "tag": "Premium",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 120,
+    "featured": true
+  },
+  {
+    "id": 9,
+    "name": "Henley Buttoned Tee",
+    "category": "tshirt",
+    "price": 999,
+    "description": "Classic henley with 3-button placket in olive green. Premium comfort and style.",
+    "image": "/images/olive-shirt.png",
+    "tag": "New",
+    "sizes": [
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 80,
+    "featured": true
+  },
+  {
+    "id": 10,
+    "name": "Graphic Dragon Tee",
+    "category": "tshirt",
+    "price": 1299,
+    "description": "Bold graphic print featuring dragon design. Premium print quality with vibrant colors.",
+    "image": "/images/black-tshirt.png",
+    "tag": "Trending",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 110,
+    "featured": true
+  },
+  {
+    "id": 13,
+    "name": "Typography Art Tee",
+    "category": "tshirt",
+    "price": 1099,
+    "description": "Bold typography design with artistic text placement. Modern urban style.",
+    "image": "/images/black-tshirt.png",
+    "tag": "New Drop",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 85,
+    "featured": true
+  },
+  {
+    "id": 14,
+    "name": "Black & White Striped",
+    "category": "tshirt",
+    "price": 899,
+    "description": "Classic horizontal stripes in black and white. Timeless design with modern fit.",
+    "image": "/images/black-tshirt.png",
+    "tag": "Bestseller",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 140,
+    "featured": true
+  },
+  {
+    "id": 16,
+    "name": "Washed Blue Vintage",
+    "category": "tshirt",
+    "price": 1099,
+    "description": "Acid washed blue tee with vintage feel. Pre-treated for authentic worn-in look.",
+    "image": "/images/navy-shirt.png",
+    "tag": "Trending",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 90,
+    "featured": true
+  },
+  {
+    "id": 18,
+    "name": "Full Sleeve Thermal",
+    "category": "tshirt",
+    "price": 999,
+    "description": "Premium full sleeve thermal tee. Perfect for layering or winter wear.",
+    "image": "/images/black-tshirt.png",
+    "tag": "Winter Essential",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 130,
+    "featured": true
+  },
+  {
+    "id": 20,
+    "name": "Slim Fit Black",
+    "category": "tshirt",
+    "price": 849,
+    "description": "Body-hugging slim fit tee in premium black. Sharp tailored silhouette.",
+    "image": "/images/black-tshirt.png",
+    "tag": "Bestseller",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 160,
+    "featured": true
+  },
+  {
+    "id": 21,
+    "name": "Regular Fit White",
+    "category": "tshirt",
+    "price": 699,
+    "description": "Classic regular fit white tee. Comfortable everyday essential.",
+    "image": "/images/white-tshirt.png",
+    "tag": "Bestseller",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 220,
+    "featured": true
+  },
+  {
+    "id": 23,
+    "name": "Streetwear Oversized",
+    "category": "tshirt",
+    "price": 1199,
+    "description": "Ultimate streetwear oversized fit with dropped shoulders and premium weight.",
+    "image": "/images/grey-tshirt.png",
+    "tag": "Trending",
+    "sizes": [
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 110,
+    "featured": true
+  },
+  {
+    "id": 24,
+    "name": "New Arrival Minimalist",
+    "category": "tshirt",
+    "price": 949,
+    "description": "Fresh minimalist design with subtle branding. Latest season collection.",
+    "image": "/images/white-tshirt.png",
+    "tag": "New Arrival",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 75,
+    "featured": true
+  },
+  {
     "id": 5,
     "name": "Charcoal Oversized Tee",
     "category": "tshirt",
@@ -43,6 +236,127 @@
     "image": "/images/grey-tshirt.png",
     "tag": "Trending",
     "sizes": [
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 100,
+    "featured": false
+  },
+  {
+    "id": 8,
+    "name": "Deep V-Neck Charcoal",
+    "category": "tshirt",
+    "price": 849,
+    "description": "Stylish V-neck tee in charcoal with perfect layering fit.",
+    "image": "/images/grey-tshirt.png",
+    "tag": "New Drop",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 95,
+    "featured": false
+  },
+  {
+    "id": 11,
+    "name": "Plain White Relaxed Fit",
+    "category": "tshirt",
+    "price": 599,
+    "description": "Pure white plain tee with relaxed fit. Perfect for everyday wear.",
+    "image": "/images/white-tshirt.png",
+    "tag": "",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 250,
+    "featured": false
+  },
+  {
+    "id": 12,
+    "name": "Printed Vintage Tee",
+    "category": "tshirt",
+    "price": 1199,
+    "description": "Vintage style print with retro aesthetic. Limited edition design.",
+    "image": "/images/grey-tshirt.png",
+    "tag": "Limited",
+    "sizes": [
+      "M",
+      "L",
+      "XL"
+    ],
+    "stock": 60,
+    "featured": false
+  },
+  {
+    "id": 15,
+    "name": "Color Block Grey-White",
+    "category": "tshirt",
+    "price": 999,
+    "description": "Modern color blocking with grey and white panels. Contemporary design.",
+    "image": "/images/grey-tshirt.png",
+    "tag": "New",
+    "sizes": [
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 75,
+    "featured": false
+  },
+  {
+    "id": 17,
+    "name": "Tie-Dye Rainbow",
+    "category": "tshirt",
+    "price": 1199,
+    "description": "Vibrant tie-dye with rainbow colors. Unique hand-dyed aesthetic.",
+    "image": "/images/white-tshirt.png",
+    "tag": "New Drop",
+    "sizes": [
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 65,
+    "featured": false
+  },
+  {
+    "id": 19,
+    "name": "Half Sleeve Classic",
+    "category": "tshirt",
+    "price": 749,
+    "description": "Premium half sleeve tee in classic black. Versatile all-season wear.",
+    "image": "/images/black-tshirt.png",
+    "tag": "",
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "stock": 180,
+    "featured": false
+  },
+  {
+    "id": 22,
+    "name": "Gym Wear Performance Tee",
+    "category": "tshirt",
+    "price": 1099,
+    "description": "Moisture-wicking performance tee for workouts. Lightweight and breathable.",
+    "image": "/images/grey-tshirt.png",
+    "tag": "Active",
+    "sizes": [
+      "S",
       "M",
       "L",
       "XL",
