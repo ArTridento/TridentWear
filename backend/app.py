@@ -25,8 +25,8 @@ from starlette.middleware.sessions import SessionMiddleware
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-FRONTEND_DIR = BASE_DIR / "frontend"
-HTML_DIR = FRONTEND_DIR / "html"
+FRONTEND_DIR = BASE_DIR
+HTML_DIR = FRONTEND_DIR
 CSS_DIR = FRONTEND_DIR / "css"
 JS_DIR = FRONTEND_DIR / "js"
 IMAGES_DIR = FRONTEND_DIR / "images"
