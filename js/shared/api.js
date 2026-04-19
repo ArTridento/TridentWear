@@ -452,13 +452,32 @@ async function handleStaticRequest(url, method, body, originalPath) {
       throw createHttpError(409, "An account with that email already exists.");
     }
 
+    const currentYearSuffix = new Date().getFullYear().toString().slice(-2);
+    let highestSeq = 0;
+    const prefix = `TW${currentYearSuffix}-`;
+    users.forEach(u => {
+        if (u.user_id && u.user_id.startsWith(prefix)) {
+            const seq = parseInt(u.user_id.split("-")[1], 10);
+            if (!isNaN(seq) && seq > highestSeq) highestSeq = seq;
+        }
+    });
+    
+    const seqNumber = String(highestSeq + 1).padStart(3, "0");
+    const userIdFormatted = `${prefix}${seqNumber}`;
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
+    console.log(`[STATIC_BACKEND_MOCK] OTP for ${email} is: ${otp}`);
+
     const user = {
       id: nextNumericId(users),
+      user_id: userIdFormatted,
       name,
       email,
       phone: "",
       password,
       role: "customer",
+      otp: otp,
+      otp_verification_status: false,
+      profile_completed_status: false,
       created_at: nowIso(),
     };
 
@@ -467,8 +486,8 @@ async function handleStaticRequest(url, method, body, originalPath) {
 
     return {
       success: true,
-      token: createToken(user),
-      user: sanitizeUser(user),
+      message: "Account created. Please check your email (or JS console) for the OTP.",
+      email: email,
     };
   }
 
@@ -477,11 +496,15 @@ async function handleStaticRequest(url, method, body, originalPath) {
     if (!user || user.password !== String(body?.password || "").trim()) {
       throw createHttpError(401, "Incorrect email or password.");
     }
+    
+    if (user.role !== "admin" && !user.otp_verification_status) {
+      throw createHttpError(403, "Please verify your email OTP before logging in.");
+    }
 
     return {
       success: true,
       token: createToken(user),
-      user: sanitizeUser(user),
+      user: { ...sanitizeUser(user), gender: user.gender, profile_completed_status: user.profile_completed_status },
     };
   }
 
@@ -524,6 +547,44 @@ async function handleStaticRequest(url, method, body, originalPath) {
       token: createToken(user),
       user: sanitizeUser(user),
     };
+  }
+
+  if (pathname === "/api/auth/otp/verify-email" && method === "POST") {
+    const targetEmail = validateEmail(body?.email);
+    const otp = String(body?.otp || "").trim();
+    const users = getUsersDb();
+    const userIndex = users.findIndex(u => u.email === targetEmail);
+    
+    if (userIndex === -1) throw createHttpError(404, "User not found.");
+    const user = users[userIndex];
+    if (user.otp_verification_status) throw createHttpError(400, "Account already verified.");
+    if (user.otp !== otp) throw createHttpError(400, "Incorrect OTP.");
+    
+    user.otp_verification_status = true;
+    users[userIndex] = user;
+    saveUsersDb(users);
+    
+    return {
+      success: true,
+      message: "Email verified successfully.",
+      user: sanitizeUser(user)
+    };
+  }
+
+  if (pathname === "/api/auth/profile/setup" && method === "POST") {
+    const userAuth = getAuthUser();
+    if (!userAuth) throw createHttpError(401, "Unauthorized");
+    
+    const users = getUsersDb();
+    const userIndex = users.findIndex(u => u.id === userAuth.id);
+    if (userIndex !== -1) {
+      users[userIndex].gender = body?.gender;
+      if (body?.phone) users[userIndex].phone = body.phone;
+      users[userIndex].profile_completed_status = true;
+      saveUsersDb(users);
+      return { success: true, message: "Profile setup complete", user: users[userIndex] };
+    }
+    throw createHttpError(404, "User not found.");
   }
 
   if (pathname === "/api/auth/google" && method === "POST") {
