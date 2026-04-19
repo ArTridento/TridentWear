@@ -27,7 +27,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     btn.textContent = "Verifying...";
     
     try {
-      await post("/api/auth/otp/verify-email", { email, otp });
+      await post("/verify-otp", { email, otp });
       showToast("Account activated successfully! Please login.", "success");
       // Redirect to login
       setTimeout(() => {

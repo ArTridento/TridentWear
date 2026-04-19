@@ -120,7 +120,7 @@ function bindRegisterForm() {
 
     setSubmitting(form, true, "Create Account", "Creating Account...");
     try {
-      const data = await post("/api/auth/register", {
+      const data = await post("/register", {
         name,
         email,
         password,
@@ -247,7 +247,7 @@ function bindLoginForm() {
 
     setSubmitting(form, true, "Login", "Signing In...");
     try {
-      const data = await post("/api/auth/login", { email, password });
+      const data = await post("/login", { email, password });
       saveAuthSession({ token: data.token, user: data.user });
       await refreshAuthState();
       renderAuthStatus();

@@ -952,6 +952,7 @@ class EmailVerifyPayload(BaseModel):
     email: str
     otp: str
 
+@auth_router.post("/verify-otp")
 @auth_router.post("/api/auth/otp/verify-email")
 def verify_email_registration(payload: EmailVerifyPayload, request: Request) -> Dict[str, Any]:
     users = load_users()

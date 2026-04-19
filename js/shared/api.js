@@ -8,8 +8,9 @@ import {
   DEFAULT_USERS,
 } from "./mock-data.js";
 
-export const STATIC_MODE = true;
+export const STATIC_MODE = false;
 
+const API_ROOT = "http://127.0.0.1:8000";
 const SITE_ROOT = new URL("../../", import.meta.url);
 const AUTH_STORAGE_KEY = "tridentwear-auth-session";
 const STORAGE_KEYS = {
@@ -383,6 +384,7 @@ async function buildProductImage(inputImage, existingImage) {
 }
 
 function shouldHandleLocally(url) {
+  if (!STATIC_MODE) return false;
   return (
     url.pathname.startsWith("/api/") ||
     url.pathname.startsWith("/products/") ||
@@ -963,6 +965,9 @@ export function resolveUrl(path) {
   if (/^(https?:)?\/\//.test(path) || String(path).startsWith("data:")) {
     return path;
   }
+  if (!STATIC_MODE && path.startsWith("/api/")) {
+    return `${API_ROOT}${path}`;
+  }
   const cleanPath = String(path || "").replace(/^\.\//, "").replace(/^\//, "");
   return new URL(cleanPath, SITE_ROOT).href;
 }
@@ -1000,6 +1005,12 @@ export async function request(path, options = {}) {
   const method = String(options.method || "GET").toUpperCase();
   const url = new URL(resolveUrl(path));
   const body = parseJsonBody(options);
+  
+  if (!options.headers) options.headers = {};
+  const session = getAuthSession();
+  if (session && session.token) {
+    options.headers["Authorization"] = `Bearer ${session.token}`;
+  }
 
   try {
     if (shouldHandleLocally(url)) {
