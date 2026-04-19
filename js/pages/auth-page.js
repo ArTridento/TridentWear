@@ -41,6 +41,11 @@ function buildPath(path) {
 }
 
 function redirectAfterAuth(user) {
+  if (user && user.profile_completed_status === false) {
+    window.location.href = `profile-setup.html`;
+    return;
+  }
+  
   const next = nextPath();
   if (next) {
     window.location.href = next;
@@ -122,10 +127,10 @@ function bindRegisterForm() {
         confirm_password: confirmPassword,
       });
 
-      saveAuthSession({ token: data.token, user: data.user });
-      await refreshAuthState();
-      renderAuthStatus();
-      redirectAfterAuth(data.user);
+      showToast(data.message || "Please check your email for OTP.", "success");
+      setTimeout(() => {
+        window.location.href = `verify.html?email=${encodeURIComponent(email)}`;
+      }, 1000);
     } catch (error) {
       showToast(error.message, "error");
     } finally {

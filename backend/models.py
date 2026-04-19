@@ -8,10 +8,16 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(String, unique=True, index=True, nullable=False) # e.g. TW26-001
     name = Column(String, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     password_hash = Column(String, nullable=False)
     phone = Column(String, nullable=True)
+    gender = Column(String, nullable=True) # Mr / Miss / Other
+    otp = Column(String, nullable=True)
+    otp_expiry = Column(DateTime(timezone=True), nullable=True)
+    otp_verification_status = Column(Boolean, default=False)
+    profile_completed_status = Column(Boolean, default=False)
     is_admin = Column(Boolean, default=False)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

@@ -833,20 +833,46 @@ def register(payload: RegisterPayload, request: Request) -> Dict[str, Any]:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="An account with that email already exists.")
 
     users = load_users()
+    current_year_suffix = datetime.now().strftime("%y")
+    
+    # Generate sequential ID starting from 001 for current year
+    highest_seq = 0
+    prefix = f"TW{current_year_suffix}-"
+    for u in users:
+        uid = str(u.get("user_id", ""))
+        if uid.startswith(prefix):
+            try:
+                seq = int(uid.split("-")[1])
+                if seq > highest_seq:
+                    highest_seq = seq
+            except Exception:
+                pass
+    
+    seq_number = str(highest_seq + 1).zfill(3)
+    user_id_formatted = f"{prefix}{seq_number}"
+    import random
+    otp = str(random.randint(100000, 999999))
+    print(f"DEBUG: Sent OTP {otp} for registration of {email}")
+
     new_user = {
         "id": next_id(users),
+        "user_id": user_id_formatted,
         "name": name,
         "email": email,
         "password_hash": hash_password(password),
         "role": "customer",
+        "gender": getattr(payload, "gender", None),
+        "otp": otp,
+        "otp_expiry": (datetime.now(timezone.utc) + timedelta(minutes=10)).isoformat(),
+        "otp_verification_status": False,
+        "profile_completed_status": False,
         "created_at": now_iso(),
     }
     users.append(new_user)
     save_users(users)
-    store_session_user(request, new_user)
-    token = issue_auth_token(new_user)
 
-    return {"success": True, "message": "Account created successfully.", "token": token, "user": serialize_user(new_user)}
+    # We do NOT return a token. They must verify OTP.
+    return {"success": True, "message": "Account created. Please check your email for the OTP.", "email": email}
 
 
 @auth_router.post("/login")
@@ -858,6 +884,10 @@ def login(payload: LoginPayload, request: Request) -> Dict[str, Any]:
 
     if not user or not verify_password(password, user.get("password_hash", "")):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password.")
+    
+    if user.get("role") != "admin" and not user.get("otp_verification_status", False):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Please verify your email OTP before logging in.")
+
     user = upgrade_password_hash_if_needed(user, password)
     store_session_user(request, user)
     token = issue_auth_token(user)
@@ -891,6 +921,64 @@ def verify_otp(payload: OTPPayload, request: Request) -> Dict[str, Any]:
     token = issue_auth_token(user)
     return {"success": True, "message": "OTP verified.", "token": token, "user": serialize_user(user)}
 
+
+class EmailVerifyPayload(BaseModel):
+    email: str
+    otp: str
+
+@auth_router.post("/api/auth/otp/verify-email")
+def verify_email_registration(payload: EmailVerifyPayload, request: Request) -> Dict[str, Any]:
+    users = load_users()
+    target_email = validate_email(payload.email)
+    user_idx = next((i for i, u in enumerate(users) if u.get("email") == target_email), None)
+    
+    if user_idx is None:
+        raise HTTPException(status_code=404, detail="User not found.")
+        
+    user = users[user_idx]
+    if user.get("otp_verification_status"):
+        raise HTTPException(status_code=400, detail="Account already verified.")
+        
+    if user.get("otp") != payload.otp.strip():
+        raise HTTPException(status_code=400, detail="Incorrect OTP.")
+        
+    # Check expiry
+    expiry = user.get("otp_expiry")
+    if expiry and datetime.fromisoformat(expiry) < datetime.now(timezone.utc):
+        raise HTTPException(status_code=400, detail="OTP has expired. Please request a new one.")
+
+    user["otp_verification_status"] = True
+    users[user_idx] = user
+    save_users(users)
+    
+    # Authenticate user immediately after verification
+    store_session_user(request, user)
+    token = issue_auth_token(user)
+    
+    return {"success": True, "message": "Email verified successfully.", "token": token, "user": serialize_user(user)}
+
+class ProfileSetupPayload(BaseModel):
+    gender: str
+    phone: Optional[str] = None
+
+@auth_router.post("/api/auth/profile/setup")
+def setup_profile(payload: ProfileSetupPayload, request: Request) -> Dict[str, Any]:
+    user_auth = get_session_user(request)
+    if not user_auth:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+        
+    users = load_users()
+    user_idx = next((i for i, u in enumerate(users) if u.get("id") == user_auth["id"]), None)
+    if user_idx is not None:
+        u = users[user_idx]
+        u["gender"] = payload.gender
+        if payload.phone:
+            u["phone"] = payload.phone
+        u["profile_completed_status"] = True
+        users[user_idx] = u
+        save_users(users)
+        return {"success": True, "message": "Profile setup complete", "user": serialize_user(u)}
+    raise HTTPException(status_code=404, detail="User not found.")
 
 @auth_router.post("/api/auth/google")
 def google_login(payload: GooglePayload, request: Request) -> Dict[str, Any]:

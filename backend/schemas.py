@@ -15,18 +15,33 @@ class UserBase(BaseModel):
     name: str
     email: EmailStr
     phone: Optional[str] = None
+    gender: Optional[str] = None
 
 class UserCreate(UserBase):
     password: str
 
 class UserResponse(UserBase):
     id: int
+    user_id: str
     is_admin: bool
     is_active: bool
+    otp_verification_status: bool
+    profile_completed_status: bool
     created_at: datetime
 
     class Config:
         from_attributes = True
+
+class OTPVerifyRequest(BaseModel):
+    email: EmailStr
+    otp: str
+
+class ResendOTPRequest(BaseModel):
+    email: EmailStr
+
+class ProfileSetupRequest(BaseModel):
+    gender: str
+    phone: Optional[str] = None
 
 # --- Product ---
 class ProductBase(BaseModel):

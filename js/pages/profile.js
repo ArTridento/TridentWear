@@ -14,6 +14,18 @@ async function loadProfile() {
   const firstName = names[0] || "N/A";
   const lastName = names.length > 1 ? names.slice(1).join(" ") : "";
 
+  const welcomeText = document.getElementById("welcome-message-text");
+  if (welcomeText) {
+    const fullName = user.name || firstName;
+    if (user.gender === "Mr") {
+      welcomeText.textContent = `👉 Mr. ${fullName}, welcome to your Trident Wear account`;
+    } else if (user.gender === "Miss") {
+      welcomeText.textContent = `👉 Miss ${fullName}, welcome to your Trident Wear account`;
+    } else {
+      welcomeText.textContent = `👉 Welcome ${fullName}, to your Trident Wear account`;
+    }
+  }
+
   // Sidebar Updates
   const sidebarName = document.getElementById("sidebar-name");
   const sidebarEmail = document.getElementById("sidebar-email");
