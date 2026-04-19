@@ -852,7 +852,33 @@ def register(payload: RegisterPayload, request: Request) -> Dict[str, Any]:
     user_id_formatted = f"{prefix}{seq_number}"
     import random
     otp = str(random.randint(100000, 999999))
-    print(f"DEBUG: Sent OTP {otp} for registration of {email}")
+    
+    # ─── REAL EMAIL DISPATCH ───
+    import smtplib
+    from email.mime.text import MIMEText
+    
+    smtp_host = os.getenv("SMTP_HOST", "")
+    smtp_port = int(os.getenv("SMTP_PORT", "587"))
+    smtp_user = os.getenv("SMTP_USER", "")
+    smtp_pass = os.getenv("SMTP_PASS", "")
+    
+    if smtp_host and smtp_user:
+        msg = MIMEText(f"Hello {name},\n\nYour Trident Wear verification code is: {otp}\n\nThis code will expire in 10 minutes.\n\nThank you,\nTrident Wear Team")
+        msg["Subject"] = "Trident Wear - Email Verification OTP"
+        msg["From"] = smtp_user
+        msg["To"] = email
+        try:
+            with smtplib.SMTP(smtp_host, smtp_port) as server:
+                server.starttls()
+                server.login(smtp_user, smtp_pass)
+                server.sendmail(smtp_user, [email], msg.as_string())
+            print(f"Successfully dispatched real OTP email to {email}")
+        except Exception as e:
+            print(f"SMTP sending failed: {e}")
+            # Fallback to local log if email fails
+            print(f"FALLBACK OTP DISPLAY: {otp}")
+    else:
+        print(f"DEBUG (NO SMTP CONFIGURED): Sent OTP {otp} for registration of {email}")
 
     new_user = {
         "id": next_id(users),
