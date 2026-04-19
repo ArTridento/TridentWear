@@ -31,6 +31,38 @@ async function loadProfile() {
   if (emailInput) emailInput.value = user.email || "N/A";
   if (firstNameInput) firstNameInput.value = firstName;
   if (lastNameInput) lastNameInput.value = lastName;
+
+  // Setup tabs
+  const tabLinks = document.querySelectorAll("[data-tab]");
+  const sections = document.querySelectorAll(".profile-section-tab");
+
+  tabLinks.forEach(link => {
+    link.addEventListener("click", e => {
+      e.preventDefault();
+      
+      // Get target tab
+      const targetId = "section-" + link.getAttribute("data-tab");
+      
+      // Hide all panels
+      sections.forEach(sec => {
+        sec.style.display = "none";
+      });
+
+      // Show target panel if it exists
+      const targetPanel = document.getElementById(targetId);
+      if (targetPanel) {
+        targetPanel.style.display = "block";
+      }
+
+      // Update sidebar active link styling if needed (optional)
+      tabLinks.forEach(l => {
+        l.style.color = "#555";
+        l.style.fontWeight = "normal";
+      });
+      link.style.color = "#117864";
+      link.style.fontWeight = "600";
+    });
+  });
 }
 
 loadProfile();
