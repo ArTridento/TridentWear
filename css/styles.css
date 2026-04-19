@@ -494,14 +494,13 @@ h4,
   display: none;
 }
 .utility-pill.is-greeting {
-  color: var(--white);
-  border-color: var(--dark);
-  background: var(--dark);
+  color: var(--primary);
+  background: transparent;
+  border: none;
 }
 .utility-pill.is-greeting:hover {
-  color: var(--white);
-  border-color: var(--primary);
-  background: var(--primary);
+  color: var(--gray-dark);
+  background: transparent;
 }
 
 .cart-badge {
@@ -522,6 +521,7 @@ h4,
 .mobile-toggle {
   display: flex !important;
   margin-right: 0.5rem; /* slight gap next to search */
+  margin-left: -0.5rem; /* pull closer to edge */
   width: 2.5rem;
   height: 2.5rem;
   flex-direction: column;

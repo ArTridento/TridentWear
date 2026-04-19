@@ -517,59 +517,25 @@ function setCartCount(count) {
 }
 
 function ensureAuthLinks() {
-  document.querySelectorAll(".header-tools").forEach((container) => {
-    const loginLink = container.querySelector("[data-login-link]");
-    if (!loginLink || container.querySelector("[data-register-link]")) {
-      return;
-    }
-
-    const registerLink = document.createElement("a");
-    registerLink.className = "utility-pill";
-    registerLink.href = "register.html";
-    registerLink.textContent = "Register";
-    registerLink.setAttribute("data-register-link", "");
-
-    const cartLink = Array.from(container.querySelectorAll("a")).find((link) => link.getAttribute("href") === "cart.html");
-    const logoutButton = container.querySelector("[data-logout-button]");
-    container.insertBefore(registerLink, cartLink || logoutButton || null);
-  });
+  // Authentication links are now strictly hardcoded inside the HTML as required by layout updates.
 }
 
 function setAccountUi() {
-  ensureAuthLinks();
-  const firstName = currentUser?.name?.split(" ")[0] || "Member";
+  const firstName = currentUser?.name?.split(" ")[0] || "Profile";
 
   document.querySelectorAll("[data-login-link]").forEach((loginLink) => {
     if (!currentUser) {
-      loginLink.innerHTML = `<i class="fa-sharp-duotone fa-solid fa-arrow-right-to-bracket"></i>`;
+      loginLink.innerHTML = `<i class="fa-solid fa-user"></i>`;
       loginLink.setAttribute("href", "login.html");
       loginLink.classList.remove("is-greeting");
       loginLink.removeAttribute("title");
       return;
     }
 
-    // Still include the icon for logged in state, but remove "Hello, Name"
-    loginLink.innerHTML = `<i class="fa-sharp-duotone fa-solid fa-user"></i>`;
-    loginLink.setAttribute("href", currentUser.role === "admin" ? "admin.html" : "products.html");
+    loginLink.innerHTML = `<i class="fa-solid fa-user"></i>`;
+    loginLink.setAttribute("href", currentUser.role === "admin" ? "admin.html" : "profile.html");
     loginLink.classList.add("is-greeting");
-    loginLink.setAttribute("title", `Signed in as ${currentUser.name}`);
-  });
-
-  document.querySelectorAll("[data-register-link]").forEach((registerLink) => {
-    registerLink.hidden = Boolean(currentUser);
-    registerLink.innerHTML = `<i class="fa-solid fa-user-plus"></i>`;
-    registerLink.setAttribute("title", "Register");
-    registerLink.setAttribute("href", "register.html");
-  });
-
-  document.querySelectorAll("[data-logout-button]").forEach((logoutButton) => {
-    logoutButton.hidden = !currentUser;
-    logoutButton.innerHTML = `<i class="fa-sharp-duotone fa-solid fa-arrow-left-from-bracket"></i>`;
-    logoutButton.setAttribute("title", "Logout");
-  });
-
-  document.querySelectorAll("[data-admin-link]").forEach((adminLink) => {
-    adminLink.hidden = !(currentUser && currentUser.role === "admin");
+    loginLink.setAttribute("title", `Hello, ${firstName}`);
   });
 }
 
