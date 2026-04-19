@@ -467,19 +467,15 @@ h4,
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  padding: 0.5rem 0.85rem;
+  padding: 0.25rem 0.5rem;
   transition: all var(--transition);
-  font-size: 0.85rem;
+  font-size: 1.1rem; /* increase icon size slightly */
   font-weight: 500;
   color: var(--gray-dark);
-  border: 1px solid #e9ecef;
-  background: var(--white);
+  border: none;
+  background: transparent;
   border-radius: var(--radius);
-  min-height: 2.4rem;
-  min-width: 2.4rem;
-  transition:
-    border-color var(--transition),
-    color var(--transition);
+  transition: color var(--transition);
 }
 
 /* Mobile Utility Pills */
@@ -492,7 +488,6 @@ h4,
   }
 }
 .utility-pill:hover {
-  border-color: var(--primary);
   color: var(--primary);
 }
 .utility-pill::before {
@@ -526,19 +521,16 @@ h4,
 /* ───────── MOBILE MENU ───────── */
 .mobile-toggle {
   display: flex !important;
-  margin-right: auto;
+  margin-right: 0.5rem; /* slight gap next to search */
   width: 2.5rem;
   height: 2.5rem;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
-  border-radius: var(--radius);
-  border: 1px solid #e9ecef;
-  background: var(--white);
-  transition:
-    background var(--transition),
-    border-color var(--transition);
+  border: none;
+  background: transparent;
+  transition: background var(--transition);
   cursor: pointer;
   z-index: 1100;
 }
@@ -546,8 +538,8 @@ h4,
 /* Show hamburger menu on all devices to act as Sidebar toggle */
 
 .mobile-toggle:hover {
-  border-color: var(--primary);
-  background: rgba(98, 68, 197, 0.05);
+  background: rgba(98, 68, 197, 0.05); /* very light hover effect */
+  border-radius: var(--radius);
 }
 
 .mobile-toggle-line {
@@ -582,6 +574,7 @@ h4,
   position: relative;
   min-width: 14rem;
   order: 2;
+  margin-right: auto;
 }
 
 /* Hide search on mobile */
