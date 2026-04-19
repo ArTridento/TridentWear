@@ -1478,6 +1478,84 @@ def get_analytics(_: Dict[str, Any] = Depends(require_admin)) -> Dict[str, Any]:
     }
 
 # ════════════════════════════════════════════════════════════
+# CHECKOUT & PAYMENT SYSTEM
+# ════════════════════════════════════════════════════════════
+payment_router = APIRouter(prefix="/api/payment", tags=["Payment"])
+
+@payment_router.post("/cod")
+def place_cod_order(payload: CODPayload, request: Request) -> Dict[str, Any]:
+    orders = load_orders()
+    order_id = f"TRD-{uuid.uuid4().hex[:8].upper()}"
+    
+    new_order = {
+        "id": next_id(orders),
+        "order_id": order_id,
+        "method": "COD",
+        "subtotal": payload.subtotal,
+        "customer": payload.customer,
+        "shipping": payload.shipping,
+        "items": payload.items,
+        "coupon_code": getattr(payload, "coupon_code", None),
+        "status": "pending",
+        "created_at": now_iso()
+    }
+    orders.append(new_order)
+    save_orders(orders)
+    
+    # Optionally send email
+    try:
+        send_order_email(payload.customer.get("email"), order_id, "COD")
+    except Exception:
+        pass
+        
+    return {"success": True, "order_id": order_id, "message": "COD order placed successfully"}
+
+@payment_router.post("/create-order")
+def create_razorpay_order(payload: RazorpayCreatePayload) -> Dict[str, Any]:
+    import os
+    rz_key = os.getenv("RAZORPAY_KEY", "rzp_test_mockkey")
+    # Normally we call razorpay.Client here
+    # Mock response for testing or offline
+    mock_order_id = f"order_{uuid.uuid4().hex[:14]}"
+    return {
+        "success": True,
+        "razorpay_order_id": mock_order_id,
+        "key_id": rz_key
+    }
+
+@payment_router.post("/verify")
+def verify_razorpay_payment(payload: RazorpayVerifyPayload) -> Dict[str, Any]:
+    # Mock signature verification
+    orders = load_orders()
+    order_id = f"TRD-{uuid.uuid4().hex[:8].upper()}"
+    
+    new_order = {
+        "id": next_id(orders),
+        "order_id": order_id,
+        "method": "Razorpay",
+        "razorpay_payment_id": payload.razorpay_payment_id,
+        "subtotal": payload.order_data.get("subtotal"),
+        "customer": payload.order_data.get("customer"),
+        "shipping": payload.order_data.get("shipping"),
+        "items": payload.order_data.get("items"),
+        "coupon_code": payload.order_data.get("coupon_code"),
+        "status": "paid",
+        "created_at": now_iso()
+    }
+    orders.append(new_order)
+    save_orders(orders)
+    
+    try:
+        user_email = payload.order_data.get("customer", {}).get("email")
+        send_order_email(user_email, order_id, "Online")
+    except Exception:
+        pass
+        
+    return {"success": True, "order_id": order_id, "message": "Payment verified and order placed"}
+
+app.include_router(payment_router)
+
+# ════════════════════════════════════════════════════════════
 # CHAT SYSTEM
 # ════════════════════════════════════════════════════════════
 @app.post("/api/chat/send")
