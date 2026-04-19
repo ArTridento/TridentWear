@@ -572,7 +572,7 @@ h4,
 /* ───────── SEARCH BAR ───────── */
 .search-wrapper {
   position: relative;
-  min-width: 14rem;
+  width: 12rem;
   order: 2;
   margin-right: auto;
 }
