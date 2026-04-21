@@ -10497,3 +10497,14 @@ body[data-page="home"] .site-header:not(.is-scrolled) {
     background: transparent !important;
   }
 }
+
+/* Fix the massive anchor tags causing them to blow out the center of the navbar */
+@media (min-width: 56.063rem) {
+  .site-nav .nav-link,
+  .site-nav .nav-dropdown-trigger,
+  .site-nav .nav-dropdown {
+    width: auto !important;
+    max-width: none !important;
+    justify-content: center !important;
+  }
+}
