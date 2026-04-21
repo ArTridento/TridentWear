@@ -10439,3 +10439,61 @@ body[data-page="home"] .site-header:not(.is-scrolled) {
 /* ═══════════════════════════════════════════════════════
    SEARCH ICON — JS click to expand (small script appended)
 ═══════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════
+   SLEDGEHAMMER FOR DESKTOP NAVBAR FIX
+═══════════════════════════════════════════════════════ */
+@media (min-width: 56.063rem) {
+  .site-nav {
+    display: flex !important;
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    clip-path: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+  .site-nav .nav-link,
+  .site-nav .nav-dropdown-trigger {
+    display: inline-flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    background: transparent !important;
+    color: rgba(255,255,255,0.85) !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    padding: 0.5rem 1rem !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  .site-nav .nav-link.is-active,
+  .site-nav .nav-link:hover {
+    background: transparent !important;
+    color: var(--secondary) !important;
+    font-weight: 700 !important;
+  }
+  .site-nav::before,
+  .site-nav::after {
+    display: none !important;
+  }
+  .nav-dropdown-menu {
+    display: flex !important;
+    background: rgba(12,10,22,0.95) !important;
+  }
+  /* Fix the search wrapper to ensure it is pushed right */
+  .search-wrapper {
+    margin-left: auto !important;
+    margin-right: 1.5rem !important;
+    background: transparent !important;
+  }
+}
