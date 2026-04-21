@@ -10508,3 +10508,63 @@ body[data-page="home"] .site-header:not(.is-scrolled) {
     justify-content: center !important;
   }
 }
+/* ═══════════════════════════════════════════════════════
+   FINAL BOMB-PROOF DESKTOP NAVBAR V14
+═══════════════════════════════════════════════════════ */
+@media (min-width: 56.063rem) {
+  .header-inner {
+    display: flex !important;
+    align-items: center !important;
+    position: relative !important;
+  }
+
+  /* 1. Brand stays left */
+  .brand {
+    margin-right: auto !important;
+    flex: 0 0 auto !important;
+  }
+
+  /* 2. Nav absolutely centered, transparent */
+  .site-nav {
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    display: flex !important;
+    flex-direction: row !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    width: auto !important;
+    clip-path: none !important;
+  }
+
+  .site-nav .nav-link,
+  .site-nav .nav-dropdown-trigger {
+    width: auto !important;
+    max-width: none !important;
+    background: transparent !important;
+  }
+
+  .site-nav .nav-dropdown-menu {
+    display: none; /* Hide dropdown by default */
+  }
+
+  .site-nav .nav-dropdown:hover .nav-dropdown-menu {
+    display: flex; /* Show dropdown only on hover */
+  }
+
+  /* 3. Search and Icons bound to the right */
+  .search-wrapper {
+    order: 10 !important;
+    margin-left: auto !important;
+    margin-right: 0.5rem !important;
+  }
+
+  .header-tools {
+    order: 11 !important;
+    display: flex !important;
+    margin-left: 0 !important;
+  }
+}
