@@ -611,41 +611,57 @@ function setAccountUi() {
 
 function bindMobileMenu() {
   const toggle = document.querySelector("[data-mobile-toggle]");
-  const nav = document.querySelector("[data-mobile-nav]");
+  const nav    = document.querySelector("[data-mobile-nav]");
+  const header = document.querySelector(".site-header");
   if (!toggle || !nav) return;
 
-  const mobileQuery = window.matchMedia("(max-width: 56rem)");
   const dropdowns = Array.from(nav.querySelectorAll(".nav-dropdown"));
-  const setExpanded = (element, expanded) => {
-    element?.setAttribute("aria-expanded", String(Boolean(expanded)));
-  };
+
+  // Stagger delay indices on nav links for cascading reveal
+  const allLinks = Array.from(nav.querySelectorAll(".nav-link, .nav-dropdown-trigger"));
+  allLinks.forEach((link, i) => link.style.setProperty("--i", i));
+
+  const setExpanded = (el, val) => el?.setAttribute("aria-expanded", String(Boolean(val)));
 
   const closeMenu = () => {
     nav.classList.remove("is-open");
+    toggle.classList.remove("is-open");
     setExpanded(toggle, false);
-    dropdowns.forEach((dropdown) => {
-      dropdown.classList.remove("is-open");
-      setExpanded(dropdown.querySelector(".nav-dropdown-trigger"), false);
+    document.body.style.overflow = "";
+    dropdowns.forEach(d => {
+      d.classList.remove("is-open");
+      setExpanded(d.querySelector(".nav-dropdown-trigger"), false);
     });
   };
 
-  toggle.setAttribute("aria-expanded", "false");
+  const openMenu = () => {
+    nav.classList.add("is-open");
+    toggle.classList.add("is-open");
+    setExpanded(toggle, true);
+    document.body.style.overflow = "hidden";
+  };
+
+  setExpanded(toggle, false);
+
   toggle.addEventListener("click", () => {
-    const isOpen = nav.classList.toggle("is-open");
-    setExpanded(toggle, isOpen);
+    const isOpen = nav.classList.contains("is-open");
+    isOpen ? closeMenu() : openMenu();
   });
 
-  dropdowns.forEach((dropdown) => {
+  // Dropdown accordion (mobile) / hover supported by CSS (desktop)
+  dropdowns.forEach(dropdown => {
     const trigger = dropdown.querySelector(".nav-dropdown-trigger");
     if (!trigger) return;
-    trigger.setAttribute("aria-expanded", "false");
-    trigger.addEventListener("click", (event) => {
-      event.preventDefault();
+    setExpanded(trigger, false);
+    trigger.addEventListener("click", e => {
+      const isMobile = window.innerWidth <= 896;
+      if (!isMobile) return; // desktop uses CSS hover
+      e.preventDefault();
       const willOpen = !dropdown.classList.contains("is-open");
-      dropdowns.forEach((item) => {
-        if (item !== dropdown) {
-          item.classList.remove("is-open");
-          setExpanded(item.querySelector(".nav-dropdown-trigger"), false);
+      dropdowns.forEach(d => {
+        if (d !== dropdown) {
+          d.classList.remove("is-open");
+          setExpanded(d.querySelector(".nav-dropdown-trigger"), false);
         }
       });
       dropdown.classList.toggle("is-open", willOpen);
@@ -653,28 +669,23 @@ function bindMobileMenu() {
     });
   });
 
-  nav.querySelectorAll("a").forEach((link) => {
+  // Close on regular link click
+  nav.querySelectorAll("a").forEach(link => {
     if (link.classList.contains("nav-dropdown-trigger")) return;
     link.addEventListener("click", closeMenu);
   });
 
-  document.addEventListener("click", (event) => {
-    if (!event.target.closest("[data-mobile-nav]") && !event.target.closest("[data-mobile-toggle]")) {
+  // Close on outside click
+  document.addEventListener("click", e => {
+    if (!e.target.closest("[data-mobile-nav]") && !e.target.closest("[data-mobile-toggle]")) {
       closeMenu();
     }
   });
 
-  const syncDesktopState = () => {
-    if (!mobileQuery.matches) {
-      closeMenu();
-    }
-  };
-
-  if (typeof mobileQuery.addEventListener === "function") {
-    mobileQuery.addEventListener("change", syncDesktopState);
-  } else {
-    mobileQuery.addListener(syncDesktopState);
-  }
+  // Close on Escape
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && nav.classList.contains("is-open")) closeMenu();
+  });
 }
 
 function bindLogout() {
