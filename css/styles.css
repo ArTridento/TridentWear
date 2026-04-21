@@ -29,8 +29,8 @@
   --teal: #20c997;
 
   /* Design Tokens */
-  --font-body: "Inter", sans-serif;
-  --font-display: "Outfit", sans-serif;
+  --font-body: "Inter", "Poppins", sans-serif;
+  --font-display: "Poppins", "Outfit", sans-serif;
   --radius: 6px;
   --radius-sm: 4px;
   --radius-pill: 999px;
@@ -8100,4 +8100,278 @@ body.js-loaded [data-animate].is-visible {
   .hero-orb-1 { width: 220px; height: 220px; }
   .hero-orb-2 { width: 180px; height: 180px; }
   .hero-orb-3 { display: none; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   NEW DROP HYPE SECTION
+═══════════════════════════════════════════════════════ */
+
+.new-drop-section {
+  background: linear-gradient(135deg, #0d0f1a 0%, #1a1030 60%, #0d0f1a 100%);
+  padding: 4rem 0;
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.new-drop-section::before {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: var(--primary);
+  opacity: 0.08;
+  filter: blur(120px);
+  top: -200px; left: -100px;
+  pointer-events: none;
+}
+.new-drop-section::after {
+  content: '';
+  position: absolute;
+  width: 400px; height: 400px;
+  border-radius: 50%;
+  background: var(--secondary);
+  opacity: 0.06;
+  filter: blur(100px);
+  bottom: -100px; right: 0;
+  pointer-events: none;
+}
+
+.new-drop-inner {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.new-drop-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255,77,77,0.15);
+  border: 1px solid rgba(255,77,77,0.3);
+  color: #ff6b6b;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 0.35rem 1rem;
+  border-radius: var(--radius-pill);
+  margin-bottom: 1.25rem;
+  text-transform: uppercase;
+  animation: pulse-badge 2s ease-in-out infinite;
+}
+@keyframes pulse-badge {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,77,77,0.3); }
+  50%       { box-shadow: 0 0 0 8px rgba(255,77,77,0); }
+}
+
+.new-drop-headline {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4vw, 3.2rem);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.15;
+  margin-bottom: 1rem;
+}
+.new-drop-headline span {
+  background: linear-gradient(135deg, var(--secondary), #ff9f43);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.new-drop-copy {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.new-drop-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.new-drop-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 2.25rem;
+  background: var(--secondary);
+  color: var(--dark) !important;
+  font-weight: 800;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  border-radius: var(--radius);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  text-decoration: none;
+}
+.new-drop-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(255,196,72,0.45);
+  color: var(--dark) !important;
+}
+
+.new-drop-stock {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.5);
+  font-weight: 500;
+}
+
+/* ═══════════════════════════════════════════════════════
+   LIFESTYLE / INSTAGRAM GRID
+═══════════════════════════════════════════════════════ */
+
+.lifestyle-section {
+  padding: 4rem 0;
+  background: var(--white);
+  border-top: 1px solid #e9ecef;
+}
+
+.lifestyle-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 260px 260px;
+  gap: 0.75rem;
+}
+
+.lifestyle-cell {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.lifestyle-cell-tall {
+  grid-row: span 2;
+}
+
+.lifestyle-cell-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.lifestyle-cell-col .lifestyle-cell {
+  flex: 1;
+}
+
+.lifestyle-img-wrap {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.lifestyle-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+  display: block;
+}
+.lifestyle-cell:hover .lifestyle-img {
+  transform: scale(1.07);
+}
+
+.lifestyle-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 55%);
+  display: flex;
+  align-items: flex-end;
+  padding: 1.25rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.lifestyle-cell:hover .lifestyle-overlay {
+  opacity: 1;
+}
+.lifestyle-overlay span {
+  color: var(--white);
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+  letter-spacing: 0.02em;
+}
+
+.lifestyle-ig-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+.lifestyle-ig-btn:hover {
+  background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  color: var(--white) !important;
+  border-color: transparent;
+  transform: translateY(-2px);
+}
+
+/* ═══════════════════════════════════════════════════════
+   ENHANCED BUTTON GLOW
+═══════════════════════════════════════════════════════ */
+
+.btn-primary {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease !important;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(98,68,197,0.4);
+}
+
+.btn-outline:hover {
+  background: var(--primary) !important;
+  color: var(--white) !important;
+  border-color: var(--primary) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(98,68,197,0.25);
+}
+
+/* Hero sub paragraph */
+.hero-sub {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.72);
+  line-height: 1.7;
+  margin: 0.75rem 0 1.5rem;
+  max-width: 480px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   PRODUCT IMAGE ZOOM ON HOVER
+═══════════════════════════════════════════════════════ */
+
+.product-media {
+  overflow: hidden;
+}
+.product-image {
+  transition: transform 0.45s ease, opacity 0.3s ease;
+}
+.product-card:hover .product-image {
+  transform: scale(1.06);
+}
+
+/* Responsive — new sections */
+@media (max-width: 56rem) {
+  .lifestyle-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+  }
+  .lifestyle-cell-tall { grid-row: span 1; }
+  .lifestyle-cell-col { flex-direction: row; }
+  .new-drop-cta { flex-direction: column; gap: 0.75rem; }
+}
+
+@media (max-width: 36rem) {
+  .lifestyle-grid { grid-template-columns: 1fr; }
+  .lifestyle-cell, .lifestyle-cell-tall { height: 220px; }
+  .lifestyle-cell-col { flex-direction: column; }
 }
