@@ -7746,3 +7746,358 @@ iframe {
 @media (max-width: 36rem) {
   .cat-grid { grid-template-columns: 1fr; }
 }
+
+/* ═══════════════════════════════════════════════════════
+   PREMIUM UPGRADE — HERO ANIMATION
+═══════════════════════════════════════════════════════ */
+
+.hero-slide-animated {
+  background: linear-gradient(135deg, #0d0f1a 0%, #12141d 50%, #151828 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated mesh orb blobs */
+.hero-mesh {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-slide-animated .container {
+  position: relative;
+  z-index: 1;
+}
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.18;
+  animation: orbFloat 8s ease-in-out infinite;
+}
+.hero-orb-1 {
+  width: 420px; height: 420px;
+  background: var(--primary);
+  top: -80px; left: -80px;
+  animation-delay: 0s;
+}
+.hero-orb-2 {
+  width: 320px; height: 320px;
+  background: var(--teal);
+  bottom: -60px; right: 10%;
+  animation-delay: 3s;
+}
+.hero-orb-3 {
+  width: 260px; height: 260px;
+  background: var(--secondary);
+  top: 40%; left: 40%;
+  animation-delay: 5s;
+  opacity: 0.1;
+}
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(20px, -25px) scale(1.05); }
+  66%       { transform: translate(-15px, 15px) scale(0.97); }
+}
+
+/* Floating hero image */
+.hero-img-float {
+  animation: imgFloat 5s ease-in-out infinite;
+}
+@keyframes imgFloat {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+
+/* CTA glow button */
+.hero-cta-glow {
+  box-shadow: 0 0 20px rgba(98, 68, 197, 0.5), 0 4px 16px rgba(98, 68, 197, 0.35);
+  transition: box-shadow 0.3s ease, transform 0.3s ease, background 0.3s ease !important;
+}
+.hero-cta-glow:hover {
+  box-shadow: 0 0 35px rgba(98, 68, 197, 0.75), 0 8px 24px rgba(98, 68, 197, 0.5);
+  transform: translateY(-3px) !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SCROLL REVEAL ANIMATIONS
+═══════════════════════════════════════════════════════ */
+
+/* Scroll reveal — only hide when JS loads (prevents invisible content on slow/failed JS) */
+body.js-loaded [data-animate] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+body.js-loaded [data-animate].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+[data-delay="100"] { transition-delay: 0.1s; }
+[data-delay="200"] { transition-delay: 0.2s; }
+[data-delay="300"] { transition-delay: 0.3s; }
+[data-delay="400"] { transition-delay: 0.4s; }
+
+
+/* ═══════════════════════════════════════════════════════
+   WHY CHOOSE SECTION
+═══════════════════════════════════════════════════════ */
+
+.why-section {
+  padding: 4.5rem 0 3rem;
+  background: var(--light);
+  border-top: 1px solid #e9ecef;
+}
+
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.why-card {
+  background: var(--white);
+  border: 1px solid #e9ecef;
+  border-radius: 14px;
+  padding: 2rem 1.75rem;
+  text-align: center;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+.why-card:hover {
+  box-shadow: 0 10px 32px rgba(98, 68, 197, 0.1);
+  transform: translateY(-4px);
+}
+
+.why-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(98,68,197,0.12), rgba(98,68,197,0.06));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: var(--primary);
+  margin: 0 auto 1.25rem;
+}
+
+.why-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--gray-dark);
+  margin-bottom: 0.65rem;
+  font-family: var(--font-display);
+}
+
+.why-copy {
+  font-size: 0.875rem;
+  color: var(--gray);
+  line-height: 1.65;
+}
+
+/* Trust badges row */
+.trust-badges-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  background: var(--white);
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 1.25rem 2rem;
+  flex-wrap: wrap;
+}
+
+.trust-badge-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 1.5rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--gray-dark);
+}
+.trust-badge-item i {
+  color: var(--primary);
+  font-size: 1rem;
+}
+
+.trust-badge-divider {
+  width: 1px;
+  height: 2rem;
+  background: #e9ecef;
+}
+
+/* ═══════════════════════════════════════════════════════
+   BRAND STORY SECTION
+═══════════════════════════════════════════════════════ */
+
+.brand-story-section {
+  background: var(--dark);
+  padding: 5rem 0;
+  position: relative;
+  overflow: hidden;
+}
+.brand-story-section::before {
+  content: "";
+  position: absolute;
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  background: var(--primary);
+  opacity: 0.06;
+  filter: blur(100px);
+  top: -100px; right: -100px;
+  pointer-events: none;
+}
+
+.brand-story-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+.eyebrow-light {
+  color: var(--secondary) !important;
+  border-color: rgba(255,196,72,0.3) !important;
+}
+
+.brand-story-headline {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.15;
+  margin: 1rem 0 1.5rem;
+}
+.brand-story-headline span {
+  color: var(--secondary);
+}
+
+.brand-story-copy {
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.75;
+  margin-bottom: 1rem;
+}
+
+.brand-story-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.85rem 2rem;
+  background: var(--secondary);
+  color: var(--dark);
+  font-weight: 700;
+  font-size: 0.9rem;
+  border-radius: var(--radius);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.brand-story-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255,196,72,0.4);
+  color: var(--dark);
+}
+
+.brand-story-visual {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.brand-story-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1.5rem 2rem;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  transition: border-color 0.2s ease;
+}
+.brand-story-stat:hover { border-color: rgba(255,196,72,0.3); }
+
+.bss-num {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: var(--secondary);
+  line-height: 1;
+}
+.bss-label {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.5);
+  margin-top: 0.25rem;
+}
+
+/* ═══════════════════════════════════════════════════════
+   ENHANCED PRODUCT CARDS — Quick View + Rating + Glow
+═══════════════════════════════════════════════════════ */
+
+.product-card {
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+.product-card:hover {
+  box-shadow: 0 12px 40px rgba(98,68,197,0.18);
+  transform: translateY(-4px);
+}
+
+/* Quick View overlay */
+.product-card .quick-view-btn {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  opacity: 0;
+  background: rgba(255,255,255,0.95);
+  color: var(--dark);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-pill);
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 5;
+  backdrop-filter: blur(4px);
+}
+.product-card:hover .quick-view-btn {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Rating stars */
+.product-card-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0.25rem 0 0.1rem;
+}
+.product-card-rating i {
+  font-size: 0.7rem;
+  color: var(--secondary);
+}
+.product-card-rating span {
+  font-size: 0.72rem;
+  color: var(--gray);
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 56rem) {
+  .why-grid { grid-template-columns: 1fr; }
+  .brand-story-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+  .trust-badges-row { flex-direction: column; gap: 0.75rem; }
+  .trust-badge-divider { width: 100%; height: 1px; }
+}
+
+@media (max-width: 42rem) {
+  .hero-orb-1 { width: 220px; height: 220px; }
+  .hero-orb-2 { width: 180px; height: 180px; }
+  .hero-orb-3 { display: none; }
+}

@@ -1,14 +1,14 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="TridentWear � Indian streetwear for the everyday grind. T-shirts, hoodies, oversized fits and more."
+      content="TridentWear ? Indian streetwear for the everyday grind. T-shirts, hoodies, oversized fits and more."
     />
     <title>TridentWear | Boys Streetwear</title>
-    <link rel="stylesheet" href="./css/styles.css?v=20260420-3" />
+    <link rel="stylesheet" href="./css/styles.css?v=20260421-4" />
     <link rel="icon" type="image/png" href="./images/Logo.png" />
     <link
       rel="stylesheet"
@@ -19,7 +19,7 @@
     <!-- Announcement Bar
     <div class="announce-bar">
       <div class="announce-inner">
-        <span>NEW DROP: Oversized Heavy-Cotton Tees � Shop Now</span>
+        <span>NEW DROP: Oversized Heavy-Cotton Tees ? Shop Now</span>
         <span class="announce-sep">|</span>
         <span>FREE delivery on orders above ?999</span>
         <span class="announce-sep">|</span>
@@ -125,61 +125,49 @@
             href="login.html"
             data-login-link
             title="Profile"
-            ><i class="fa-jelly-fill fa-regular fa-user"></i></a>
+            ><i class="fa-jelly-fill fa-regular fa-user"></i
+          ></a>
         </div>
       </div>
     </header>
 
     <main>
-      <!-- HERO BANNER -->
+          <!-- ─── HERO BANNER ─── -->
       <section class="hero-banner">
         <div class="hero-banner-slides" data-hero-slider>
-          <div
-            class="hero-slide is-active"
-            style="
-              background: linear-gradient(135deg, #12141d 55%, #1e2235 100%);
-            "
-          >
+          <div class="hero-slide is-active hero-slide-animated">
+            <!-- Animated mesh orbs -->
+            <div class="hero-mesh">
+              <div class="hero-orb hero-orb-1"></div>
+              <div class="hero-orb hero-orb-2"></div>
+              <div class="hero-orb hero-orb-3"></div>
+            </div>
             <div class="container hero-slide-inner">
               <div class="hero-text-col">
-                <span class="hero-kicker">NEW SEASON DROP</span>
-                <h1 class="hero-headline">
-                  Trends will fade
-                  <span class="hero-accent">identity stays.</span><br />Wear
-                  what defines
-                  <span class="hero-accent"> you.</span>
+                <span class="hero-kicker" data-animate="fade-up">NEW SEASON DROP</span>
+                <h1 class="hero-headline" data-animate="fade-up" data-delay="100">
+                  Trends fade.<br>
+                  <span class="hero-accent">Identity stays.</span>
                 </h1>
-                <div class="hero-cta-row">
-                  <a class="btn btn-hero-primary" href="products.html"
-                    >Own the Look <i class="fa-solid fa-arrow-right"></i
-                  ></a>
-                  <a
-                    class="btn btn-hero-outline"
-                    href="products.html?cat=oversized"
-                    >Oversized Fits</a
-                  >
+                <p class="hero-sub" data-animate="fade-up" data-delay="200">
+                  Wear what defines you. Premium 220 GSM cotton — built for India's streets.
+                </p>
+                <div class="hero-cta-row" data-animate="fade-up" data-delay="300">
+                  <a class="btn btn-hero-primary hero-cta-glow" href="products.html">
+                    Shop Now <i class="fa-solid fa-arrow-right"></i>
+                  </a>
+                  <a class="btn btn-hero-outline" href="products.html?cat=oversized">Oversized Fits</a>
                 </div>
-                <div class="hero-pills">
-                  <span class="hero-pill"
-                    ><i class="fa-solid fa-shirt"></i> 220 GSM Cotton</span
-                  >
-                  <span class="hero-pill"
-                    ><i class="fa-solid fa-users"></i> 10K+ Customers</span
-                  >
-                  <span class="hero-pill"
-                    ><i class="fa-solid fa-indian-rupee-sign"></i> Made in
-                    India</span
-                  >
+                <div class="hero-pills" data-animate="fade-up" data-delay="400">
+                  <span class="hero-pill"><i class="fa-solid fa-shirt"></i> 220 GSM Cotton</span>
+                  <span class="hero-pill"><i class="fa-solid fa-users"></i> 10K+ Customers</span>
+                  <span class="hero-pill"><i class="fa-solid fa-indian-rupee-sign"></i> Made in India</span>
                 </div>
               </div>
               <div class="hero-img-col">
-                <div class="hero-img-wrap">
-                  <img
-                    src="./images/hero-banner.jpg"
-                    alt="TridentWear Collection"
-                    class="hero-img"
-                  />
-                  <div class="hero-badge-float"><span>NEW</span><br />DROP</div>
+                <div class="hero-img-wrap hero-img-float">
+                  <img src="./images/hero-banner.jpg" alt="TridentWear Collection" class="hero-img" />
+                  <div class="hero-badge-float"><span>NEW</span><br>DROP</div>
                 </div>
               </div>
             </div>
@@ -190,18 +178,10 @@
         <div class="hero-dots" data-hero-dots>
           <button class="hero-dot is-active" data-slide="0"></button>
         </div>
-        <button
-          class="hero-arrow hero-arrow-prev"
-          data-hero-prev
-          aria-label="Previous slide"
-        >
+        <button class="hero-arrow hero-arrow-prev" data-hero-prev aria-label="Previous slide">
           <i class="fa-solid fa-chevron-left"></i>
         </button>
-        <button
-          class="hero-arrow hero-arrow-next"
-          data-hero-next
-          aria-label="Next slide"
-        >
+        <button class="hero-arrow hero-arrow-next" data-hero-next aria-label="Next slide">
           <i class="fa-solid fa-chevron-right"></i>
         </button>
       </section>
@@ -425,6 +405,64 @@
         </div>
       </section>
 
+      <!-- WHY CHOOSE TRIDENTWEAR -->
+      <section class="why-section" data-animate="fade-up">
+        <div class="container">
+          <div style="text-align:center; margin-bottom:2.5rem;">
+            <span class="eyebrow">Our Promise</span>
+            <h2 class="section-title">Why Choose <span class="accent">TridentWear?</span></h2>
+          </div>
+          <div class="why-grid">
+            <div class="why-card" data-animate="fade-up" data-delay="0">
+              <div class="why-icon"><i class="fa-solid fa-fingerprint"></i></div>
+              <h3 class="why-title">Identity-Based Fashion</h3>
+              <p class="why-copy">We don't make clothes that blend in. Every piece is designed to make a statement — because you are not a trend, you are an identity.</p>
+            </div>
+            <div class="why-card" data-animate="fade-up" data-delay="100">
+              <div class="why-icon"><i class="fa-solid fa-gem"></i></div>
+              <h3 class="why-title">Premium Quality Fabric</h3>
+              <p class="why-copy">220 GSM heavyweight cotton — built to last, built to feel premium. Pre-shrunk, colour-fast, and soft after every wash.</p>
+            </div>
+            <div class="why-card" data-animate="fade-up" data-delay="200">
+              <div class="why-icon"><i class="fa-solid fa-paintbrush"></i></div>
+              <h3 class="why-title">Unique Designs Only</h3>
+              <p class="why-copy">No mass-market knockoffs. Every graphic, every cut, every colourway is conceptualised in-house — exclusively for TridentWear wearers.</p>
+            </div>
+          </div>
+
+          <!-- Trust badges row -->
+          <div class="trust-badges-row" data-animate="fade-up" data-delay="300">
+            <div class="trust-badge-item"><i class="fa-solid fa-truck-fast"></i><span>Free Shipping ₹999+</span></div>
+            <div class="trust-badge-divider"></div>
+            <div class="trust-badge-item"><i class="fa-solid fa-rotate-left"></i><span>30-Day Returns</span></div>
+            <div class="trust-badge-divider"></div>
+            <div class="trust-badge-item"><i class="fa-solid fa-lock"></i><span>Secure Payment</span></div>
+            <div class="trust-badge-divider"></div>
+            <div class="trust-badge-item"><i class="fa-solid fa-headset"></i><span>WhatsApp Support</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- BRAND STORY -->
+      <section class="brand-story-section" data-animate="fade-up">
+        <div class="container">
+          <div class="brand-story-inner">
+            <div class="brand-story-text">
+              <span class="eyebrow eyebrow-light">Our Story</span>
+              <h2 class="brand-story-headline">Not a brand.<br><span>A movement.</span></h2>
+              <p class="brand-story-copy">TridentWear was born from one belief — that what you wear is a declaration of who you are. In a world flooded with fast fashion and copy-paste trends, we chose to build something different.</p>
+              <p class="brand-story-copy">We build clothes for those who refuse to blend in. For the ones who know exactly who they are and wear it like armour.</p>
+              <a href="about.html" class="btn brand-story-btn">Our Story <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            <div class="brand-story-visual">
+              <div class="brand-story-stat"><span class="bss-num">10K+</span><span class="bss-label">Customers who chose identity</span></div>
+              <div class="brand-story-stat"><span class="bss-num">220</span><span class="bss-label">GSM Cotton — no compromise</span></div>
+              <div class="brand-story-stat"><span class="bss-num">100%</span><span class="bss-label">Made in India</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- NEWSLETTER -->
       <section class="newsletter-section">
         <div class="container">
@@ -436,7 +474,7 @@
                   Join the <span class="accent">Trident Crew</span>
                 </h2>
                 <p class="section-copy">
-                  Early access to drops, exclusive deals, style guides �
+                  Early access to drops, exclusive deals, style guides ?
                   straight to your inbox.
                 </p>
               </div>
@@ -460,7 +498,7 @@
     <!-- FOOTER  -->
     <div class="footer-top-strip">
       <div class="container">
-        <span>???? Proudly Made in India � Wear the Pride</span>
+        <span><span style="font-weight:800; letter-spacing:0.05em; color:var(--secondary);">IN</span> Proudly Made in India &mdash; Wear the Pride</span>
       </div>
     </div>
     <footer class="site-footer">
@@ -527,9 +565,9 @@
         <div class="footer-col">
           <h3 class="footer-title">Contact Us</h3>
           <div class="footer-links">
-            <a href="mailto:hello@tridentwear.com"
+            <a href="mailto:tridentwear@artridento.com"
               ><i class="fa-regular fa-envelope footer-link-icon"></i
-              >hello@tridentwear.com</a
+              >tridentwear@artridento.com</a
             >
             <a href="tel:+919876543210"
               ><i class="fa-solid fa-phone footer-link-icon"></i>+91 98765

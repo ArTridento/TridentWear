@@ -1,9 +1,7 @@
 import { getWithFallback } from "../shared/api.js";
-import { normalizeProduct } from "../shared/catalog.js";
 import {
   bindProductCardActions,
   createEmptyMarkup,
-  createSkeletonCards,
   initSite,
   productCardMarkup,
   startProgress,
@@ -11,52 +9,51 @@ import {
 } from "../shared/site.js";
 
 /* ───────────────────────────────────────────
-   STATE & CATEGORY MAPPING
+   STATE & CATEGORY MAP
 ─────────────────────────────────────────── */
 let allProducts = [];
-let activeCategory = "all"; // Currently selected category
+let activeCategory = "all";
+
 const categoryLabels = {
-  all: "All T-Shirts",
-  "crew-neck": "Crew Neck T-Shirts",
-  polo: "Polo T-Shirts",
-  "v-neck": "V-Neck T-Shirts",
-  henley: "Henley T-Shirts",
-  graphic: "Graphic T-Shirts",
-  plain: "Plain T-Shirts",
-  printed: "Printed T-Shirts",
-  typography: "Typography T-Shirts",
-  striped: "Striped T-Shirts",
-  "color-block": "Color Block T-Shirts",
-  washed: "Washed T-Shirts",
-  "tie-dye": "Tie-Dye T-Shirts",
-  "full-sleeve": "Full Sleeve T-Shirts",
-  "half-sleeve": "Half Sleeve T-Shirts",
-  "slim-fit": "Slim Fit T-Shirts",
-  "regular-fit": "Regular Fit T-Shirts",
-  "oversized-fit": "Oversized T-Shirts",
-  "gym-wear": "Gym Wear T-Shirts",
-  streetwear: "Streetwear T-Shirts",
-  "new-arrivals": "New Arrivals",
+  all:         "All Products",
+  tshirt:      "T-Shirts",
+  shirt:       "Shirts",
+  kurta:       "Kurtas",
+  hoodie:      "Hoodies",
+  sweatshirt:  "Sweatshirts",
+  jacket:      "Jackets",
+  sweater:     "Sweaters",
+  blazer:      "Blazers",
+  tunic:       "Tunics",
 };
 
 /* ───────────────────────────────────────────
-   FILTER PRODUCTS BY CATEGORY
+   READ ?cat= FROM URL
 ─────────────────────────────────────────── */
-function filterByCategory(categorySlug) {
-  if (categorySlug === "all") {
-    return allProducts.filter(p => p.category === "tshirt");
-  }
-  return allProducts.filter(p => p.category === "tshirt" && p.subcategory === categorySlug);
+function getCatFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  const cat = params.get("cat") || "all";
+  return categoryLabels[cat] ? cat : "all";
 }
 
 /* ───────────────────────────────────────────
-   RENDER PRODUCTS WITH ANIMATION
+   FILTER PRODUCTS
+─────────────────────────────────────────── */
+function filterProducts(cat) {
+  if (cat === "all") return allProducts;
+  return allProducts.filter(p => p.category === cat);
+}
+
+/* ───────────────────────────────────────────
+   RENDER PRODUCTS
 ─────────────────────────────────────────── */
 function renderProducts(animate = true) {
   const grid = document.querySelector("[data-products-grid]");
   if (!grid) return;
 
-  const filtered = filterByCategory(activeCategory);
+  const filtered = filterProducts(activeCategory);
+
+  // Update count
   const countEl = document.querySelector("[data-product-count]");
   if (countEl) countEl.textContent = filtered.length;
 
@@ -64,13 +61,12 @@ function renderProducts(animate = true) {
     grid.innerHTML = createEmptyMarkup(
       "No products found",
       "Try selecting a different category.",
-      "#",
-      "View All",
+      "products.html",
+      "View All"
     );
     return;
   }
 
-  // Add fade-out animation
   if (animate) {
     grid.classList.add("fade-out");
     setTimeout(() => {
@@ -85,79 +81,81 @@ function renderProducts(animate = true) {
 }
 
 /* ───────────────────────────────────────────
-   UPDATE CATEGORY LABEL & BREADCRUMB
+   UPDATE PAGE TITLE & BREADCRUMB
 ─────────────────────────────────────────── */
-function updateCategoryLabels() {
-  const label = categoryLabels[activeCategory] || "All T-Shirts";
-  
-  document.querySelectorAll("[data-active-category-label]").forEach(el => {
-    el.textContent = label;
-  });
-  
-  document.querySelectorAll("[data-active-category-label-h1]").forEach(el => {
-    el.textContent = label;
-  });
+function updateLabels() {
+  const label = categoryLabels[activeCategory] || "All Products";
+  document.querySelectorAll("[data-active-category-label]").forEach(el => el.textContent = label);
+  document.querySelectorAll("[data-active-category-label-h1]").forEach(el => el.textContent = label);
+  document.title = `${label} | TridentWear`;
 }
 
 /* ───────────────────────────────────────────
-   CATEGORY TAB CLICK HANDLER
+   SYNC ACTIVE TAB
 ─────────────────────────────────────────── */
-function handleCategoryClick(button) {
-  const categorySlug = button.dataset.category;
-  if (categorySlug === activeCategory) return; // Already selected
-
-  // Remove active class from all tabs
-  document.querySelectorAll("[data-category]").forEach(tab => {
-    tab.classList.remove("is-active");
+function syncTabs() {
+  document.querySelectorAll("[data-main-category]").forEach(btn => {
+    const isActive = btn.dataset.mainCategory === activeCategory;
+    btn.classList.toggle("is-active", isActive);
   });
 
-  // Add active class to clicked tab
-  button.classList.add("is-active");
+  // Scroll active tab into view
+  const activeBtn = document.querySelector("[data-main-category].is-active");
+  if (activeBtn) {
+    activeBtn.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  }
+}
 
-  // Update active category
-  activeCategory = categorySlug;
+/* ───────────────────────────────────────────
+   SWITCH CATEGORY
+─────────────────────────────────────────── */
+function switchCategory(cat) {
+  if (cat === activeCategory) return;
+  activeCategory = cat;
 
-  // Update breadcrumb and title
-  updateCategoryLabels();
+  // Update URL without reload
+  const url = new URL(window.location.href);
+  if (cat === "all") {
+    url.searchParams.delete("cat");
+  } else {
+    url.searchParams.set("cat", cat);
+  }
+  window.history.replaceState({}, "", url.toString());
 
-  // Re-render products with animation
+  syncTabs();
+  updateLabels();
   renderProducts(true);
 
-  // Scroll to top of products
+  // Scroll to grid
   setTimeout(() => {
     document.querySelector("[data-products-grid]")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, 100);
 }
 
 /* ───────────────────────────────────────────
-   INIT CATEGORY TABS
+   INIT TABS
 ─────────────────────────────────────────── */
-function initCategoryTabs() {
-  document.querySelectorAll("[data-category]").forEach(button => {
-    button.addEventListener("click", () => handleCategoryClick(button));
+function initTabs() {
+  document.querySelectorAll("[data-main-category]").forEach(btn => {
+    btn.addEventListener("click", () => switchCategory(btn.dataset.mainCategory));
   });
-
-  // Horizontal scroll container
-  const scrollContainer = document.querySelector("[data-category-scroll]");
-  if (scrollContainer) {
-    // Scroll buttons (optional for mobile)
-    // You can add prev/next buttons if needed
-  }
 }
 
 /* ───────────────────────────────────────────
-   LOAD DATA & INIT PAGE
+   LOAD & INIT
 ─────────────────────────────────────────── */
 async function loadAndRender() {
   try {
     startProgress();
     allProducts = await getWithFallback(["/api/products"]);
     if (!Array.isArray(allProducts)) allProducts = allProducts.products || [];
-    
-    if (allProducts.length) {
-      renderProducts(false); // Initial render without animation
-      initCategoryTabs();
-    }
+
+    // Read cat from URL and set active
+    activeCategory = getCatFromURL();
+    syncTabs();
+    updateLabels();
+    renderProducts(false);
+    initTabs();
   } catch (err) {
     console.error("Failed to load products:", err);
   } finally {
@@ -165,9 +163,6 @@ async function loadAndRender() {
   }
 }
 
-/* ───────────────────────────────────────────
-   PAGE INIT
-─────────────────────────────────────────── */
 document.addEventListener("DOMContentLoaded", async () => {
   await initSite();
   await loadAndRender();

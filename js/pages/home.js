@@ -159,11 +159,39 @@ function initNewsletter() {
   });
 }
 
+/* ─── Scroll Reveal ─── */
+function initScrollReveal() {
+  const targets = document.querySelectorAll("[data-animate]");
+  if (!targets.length) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.05, rootMargin: "0px 0px -20px 0px" });
+
+  targets.forEach(el => {
+    // Already in viewport? Reveal immediately with stagger
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight) {
+      const delay = parseInt(el.dataset.delay || 0);
+      setTimeout(() => el.classList.add("is-visible"), delay);
+    } else {
+      observer.observe(el);
+    }
+  });
+}
+
 /* ─── Boot ─── */
 window.addEventListener("DOMContentLoaded", async () => {
+  document.body.classList.add("js-loaded"); // Enable scroll-reveal CSS guard
   await initSite();
   initHeroSlider();
   initNewsletter();
+  initScrollReveal();
   loadStats();
   loadFeaturedProducts();
   loadTrendingProducts();
