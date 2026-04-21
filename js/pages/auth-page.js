@@ -127,10 +127,15 @@ function bindRegisterForm() {
         confirm_password: confirmPassword,
       });
 
-      showToast(data.message || "Please check your email for OTP.", "success");
+      // Show dev OTP if present
+      if (data.dev_otp) {
+        showToast(data.message.replace(data.dev_otp, '***') + "\nDev OTP: " + data.dev_otp, "success");
+      } else {
+        showToast(data.message || "Please check your email for OTP.", "success");
+      }
       setTimeout(() => {
         window.location.href = `verify.html?email=${encodeURIComponent(email)}`;
-      }, 1000);
+      }, 3000); // give them time to read the OTP
     } catch (error) {
       showToast(error.message, "error");
     } finally {
@@ -159,11 +164,15 @@ function bindOtpLogin() {
       sendOtpBtn.textContent = "Sending...";
       
       try {
-        await post("/api/auth/otp/send", { phone: mobile });
+        const data = await post("/api/auth/otp/send", { phone: mobile });
         otpContainer.style.display = "block";
         sendOtpBtn.textContent = "Verify & Login";
         sendOtpBtn.classList.replace("btn-secondary", "btn-primary");
-        showToast("OTP sent to your mobile!", "success");
+        if (data.dev_otp) {
+           showToast("OTP sent to your mobile!\nDev OTP: " + data.dev_otp, "success");
+        } else {
+           showToast("OTP sent to your mobile!", "success");
+        }
       } catch (err) {
         showToast(err.message, "error");
         sendOtpBtn.textContent = "Send OTP";
@@ -196,28 +205,52 @@ function bindOtpLogin() {
   });
 }
 
-function bindGoogleLogin() {
-  const googleBtn = document.getElementById("google-login-btn");
-  if (!googleBtn) return;
+window.handleGoogleCredentialResponse = async (response) => {
+  if (!response || !response.credential) return;
+  
+  showToast("Verifying with Google...", "info");
+  try {
+    const data = await post("/api/auth/google", { credential: response.credential });
+    saveAuthSession({ token: data.token, user: data.user });
+    await refreshAuthState();
+    showToast("Signed in with Google!", "success");
+    redirectAfterAuth(data.user);
+  } catch (err) {
+    showToast(err.message, "error");
+  }
+};
 
-  googleBtn.addEventListener("click", async () => {
-    showToast("Connecting to Google...", "info");
-    
-    // Simulate Google account selection
-    const mockEmail = "google.user@gmail.com";
-    const mockName = "Google Tester";
-    
+function bindForgotPassword() {
+  const link = document.getElementById("forgot-password-link");
+  if (!link) return;
+  link.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const email = prompt("Enter your email address to reset password:");
+    if (!email) return;
+
     try {
-      const data = await post("/api/auth/google", { 
-        email: mockEmail, 
-        name: mockName,
-        id_token: "mock_google_id_token_123"
-      });
-      
-      saveAuthSession({ token: data.token, user: data.user });
-      await refreshAuthState();
-      showToast("Signed in with Google!", "success");
-      redirectAfterAuth(data.user);
+      showToast("Requesting password reset...", "info");
+      const res = await post("/api/auth/password/forgot", { email });
+      if (res.dev_otp) {
+         showToast(res.message, "success");
+         const otp = prompt(`Dev Mode: We displayed the OTP in the message.\nEnter the 6-digit OTP you received:\n(Hint: It's ${res.dev_otp})`);
+         if (!otp) return;
+         const newPass = prompt("Enter your new password (min 8 chars):");
+         if (!newPass) return;
+         
+         const resetRes = await post("/api/auth/password/reset", { email, otp, new_password: newPass });
+         showToast(resetRes.message, "success");
+      } else {
+         // In dev mode, if dev_otp is missing, it means the email was not found.
+         showToast("Dev Mode: No dev_otp received. The email might not be registered or you made a typo. Check db/users.json.", "warning");
+         const otp = prompt("Dev Mode Error: No OTP returned.\nEnter the 6-digit OTP sent to your email:");
+         if (!otp) return;
+         const newPass = prompt("Enter your new password (min 8 chars):");
+         if (!newPass) return;
+         
+         const resetRes = await post("/api/auth/password/reset", { email, otp, new_password: newPass });
+         showToast(resetRes.message, "success");
+      }
     } catch (err) {
       showToast(err.message, "error");
     }
@@ -268,6 +301,6 @@ export async function initAuthPage(mode) {
   bindLoginForm();
   if (mode === "login") {
     bindOtpLogin();
-    bindGoogleLogin();
+    bindForgotPassword();
   }
 }

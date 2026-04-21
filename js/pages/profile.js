@@ -1,4 +1,5 @@
-import { initSite, getCurrentUser } from "../shared/site.js";
+import { initSite, getCurrentUser, showToast } from "../shared/site.js";
+import { get, post } from "../shared/api.js";
 
 async function loadProfile() {
   await initSite();
@@ -31,9 +32,34 @@ async function loadProfile() {
   const sidebarEmail = document.getElementById("sidebar-email");
   const sidebarRole = document.getElementById("sidebar-role");
 
-  if (sidebarName) sidebarName.textContent = user.name || "N/A";
+  // Show Mr./Miss. prefix in yellow banner based on gender set during profile setup
+  if (sidebarName) {
+    const fullName = user.name || "N/A";
+    if (user.gender === "Mr") {
+      sidebarName.textContent = `Mr. ${fullName}`;
+    } else if (user.gender === "Miss") {
+      sidebarName.textContent = `Miss ${fullName}`;
+    } else {
+      sidebarName.textContent = fullName;
+    }
+  }
   if (sidebarEmail) sidebarEmail.textContent = user.email || "N/A";
   if (sidebarRole) sidebarRole.textContent = user.role === "admin" ? "(Admin)" : "(Member)";
+
+  const year = new Date().getFullYear().toString().slice(-2);
+  const paddedId = String(user.id).padStart(3, '0');
+  // Format: TW26003 (no dashes)
+  const generatedId = `TW${year}${paddedId}`;
+
+  const customerIdSpan = document.getElementById("sidebar-customer-id");
+  const referralIdSpan = document.getElementById("sidebar-referral-id");
+  if(customerIdSpan) {
+     customerIdSpan.textContent = generatedId;
+  }
+  if(referralIdSpan) {
+     // Referral code same format as customer ID
+     referralIdSpan.textContent = generatedId;
+  }
 
   // Content Updates
   const emailInput = document.getElementById("profile-email-input");
@@ -41,7 +67,7 @@ async function loadProfile() {
   const lastNameInput = document.getElementById("profile-lastname");
 
   if (emailInput) emailInput.value = user.email || "N/A";
-  if (firstNameInput) firstNameInput.value = firstName;
+  if (firstNameInput) firstNameInput.value = firstName !== "N/A" ? firstName : "";
   if (lastNameInput) lastNameInput.value = lastName;
 
   // Setup tabs
@@ -52,21 +78,14 @@ async function loadProfile() {
     link.addEventListener("click", e => {
       e.preventDefault();
       
-      // Get target tab
       const targetId = "section-" + link.getAttribute("data-tab");
-      
-      // Hide all panels
-      sections.forEach(sec => {
-        sec.style.display = "none";
-      });
+      sections.forEach(sec => sec.style.display = "none");
 
-      // Show target panel if it exists
       const targetPanel = document.getElementById(targetId);
       if (targetPanel) {
         targetPanel.style.display = "block";
       }
 
-      // Update sidebar active link styling if needed (optional)
       tabLinks.forEach(l => {
         l.style.color = "#555";
         l.style.fontWeight = "normal";
@@ -75,6 +94,132 @@ async function loadProfile() {
       link.style.fontWeight = "600";
     });
   });
+
+  // Fetch Orders
+  const ordersContainer = document.getElementById("orders-container");
+  if (ordersContainer) {
+    try {
+      const data = await get("/api/orders");
+      if (data && data.orders && data.orders.length > 0) {
+        let html = '<div style="text-align: left;">';
+        data.orders.forEach(o => {
+          html += `
+            <div style="border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem; border-radius: 4px;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                <strong>Order ID: ${o.order_id}</strong>
+                <span style="color:var(--primary); font-weight: bold;">${o.status.toUpperCase()}</span>
+              </div>
+              <p style="margin-bottom: 0.5rem; color: #555;">Date: ${new Date(o.created_at).toLocaleDateString()}</p>
+              <p style="margin-bottom: 0.5rem; color: #555;">Total: ₹${o.subtotal}</p>
+              <a href="track.html?id=${o.order_id}" class="btn btn-outline" style="padding: 0.25rem 1rem; font-size: 0.85rem;">Track</a>
+            </div>
+          `;
+        });
+        html += '</div>';
+        ordersContainer.innerHTML = html;
+      } else {
+        ordersContainer.innerHTML = '<p style="font-size: 1.15rem; color: #555;">You have no recent orders.</p>';
+      }
+    } catch (err) {
+      ordersContainer.innerHTML = '<p style="font-size: 1.15rem; color: #555;">Error loading orders.</p>';
+    }
+  }
+
+  // Address Edit Modal Logic (structured fields)
+  const addressDisplay = document.getElementById("address-display");
+  const addressModal = document.getElementById("address-modal");
+  const btnSaveAddress = document.getElementById("btn-save-address");
+  const btnCancelAddress = document.getElementById("btn-cancel-address");
+  const btnEditAddress = document.getElementById("btn-edit-address");
+
+  // Store address object
+  let savedAddress = {};
+
+  function openAddressModal() {
+    if (document.getElementById("addr-street")) document.getElementById("addr-street").value = savedAddress.street || "";
+    if (document.getElementById("addr-area")) document.getElementById("addr-area").value = savedAddress.area || "";
+    if (document.getElementById("addr-city")) document.getElementById("addr-city").value = savedAddress.city || "";
+    if (document.getElementById("addr-state")) document.getElementById("addr-state").value = savedAddress.state || "";
+    if (document.getElementById("addr-pin")) document.getElementById("addr-pin").value = savedAddress.pin || "";
+    if (addressModal) addressModal.style.display = "flex";
+    setTimeout(() => { document.getElementById("addr-street")?.focus(); }, 100);
+  }
+
+  function formatAddressDisplay(addr) {
+    const parts = [addr.street, addr.area, addr.city, addr.state, addr.pin].filter(Boolean);
+    return parts.join(", ");
+  }
+
+  if (addressDisplay) addressDisplay.addEventListener("click", openAddressModal);
+  if (btnEditAddress) btnEditAddress.addEventListener("click", (e) => { e.preventDefault(); openAddressModal(); });
+  if (btnCancelAddress) btnCancelAddress.addEventListener("click", () => { if (addressModal) addressModal.style.display = "none"; });
+
+  if (btnSaveAddress) {
+    btnSaveAddress.addEventListener("click", () => {
+      const street = document.getElementById("addr-street")?.value.trim() || "";
+      const area = document.getElementById("addr-area")?.value.trim() || "";
+      const city = document.getElementById("addr-city")?.value.trim() || "";
+      const state = document.getElementById("addr-state")?.value.trim() || "";
+      const pin = document.getElementById("addr-pin")?.value.trim() || "";
+
+      if (!street || !city || !state || !pin) {
+        showToast("Please fill Street, City, State and PIN Code.", "error");
+        return;
+      }
+      if (!/^\d{6}$/.test(pin)) {
+        showToast("Enter a valid 6-digit PIN code.", "error");
+        return;
+      }
+
+      savedAddress = { street, area, city, state, pin };
+      const formatted = formatAddressDisplay(savedAddress);
+      if (addressDisplay) {
+        addressDisplay.textContent = formatted;
+        addressDisplay.style.color = "#333";
+      }
+      if (addressModal) addressModal.style.display = "none";
+      showToast("Address saved!", "success");
+    });
+  }
+
+  // Password Modal Logic
+  const btnChangePwd = document.getElementById("btn-change-password");
+  const pwdModal = document.getElementById("password-modal");
+  const btnClosePwd = document.getElementById("close-password-modal");
+  const pwdForm = document.getElementById("password-form");
+
+  if (btnChangePwd && pwdModal && btnClosePwd && pwdForm) {
+    btnChangePwd.addEventListener("click", (e) => {
+      e.preventDefault();
+      pwdModal.style.display = "flex";
+    });
+
+    btnClosePwd.addEventListener("click", () => {
+      pwdModal.style.display = "none";
+      pwdForm.reset();
+    });
+
+    pwdForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const current = document.getElementById("current-password").value;
+      const newPwd = document.getElementById("new-password").value;
+      const confirm = document.getElementById("confirm-password").value;
+
+      if (newPwd !== confirm) {
+        showToast("New passwords do not match!", "error");
+        return;
+      }
+      if (newPwd.length < 6) {
+        showToast("Password must be at least 6 characters.", "warning");
+        return;
+      }
+
+      // Mocking the password change API call functionality
+      showToast("Password successfully changed!", "success");
+      pwdModal.style.display = "none";
+      pwdForm.reset();
+    });
+  }
 }
 
-loadProfile();
+window.addEventListener("DOMContentLoaded", loadProfile);

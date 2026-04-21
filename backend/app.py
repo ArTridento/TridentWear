@@ -67,16 +67,20 @@ class OTPPayload(BaseModel):
 
 
 class GooglePayload(BaseModel):
-    email: str
-    name: str
-    id_token: str
+    credential: str
 
 
 class LoginPayload(BaseModel):
     email: str
     password: str
 
+class ForgotPasswordPayload(BaseModel):
+    email: str
 
+class ResetPasswordPayload(BaseModel):
+    email: str
+    otp: str
+    new_password: str
 
 class ReviewPayload(BaseModel):
     product_id: int
@@ -447,6 +451,10 @@ def serialize_user(user: Dict[str, Any]) -> Dict[str, Any]:
         "email": user["email"],
         "role": user["role"],
         "created_at": user["created_at"],
+        "gender": user.get("gender"),
+        "phone": user.get("phone"),
+        "user_id": user.get("user_id"),
+        "profile_completed_status": user.get("profile_completed_status", True),
     }
 
 
@@ -685,6 +693,63 @@ payment_router = APIRouter(prefix="/api/payment", tags=["payment"])
 coupon_router = APIRouter(prefix="/api", tags=["coupons"])
 wishlist_router = APIRouter(prefix="/api/wishlist", tags=["wishlist"])
 
+@wishlist_router.get("")
+@wishlist_router.get("/")
+def get_user_wishlist(request: Request) -> List[Dict[str, Any]]:
+    user = get_session_user(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="Please log in to view your wishlist.")
+    wishlists = load_wishlist()
+    user_items = [w for w in wishlists if w.get("user_id") == user["id"]]
+    products = {p["id"]: p for p in load_products()}
+    enriched = []
+    for w in user_items:
+        if w["product_id"] in products:
+            enriched.append({
+                "id": w["id"],
+                "product_id": w["product_id"],
+                "product": products[w["product_id"]]
+            })
+    return enriched
+
+@wishlist_router.post("/add")
+def add_to_wishlist(payload: WishlistPayload, request: Request) -> Dict[str, Any]:
+    user = get_session_user(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="Please log in to manage your wishlist.")
+    wishlists = load_wishlist()
+    if any(w.get("user_id") == user["id"] and w.get("product_id") == payload.product_id for w in wishlists):
+        return {"success": True, "message": "Already in wishlist"}
+    products = load_products()
+    if not any(p["id"] == payload.product_id for p in products):
+        raise HTTPException(status_code=404, detail="Product not found.")
+    new_item = {
+        "id": next_id(wishlists),
+        "user_id": user["id"],
+        "product_id": payload.product_id,
+        "created_at": now_iso()
+    }
+    wishlists.append(new_item)
+    save_wishlist(wishlists)
+    return {"success": True, "message": "Added to wishlist", "item": new_item}
+
+@wishlist_router.delete("/remove")
+def remove_from_wishlist(payload: WishlistPayload, request: Request) -> Dict[str, Any]:
+    user = get_session_user(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="Please log in to manage your wishlist.")
+    wishlists = load_wishlist()
+    initial_len = len(wishlists)
+    wishlists = [w for w in wishlists if not (w.get("user_id") == user["id"] and w.get("product_id") == payload.product_id)]
+    if len(wishlists) == initial_len:
+         raise HTTPException(status_code=404, detail="Item not in wishlist.")
+    save_wishlist(wishlists)
+    return {"success": True, "message": "Removed from wishlist"}
+
+@coupon_router.post("/coupons/apply")
+def apply_coupon(payload: ApplyCouponPayload) -> Dict[str, Any]:
+    return validate_coupon(payload.code, payload.subtotal)
+
 
 
 def html_response(filename: str) -> FileResponse:
@@ -707,6 +772,12 @@ def serve_products_page() -> FileResponse:
 @pages_router.get("/cart", include_in_schema=False)
 def serve_cart_page() -> FileResponse:
     return html_response("cart.html")
+
+@pages_router.get("/product", include_in_schema=False)
+@pages_router.get("/product-detail", include_in_schema=False)
+@pages_router.get("/product-detail.html", include_in_schema=False)
+def serve_product_page() -> FileResponse:
+    return html_response("product.html")
 
 @pages_router.get("/checkout", include_in_schema=False)
 def serve_checkout_page() -> FileResponse:
@@ -789,6 +860,8 @@ def legacy_html_routes(page_name: str, request: Request):
         "index": "/",
         "shop": "/products",
         "products": "/products",
+        "product": "/product",
+        "product-detail": "/product",
         "cart": "/cart",
         "checkout": "/checkout",
         "auth": "/login",
@@ -811,6 +884,12 @@ def legacy_html_routes(page_name: str, request: Request):
         return FileResponse(HTML_DIR / "404.html", status_code=404)
     if target == "/admin":
         return serve_admin_page(request)
+        
+    # Preserve query parameters
+    query_string = request.url.query
+    if query_string:
+        target = f"{target}?{query_string}"
+        
     return RedirectResponse(url=target, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
 
 @pages_router.get("/profile", include_in_schema=False)
@@ -917,7 +996,9 @@ def register(payload: RegisterPayload, request: Request) -> Dict[str, Any]:
     users.append(new_user)
     save_users(users)
 
-    # We do NOT return a token. They must verify OTP.
+    if not (smtp_host and smtp_user):
+        return {"success": True, "message": f"Account created. (Dev Mode OTP: {otp})", "email": email, "dev_otp": otp}
+
     return {"success": True, "message": "Account created. Please check your email for the OTP.", "email": email}
 
 
@@ -943,19 +1024,23 @@ def login(payload: LoginPayload, request: Request) -> Dict[str, Any]:
 
 @auth_router.post("/api/auth/otp/send")
 def send_otp(payload: OTPPayload) -> Dict[str, Any]:
-    return {"success": True, "message": "OTP sent."}
+    # Development dummy OTP
+    return {"success": True, "message": "OTP sent! (Dev Mode OTP: 123456)", "dev_otp": "123456"}
 
 
 @auth_router.post("/api/auth/otp/verify")
 def verify_otp(payload: OTPPayload, request: Request) -> Dict[str, Any]:
+    if payload.otp != "123456":
+         raise HTTPException(status_code=400, detail="Invalid OTP.")
     users = load_users()
     email_variant = f"{payload.phone}@trident.local"
     user = find_user_by_email(email_variant)
     if not user:
         user = {
             "id": next_id(users),
-            "name": payload.phone,
+            "name": payload.name,
             "email": email_variant,
+            "phone": payload.phone,
             "password_hash": hash_password("dummy"),
             "role": "customer",
             "created_at": now_iso(),
@@ -966,6 +1051,51 @@ def verify_otp(payload: OTPPayload, request: Request) -> Dict[str, Any]:
     store_session_user(request, user)
     token = issue_auth_token(user)
     return {"success": True, "message": "OTP verified.", "token": token, "user": serialize_user(user)}
+
+@auth_router.post("/api/auth/password/forgot")
+def forgot_password(payload: ForgotPasswordPayload) -> Dict[str, Any]:
+    email = validate_email(payload.email)
+    users = load_users()
+    user_idx = next((i for i, u in enumerate(users) if u.get("email", "").lower() == email), None)
+    if user_idx is None:
+        # Always return success to prevent email enumeration
+        return {"success": True, "message": "If an account exists, a reset OTP was sent."}
+    
+    import random
+    otp = str(random.randint(100000, 999999))
+    users[user_idx]["otp"] = otp
+    users[user_idx]["otp_expiry"] = (datetime.now(timezone.utc) + timedelta(minutes=10)).isoformat()
+    save_users(users)
+    
+    # Normally send email here. In dev we return it:
+    return {"success": True, "message": f"If an account exists, a reset OTP was sent. (Dev Mode OTP: {otp})", "dev_otp": otp}
+
+@auth_router.post("/api/auth/password/reset")
+def reset_password(payload: ResetPasswordPayload) -> Dict[str, Any]:
+    email = validate_email(payload.email)
+    users = load_users()
+    user_idx = next((i for i, u in enumerate(users) if u.get("email", "").lower() == email), None)
+    
+    if user_idx is None:
+        raise HTTPException(status_code=400, detail="Invalid email or OTP.")
+        
+    user = users[user_idx]
+    if user.get("otp") != payload.otp.strip():
+        raise HTTPException(status_code=400, detail="Incorrect OTP.")
+        
+    expiry = user.get("otp_expiry")
+    if expiry and datetime.fromisoformat(expiry) < datetime.now(timezone.utc):
+        raise HTTPException(status_code=400, detail="OTP has expired.")
+        
+    if len(payload.new_password) < 8:
+         raise HTTPException(status_code=400, detail="Password must be at least 8 characters.")
+
+    users[user_idx]["password_hash"] = hash_password(payload.new_password)
+    users[user_idx]["otp"] = None
+    save_users(users)
+    
+    return {"success": True, "message": "Password reset successfully. You can now log in."}
+
 
 
 class EmailVerifyPayload(BaseModel):
@@ -1026,26 +1156,6 @@ def setup_profile(payload: ProfileSetupPayload, request: Request) -> Dict[str, A
         save_users(users)
         return {"success": True, "message": "Profile setup complete", "user": serialize_user(u)}
     raise HTTPException(status_code=404, detail="User not found.")
-
-@auth_router.post("/api/auth/google")
-def google_login(payload: GooglePayload, request: Request) -> Dict[str, Any]:
-    users = load_users()
-    user = find_user_by_email(payload.email)
-    if not user:
-        user = {
-            "id": next_id(users),
-            "name": payload.name,
-            "email": payload.email,
-            "password_hash": hash_password("dummy"),
-            "role": "customer",
-            "created_at": now_iso(),
-        }
-        users.append(user)
-        save_users(users)
-        
-    store_session_user(request, user)
-    token = issue_auth_token(user)
-    return {"success": True, "message": "Signed in with Google.", "token": token, "user": serialize_user(user)}
 
 
 @auth_router.post("/logout")
@@ -1290,6 +1400,32 @@ def create_order(payload: OrderPayload, request: Request) -> Dict[str, Any]:
         pass
     return {"success": True, "message": "Order placed successfully.", "order_id": order["order_id"]}
 
+@orders_router.get("/orders")
+def get_user_orders(request: Request) -> Dict[str, Any]:
+    user = get_session_user(request)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Please log in to view orders.")
+    orders = load_orders()
+    user_orders = [o for o in orders if o.get("customer", {}).get("user_id") == user["id"]]
+    # Sort orders by created_at descending
+    user_orders.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+    return {"success": True, "orders": user_orders}
+
+@orders_router.put("/orders/{order_id}/cancel")
+def cancel_order(order_id: str, request: Request) -> Dict[str, Any]:
+    user = get_session_user(request)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Please log in.")
+    orders = load_orders()
+    for o in orders:
+        if o.get("order_id") == order_id and o.get("customer", {}).get("user_id") == user["id"]:
+            if o.get("status") in ("shipped", "delivered"):
+                 raise HTTPException(status_code=400, detail="Cannot cancel a shipped order.")
+            o["status"] = "cancelled"
+            save_orders(orders)
+            return {"success": True, "message": "Order cancelled."}
+    raise HTTPException(status_code=404, detail="Order not found.")
+
 
 @contact_router.post("/contact")
 def create_contact_message(payload: ContactPayload) -> Dict[str, Any]:
@@ -1321,6 +1457,8 @@ app.include_router(products_router)
 app.include_router(admin_router)
 app.include_router(orders_router)
 app.include_router(contact_router)
+app.include_router(wishlist_router)
+app.include_router(coupon_router)
 
 
 @app.exception_handler(StarletteHTTPException)
@@ -1423,46 +1561,32 @@ def track_order(order_id: str) -> Dict[str, Any]:
 # ════════════════════════════════════════════════════════════
 # ADVANCED AUTH (OTP & GOOGLE)
 # ════════════════════════════════════════════════════════════
-@auth_router.post("/api/auth/otp/send")
-def send_otp(payload: OTPPayload) -> Dict[str, Any]:
-    # Simulation: In production use Twilio or Msg91
-    print(f"DEBUG: Sent OTP 123456 to {payload.phone}")
-    return {"success": True, "message": "OTP sent successfully."}
 
-@auth_router.post("/api/auth/otp/verify")
-def verify_otp(payload: OTPPayload, request: Request) -> Dict[str, Any]:
-    if payload.otp != "123456":
-        raise HTTPException(status_code=400, detail="Invalid OTP.")
-    
-    users = load_users()
-    user = next((u for u in users if u.get("phone") == payload.phone), None)
-    if not user:
-        user = {
-            "id": next_id(users),
-            "name": payload.name or f"User {payload.phone[-4:]}",
-            "email": f"user{uuid.uuid4().hex[:4]}@trident.local",
-            "phone": payload.phone,
-            "role": "customer",
-            "created_at": now_iso()
-        }
-        users.append(user)
-        save_users(users)
-        
-    store_session_user(request, user)
-    token = issue_auth_token(user)
-    return {"success": True, "token": token, "user": serialize_user(user)}
 
 @auth_router.post("/api/auth/google")
 def google_auth(payload: GooglePayload, request: Request) -> Dict[str, Any]:
-    # In real app, verify payload.id_token with google.oauth2.id_token
+    try:
+        decoded_token = jwt.decode(payload.credential, options={"verify_signature": False})
+        email = decoded_token.get("email")
+        name = decoded_token.get("name", "Google User")
+        
+        if not email:
+            raise HTTPException(status_code=400, detail="Invalid Google credential: No email found.")
+            
+        email = validate_email(email)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Failed to process Google sign-in: {str(e)}")
+
     users = load_users()
-    user = find_user_by_email(payload.email)
+    user = find_user_by_email(email)
     if not user:
         user = {
             "id": next_id(users),
-            "name": payload.name,
-            "email": payload.email,
+            "name": name,
+            "email": email,
             "role": "customer",
+            "profile_completed_status": True,
+            "otp_verification_status": True,
             "created_at": now_iso()
         }
         users.append(user)

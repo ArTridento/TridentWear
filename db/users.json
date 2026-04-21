@@ -1,56 +1,47 @@
 [
   {
     "id": 1,
-    "name": "Admin",
+    "name": "Trident Admin",
     "email": "admin@trident.local",
-    "phone": "9999999999",
-    "password_hash": "$2b$12$bbojbjDa29RszscabEaCnO6mRyieE6f3G0yVCCtzYSp/PM2PPonMe",
+    "password_hash": "$2b$12$7Q07pQBBqNur7Rdxq4R7pebAeUdR89zN4T.NQfpcPZ/p4CVB3TRJq",
     "role": "admin",
-    "created_at": "2026-04-15T17:47:46.734200"
+    "created_at": "2026-04-12T00:00:00+00:00"
+  },
+  {
+    "id": 1,
+    "name": "Admin User",
+    "email": "admin@tridentwear.com",
+    "password_hash": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjIQqiRQYm",
+    "role": "admin",
+    "created_at": "2026-04-14T10:00:00Z"
   },
   {
     "id": 2,
-    "name": "Test Customer",
-    "email": "customer@trident.local",
-    "phone": "9876543210",
-    "password_hash": "$2b$12$c3NQfqvG71UbnEfbrswtye1JRQOBwxByYx8Ymw9nkeYZz1kH2EoPC",
+    "user_id": "TW26-001",
+    "name": "Test",
+    "email": "tes123@gmail.com",
+    "password_hash": "$2b$12$4M7wm5amBjVgKQCh/UizEOrJ9DORWu8.NquXy20lo1vLtoQQIuOMi",
     "role": "customer",
-    "created_at": "2026-04-15T17:47:46.991501"
+    "gender": null,
+    "otp": "915979",
+    "otp_expiry": "2026-04-20T11:06:15.987374+00:00",
+    "otp_verification_status": false,
+    "profile_completed_status": false,
+    "created_at": "2026-04-20T10:56:15.987374+00:00"
   },
   {
     "id": 3,
-    "name": "Test User",
-    "email": "testlogin@test.com",
-    "password_hash": "$2b$12$U/orSl7vc2PP4VhLrNgxv.ixBFZkP9wFNiQkKkVWO5ktKF9LrJSA2",
-    "role": "customer",
-    "created_at": "2026-04-15T14:56:41.393654+00:00"
-  },
-  {
-    "id": 4,
-    "name": "John Doe",
-    "email": "johndoe123@example.com",
-    "password_hash": "$2b$12$ivE1BuPjXpypiWQgC20Zs.ELddNXzzGYb8w8BSra3EuNidqt3f0z6",
-    "role": "customer",
-    "created_at": "2026-04-15T14:58:17.202762+00:00"
-  },
-  {
-    "id": 5,
-    "name": "Jane Smith",
-    "email": "janesmith999@example.com",
-    "password_hash": "$2b$12$Z2qdq/anvr6r53YPUmirzOcMWKR5eUbsX9XItEFloFfrD9zTO6aBO",
-    "role": "customer",
-    "created_at": "2026-04-15T15:01:05.975278+00:00"
-  },
-  {
-    "id": 6,
-    "user_id": "TW26-test",
-    "name": "Test Maams",
-    "email": "test@trident.com",
-    "password_hash": "$2b$12$7fjBeFUWRX93vx51XLYT..D5IKUM3BiDVDIcKt1YScr1qRDpY7jVy",
+    "user_id": "TW26-002",
+    "name": "Hari Hara Sudhan",
+    "email": "trhariharasudhan@gmail.com",
+    "password_hash": "$2b$12$gx6Q62Oj1wHdLngmDj9AnO6MHZ4QGd1VqlfdHMHWZxIIIRkSWGDRS",
     "role": "customer",
     "gender": "Mr",
+    "otp": "712761",
+    "otp_expiry": "2026-04-20T11:11:50.977331+00:00",
     "otp_verification_status": true,
     "profile_completed_status": true,
-    "created_at": "2026-04-19T14:10:34.718697+00:00"
+    "created_at": "2026-04-20T11:01:50.977331+00:00",
+    "phone": "8838759794"
   }
 ]

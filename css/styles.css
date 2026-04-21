@@ -505,6 +505,16 @@ h4,
   background: transparent;
 }
 
+/* Circle user profile icon — purple filled look */
+.utility-pill [data-login-link] .fa-circle-user,
+a[data-login-link] .fa-circle-user {
+  color: var(--primary);
+  font-size: 1.45rem;
+}
+a[data-login-link]:hover .fa-circle-user {
+  color: var(--indigo);
+}
+
 .cart-badge {
   display: inline-flex;
   align-items: center;
@@ -4040,10 +4050,10 @@ h4,
 }
 .hero-headline {
   font-family: var(--font-display);
-  font-size: clamp(2.4rem, 5.5vw, 4rem);
+  font-size: clamp(1.35rem, 2.8vw, 2.1rem);
   font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.03em;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
   color: var(--white);
 }
 .hero-accent {
@@ -7607,4 +7617,132 @@ iframe {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
+}
+
+/* ═══════════════════════════════════════════════════════
+   SHOP BY CATEGORY GRID
+═══════════════════════════════════════════════════════ */
+
+.cat-section {
+  padding: 3.5rem 0;
+  background: var(--white, #fff);
+}
+
+.cat-section-head {
+  margin-bottom: 2rem;
+}
+
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+/* Base card — color driven by --cat-clr per card */
+.cat-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--gray-dark);
+  background: var(--white);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  --cat-clr: var(--primary);
+}
+
+.cat-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var(--cat-clr);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.cat-card:hover {
+  border-color: var(--cat-clr);
+  box-shadow: 0 4px 18px color-mix(in srgb, var(--cat-clr) 20%, transparent);
+  transform: translateY(-2px);
+}
+
+.cat-card:hover::before { opacity: 0.05; }
+
+.cat-card-icon {
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 8px;
+  background-color: color-mix(in srgb, var(--cat-clr) 12%, white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: var(--cat-clr);
+  flex-shrink: 0;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.cat-card:hover .cat-card-icon {
+  background-color: var(--cat-clr);
+  color: var(--white);
+}
+
+.cat-card-body { flex: 1; min-width: 0; }
+
+.cat-card-name {
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--gray-dark);
+  margin-bottom: 0.1rem;
+}
+
+.cat-card-sub {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--gray);
+}
+
+.cat-card-arrow {
+  font-size: 0.75rem;
+  color: #ccc;
+  flex-shrink: 0;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.cat-card:hover .cat-card-arrow {
+  color: var(--cat-clr);
+  transform: translateX(3px);
+}
+
+/* ─── 9 unique colors from :root ─── */
+/* 1. T-Shirts   → --purple */
+.cat-grid .cat-card:nth-child(1) { --cat-clr: var(--purple); }
+/* 2. Shirts     → --teal */
+.cat-grid .cat-card:nth-child(2) { --cat-clr: var(--teal); }
+/* 3. Kurtas     → --orange */
+.cat-grid .cat-card:nth-child(3) { --cat-clr: var(--orange); }
+/* 4. Hoodies    → --indigo */
+.cat-grid .cat-card:nth-child(4) { --cat-clr: var(--indigo); }
+/* 5. Sweatshirts→ --warning (amber) */
+.cat-grid .cat-card:nth-child(5) { --cat-clr: var(--warning); }
+/* 6. Jackets    → --danger (red) */
+.cat-grid .cat-card:nth-child(6) { --cat-clr: var(--danger); }
+/* 7. Sweaters   → --info (cyan) */
+.cat-grid .cat-card:nth-child(7) { --cat-clr: var(--info); }
+/* 8. Blazers    → --success (green) */
+.cat-grid .cat-card:nth-child(8) { --cat-clr: var(--success); }
+/* 9. Tunics     → --blue */
+.cat-grid .cat-card:nth-child(9) { --cat-clr: var(--blue); }
+
+@media (max-width: 56rem) {
+  .cat-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 36rem) {
+  .cat-grid { grid-template-columns: 1fr; }
 }

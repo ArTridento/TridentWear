@@ -109,7 +109,7 @@ export function productCardMarkup(product) {
           <strong class="product-price">${formatCurrency(item.price)}</strong>
         </div>
         <div class="product-actions" style="display:flex; gap:0.5rem; margin-top:0.75rem;">
-          <a href="product-detail.html?id=${item.id}" class="btn btn-outline" style="flex:1; padding:0.5rem; font-size:0.8rem; text-align:center; display:flex; align-items:center; justify-content:center;">View Details</a>
+          <a href="product.html?id=${item.id}" class="btn btn-outline" style="flex:1; padding:0.5rem; font-size:0.8rem; text-align:center; display:flex; align-items:center; justify-content:center;">View Details</a>
           <button class="btn btn-primary" type="button" data-add-cart-mock style="flex:1; padding:0.5rem; font-size:0.8rem; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-cart-shopping" style="margin-right:4px;"></i> Add to Cart</button>
         </div>
       </div>
@@ -166,7 +166,7 @@ export function bindProductCardActions(container, products) {
       event.preventDefault();
       event.stopPropagation();
       const productId = card.dataset.productId;
-      if (productId) window.location.href = `product-detail.html?id=${productId}`;
+      if (productId) window.location.href = `product.html?id=${productId}`;
     });
   });
 
@@ -542,14 +542,16 @@ function setAccountUi() {
 
   document.querySelectorAll("[data-login-link]").forEach((loginLink) => {
     if (!currentUser) {
-      loginLink.innerHTML = `<i class="fa-solid fa-user"></i>`;
+      // Logged out state
+      loginLink.innerHTML = `<i class="fa-regular fa-user"></i>`;
       loginLink.setAttribute("href", "login.html");
       loginLink.classList.remove("is-greeting");
-      loginLink.removeAttribute("title");
+      loginLink.setAttribute("title", "Login / Register");
       return;
     }
 
-    loginLink.innerHTML = `<i class="fa-solid fa-user"></i>`;
+    // Logged in state
+    loginLink.innerHTML = `<i class="fa-solid fa-circle-user" style="color: var(--primary);"></i>`;
     loginLink.setAttribute("href", currentUser.role === "admin" ? "admin.html" : "profile.html");
     loginLink.classList.add("is-greeting");
     loginLink.setAttribute("title", `Hello, ${firstName}`);
@@ -785,6 +787,19 @@ export async function refreshAuthState() {
     currentUser = null;
   }
   setAccountUi();
+
+  // Profile-setup gate: if logged in but profile not complete, redirect to setup page
+  // Skip if already on profile-setup or auth pages to avoid infinite loops
+  if (currentUser && currentUser.role !== "admin" && currentUser.profile_completed_status === false) {
+    const page = document.body.dataset.page;
+    const path = window.location.pathname;
+    const isSetupPage = path.includes("profile-setup");
+    const isAuthPage = page === "auth" || path.includes("login") || path.includes("register") || path.includes("verify");
+    if (!isSetupPage && !isAuthPage) {
+      window.location.href = "profile-setup.html";
+    }
+  }
+
   return currentUser;
 }
 

@@ -1,5 +1,5 @@
-import { post } from "../shared/api.js";
-import { initSite, showToast, getCurrentUser, refreshAuthState } from "../shared/site.js";
+import { post, saveAuthSession, getAuthSession } from "../shared/api.js";
+import { initSite, showToast, getCurrentUser } from "../shared/site.js";
 
 function nextPath() {
   const params = new URLSearchParams(window.location.search);
@@ -7,44 +7,58 @@ function nextPath() {
 }
 
 window.addEventListener("DOMContentLoaded", async () => {
-  await initSite();
-  
-  const user = getCurrentUser();
-  if (!user) {
+  // Don't call initSite here — it would trigger the profile gate redirect loop.
+  // Just check auth session directly.
+  const { getAuthSession } = await import("../shared/api.js");
+  const session = getAuthSession();
+  if (!session?.user) {
     window.location.href = "login.html";
     return;
   }
-  
+
+  // Pre-fill name if available
+  const nameEl = document.getElementById("setup-name-display");
+  if (nameEl && session.user.name) nameEl.textContent = session.user.name;
+
   const form = document.querySelector("[data-setup-form]");
   if (!form) return;
-  
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    
-    // Get checked radio button value
+
     const titleRadio = form.querySelector("input[name='title']:checked");
     const gender = titleRadio ? titleRadio.value : "Other";
-    
+
     const mobile = document.getElementById("setup-mobile")?.value.trim() || "";
-    
+    if (mobile && !/^[0-9]{10}$/.test(mobile)) {
+      showToast("Enter a valid 10-digit mobile number.", "error");
+      return;
+    }
+
     const btn = form.querySelector("button[type='submit']");
     btn.disabled = true;
     btn.textContent = "Saving...";
-    
+
     try {
-      await post("/api/auth/profile/setup", { gender, phone: mobile || null });
-      await refreshAuthState();
-      showToast("Profile completed! Redirecting...", "success");
-      
+      const result = await post("/api/auth/profile/setup", { gender, phone: mobile || null });
+
+      // Update session with completed user data so guard won't trigger
+      const currentSession = getAuthSession();
+      if (currentSession && result.user) {
+        saveAuthSession({ ...currentSession, user: { ...currentSession.user, ...result.user, profile_completed_status: true } });
+      }
+
+      showToast("Profile setup complete! Welcome to TridentWear 🎉", "success");
+
       setTimeout(() => {
         const next = nextPath();
-        if (next) window.location.href = next;
-        else window.location.href = "profile.html";
-      }, 1000);
+        window.location.href = next || "profile.html";
+      }, 900);
     } catch (err) {
-      showToast(err.message, "error");
+      showToast(err.message || "Something went wrong. Try again.", "error");
       btn.disabled = false;
       btn.textContent = "Complete Setup";
     }
   });
 });
+
