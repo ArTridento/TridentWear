@@ -8482,3 +8482,84 @@ input:focus, textarea:focus, select:focus {
   .section, .section-tight { padding-block: 2.5rem; }
   .btn { min-height: 44px; } /* touch-friendly */
 }
+
+/* ═══════════════════════════════════════════════════════
+   FUNCTIONAL ECOMMERCE UPGRADES
+═══════════════════════════════════════════════════════ */
+
+/* Cart button success animation */
+@keyframes cartPop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.15); }
+  70%  { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+.cart-added {
+  animation: cartPop 0.6s ease forwards;
+  background: var(--success) !important;
+  border-color: var(--success) !important;
+}
+
+/* Product detail add-cart success state */
+#detail-add-cart {
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+#detail-add-cart:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(98,68,197,0.35);
+}
+
+/* Size button */
+.size-btn {
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--radius);
+  border: 1.5px solid #e0e0e0;
+  background: var(--white);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+  font-family: var(--font-display);
+}
+.size-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.size-btn.is-selected {
+  background: var(--primary);
+  color: var(--white);
+  border-color: var(--primary);
+}
+
+/* Related products section heading */
+#related-products-grid {
+  min-height: 200px;
+}
+
+/* Login prompt overlay backdrop */
+.login-prompt-overlay {
+  z-index: 10000;
+}
+
+/* Hero animated particles — enhanced depth */
+.hero-orb-1 { animation-duration: 10s; }
+.hero-orb-2 { animation-duration: 13s; }
+.hero-orb-3 { animation-duration: 8s; }
+
+/* Floating particle dots inside hero */
+.hero-slide-animated::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Cart added toast glow */
+.toast.success {
+  box-shadow: 0 4px 20px rgba(32,201,151,0.3);
+}

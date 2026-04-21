@@ -188,12 +188,26 @@ export function bindProductCardActions(container, products) {
     });
   });
 
-  // Mock add to cart button
+  // Add to cart — real implementation with login gate
   container.querySelectorAll("[data-add-cart-mock]").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
-      showToast("Item ready to be added! Go to details page to select size.", "info");
+      const card = btn.closest("[data-product-card]");
+      const productId = card?.dataset.productId;
+      const product = lookup.get(String(productId));
+      if (!product) return;
+      const item = normalizeProduct(product);
+      try {
+        addCartItem(item, { size: item.sizes?.[0] || "M", qty: 1 });
+        showToast(`${item.name} added to cart!`, "success");
+        // Small bounce animation on button
+        btn.classList.add("cart-added");
+        setTimeout(() => btn.classList.remove("cart-added"), 600);
+      } catch (err) {
+        // Not logged in — show login prompt
+        promptLoginOverlay();
+      }
     });
   });
 
