@@ -1,5 +1,5 @@
-import { getWithFallback } from "../shared/api.js";
-import { formatCurrency, escapeHtml, initSite, showToast, resolveAssetUrl } from "../shared/site.js";
+import { getWithFallback } from "../shared/api.js?v=5";
+import { formatCurrency, escapeHtml, initSite, showToast, resolveAssetUrl } from "../shared/site.js?v=5";
 
 async function loadProductDetail() {
   const urlParams = new URLSearchParams(window.location.search);

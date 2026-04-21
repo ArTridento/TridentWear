@@ -1,5 +1,5 @@
-import { post, saveAuthSession, getAuthSession } from "../shared/api.js";
-import { initSite, showToast, getCurrentUser } from "../shared/site.js";
+import { post, saveAuthSession, getAuthSession } from "../shared/api.js?v=5";
+import { initSite, showToast, getCurrentUser } from "../shared/site.js?v=5";
 
 function nextPath() {
   const params = new URLSearchParams(window.location.search);
@@ -9,7 +9,7 @@ function nextPath() {
 window.addEventListener("DOMContentLoaded", async () => {
   // Don't call initSite here — it would trigger the profile gate redirect loop.
   // Just check auth session directly.
-  const { getAuthSession } = await import("../shared/api.js");
+  const { getAuthSession } = await import("../shared/api.js?v=5");
   const session = getAuthSession();
   if (!session?.user) {
     window.location.href = "login.html";

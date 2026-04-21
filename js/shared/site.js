@@ -826,6 +826,10 @@ export function getCurrentUser() { return currentUser; }
 /* ───────── Init ───────── */
 
 export async function initSite() {
+  // Enable CSS animation guard + scroll reveal on every page
+  document.body.classList.add("js-loaded");
+  initGlobalScrollReveal();
+
   setActiveNav();
   await refreshAuthState();
 
@@ -847,6 +851,31 @@ export async function initSite() {
   window.addEventListener("trident:cart-change", (event) => { setCartCount(event.detail.count); });
   syncCart();
   observeReveals();
+}
+
+/* ───────── Global scroll reveal (runs on every page) ───────── */
+function initGlobalScrollReveal() {
+  const targets = document.querySelectorAll("[data-animate]");
+  if (!targets.length) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.05, rootMargin: "0px 0px -20px 0px" });
+
+  targets.forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight) {
+      const delay = parseInt(el.dataset.delay || 0);
+      setTimeout(() => el.classList.add("is-visible"), delay);
+    } else {
+      observer.observe(el);
+    }
+  });
 }
 
 export function promptLoginOverlay() {

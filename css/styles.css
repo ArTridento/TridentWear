@@ -8375,3 +8375,110 @@ body.js-loaded [data-animate].is-visible {
   .lifestyle-cell, .lifestyle-cell-tall { height: 220px; }
   .lifestyle-cell-col { flex-direction: column; }
 }
+
+/* ═══════════════════════════════════════════════════════
+   GLOBAL CONSISTENCY — ALL PAGES
+   Applied via body.js-loaded + CSS tokens
+═══════════════════════════════════════════════════════ */
+
+/* Universal box-sizing fix */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* Smooth scrolling globally */
+html { scroll-behavior: smooth; }
+
+/* Page-level fade in */
+body {
+  animation: pageFadeIn 0.4s ease forwards;
+}
+@keyframes pageFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Consistent section spacing */
+.section, .section-tight {
+  padding-block: 3.5rem;
+}
+
+/* Heading hierarchy — enforce Poppins on h1-h3 everywhere */
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--gray-dark);
+}
+h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+/* Section title global */
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+}
+
+/* Uniform CTA button — all pages */
+.btn {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+.btn:hover {
+  transform: translateY(-2px);
+}
+.btn:active {
+  transform: translateY(0);
+}
+
+/* ── Page Hero (inner pages) — consistent style ── */
+.page-hero-combined .page-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 800;
+  color: var(--gray-dark);
+}
+
+/* ── Card hover — uniform glow across all pages ── */
+.card, .why-card, .product-card {
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+.card:hover, .why-card:hover {
+  box-shadow: 0 8px 28px rgba(98,68,197,0.12);
+  transform: translateY(-3px);
+}
+
+/* ── Input fields — consistent style ── */
+input, textarea, select {
+  font-family: var(--font-body);
+  border-radius: var(--radius);
+  border: 1.5px solid #e0e0e0;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(98,68,197,0.1);
+  outline: none;
+}
+
+/* ── Footer-top strip consistent ── */
+.footer-top-strip {
+  background: var(--dark);
+  color: rgba(255,255,255,0.7);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 0.75rem 0;
+  letter-spacing: 0.04em;
+}
+
+/* ── Mobile global ── */
+@media (max-width: 48rem) {
+  h1 { font-size: clamp(1.6rem, 5vw, 2.2rem); }
+  h2 { font-size: clamp(1.3rem, 4vw, 1.75rem); }
+  .section, .section-tight { padding-block: 2.5rem; }
+  .btn { min-height: 44px; } /* touch-friendly */
+}

@@ -1,6 +1,6 @@
-import { STATIC_MODE, post } from "../shared/api.js";
-import { clearCart, getCartSubtotal, loadCart } from "../shared/cart.js";
-import { formatCurrency, getCurrentUser, initSite, showToast } from "../shared/site.js";
+import { STATIC_MODE, post } from "../shared/api.js?v=5";
+import { clearCart, getCartSubtotal, loadCart } from "../shared/cart.js?v=5";
+import { formatCurrency, getCurrentUser, initSite, showToast } from "../shared/site.js?v=5";
 
 let appliedCoupon = null; // { code, discount_amount, final_total }
 

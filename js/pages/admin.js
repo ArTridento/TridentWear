@@ -1,6 +1,6 @@
-import { del, get, postForm, putForm, resolveAssetUrl } from "../shared/api.js";
-import { normalizeProduct } from "../shared/catalog.js";
-import { createLoaderMarkup, formatCurrency, getCurrentUser, initSite, showToast } from "../shared/site.js";
+import { del, get, postForm, putForm, resolveAssetUrl } from "../shared/api.js?v=5";
+import { normalizeProduct } from "../shared/catalog.js?v=5";
+import { createLoaderMarkup, formatCurrency, getCurrentUser, initSite, showToast } from "../shared/site.js?v=5";
 
 let products = [];
 let editingProductId = null;

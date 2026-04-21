@@ -2,13 +2,16 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
       content="Complete your TridentWear order — choose COD or online payment, apply coupons."
     />
     <title>Checkout | TridentWear</title>
-    <link rel="stylesheet" href="./css/styles.css?v=20260416-1" />
+    <link rel="stylesheet" href="./css/styles.css?v=20260421-5" />
     <link rel="icon" type="image/png" href="./images/Logo.png" />
     <!-- Razorpay SDK - loads only when needed -->
     <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
@@ -83,7 +86,7 @@
         </div>
       </section>
 
-      <section class="section-tight">
+      <section class="section" data-animate="fade-up"-tight">
         <div class="container checkout-shell">
           <div data-order-status></div>
 
@@ -405,7 +408,7 @@
       </svg>
     </button>
 
-    <script type="module" src="./js/pages/checkout.js"></script>
+    <script type="module" src="./js/pages/checkout.js?v=5"></script>
     <script>
       // Update button label when payment method changes
       document.addEventListener("change", (e) => {
