@@ -856,12 +856,29 @@ export async function refreshAuthState() {
 
 export function getCurrentUser() { return currentUser; }
 
+/* ───────── Button ripple (all pages) ───────── */
+function initButtonRipple() {
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".btn");
+    if (!btn || btn.disabled) return;
+    btn.querySelectorAll(".btn-ripple-wave").forEach(el => el.remove());
+    const ripple = document.createElement("span");
+    ripple.className = "btn-ripple-wave";
+    const rect = btn.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height) * 2.5;
+    ripple.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - rect.left - size / 2}px;top:${e.clientY - rect.top - size / 2}px`;
+    btn.appendChild(ripple);
+    ripple.addEventListener("animationend", () => ripple.remove(), { once: true });
+  });
+}
+
 /* ───────── Init ───────── */
 
 export async function initSite() {
-  // Enable CSS animation guard + scroll reveal on every page
+  // Enable CSS animation guard + scroll reveal + ripple on every page
   document.body.classList.add("js-loaded");
   initGlobalScrollReveal();
+  initButtonRipple();
 
   setActiveNav();
   await refreshAuthState();

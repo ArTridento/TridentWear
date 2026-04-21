@@ -185,6 +185,55 @@ function initScrollReveal() {
   });
 }
 
+/* ─── Hero Parallax ─── */
+function initHeroParallax() {
+  const bg = document.querySelector(".hero-cinema-bg");
+  if (!bg || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  window.addEventListener("scroll", () => {
+    const offset = window.scrollY * 0.3;
+    bg.style.transform = `translateY(${offset}px) scale(1.1)`;
+  }, { passive: true });
+}
+
+/* ─── Recently Viewed ─── */
+function loadRecentlyViewed() {
+  const section = document.getElementById("recently-viewed-section");
+  const grid = document.getElementById("recently-viewed-grid");
+  const clearBtn = document.getElementById("clear-recently-viewed");
+  if (!section || !grid) return;
+
+  const RV_KEY = "trident_recently_viewed";
+  const items = JSON.parse(localStorage.getItem(RV_KEY) || "[]");
+  if (!items.length) return;
+
+  // Only show up to 4 cards
+  const toShow = items.slice(0, 4);
+  grid.innerHTML = toShow.map(p => {
+    const img = p.image ? (p.image.startsWith("http") ? p.image : `/images/${p.image}`) : "/images/Logo.png";
+    return `
+      <article class="product-card reveal" style="cursor:pointer;" onclick="window.location.href='product.html?id=${p.id}'">
+        <div class="product-media" style="position:relative; overflow:hidden;">
+          <img src="${img}" alt="${p.name}" loading="lazy" class="product-image">
+        </div>
+        <div class="product-body">
+          <span class="product-type">${p.category || "T-Shirt"}</span>
+          <h3 class="product-name">${p.name}</h3>
+          <div class="product-footer">
+            <strong class="product-price">₹${p.price}</strong>
+          </div>
+          <a href="product.html?id=${p.id}" class="btn btn-outline" style="width:100%;text-align:center;display:block;margin-top:0.75rem;padding:0.5rem;font-size:0.85rem;">View Again</a>
+        </div>
+      </article>`;
+  }).join("");
+
+  section.style.display = "block";
+
+  clearBtn?.addEventListener("click", () => {
+    localStorage.removeItem(RV_KEY);
+    section.style.display = "none";
+  });
+}
+
 /* ─── Sticky mobile CTA — show after hero ─── */
 function initStickyCTA() {
   const cta = document.getElementById("sticky-mob-cta");
@@ -200,12 +249,14 @@ function initStickyCTA() {
 
 /* ─── Boot ─── */
 window.addEventListener("DOMContentLoaded", async () => {
-  document.body.classList.add("js-loaded"); // Enable scroll-reveal CSS guard
+  document.body.classList.add("js-loaded");
   await initSite();
   initHeroSlider();
   initNewsletter();
   initScrollReveal();
   initStickyCTA();
+  initHeroParallax();
+  loadRecentlyViewed();
   loadStats();
   loadFeaturedProducts();
   loadTrendingProducts();

@@ -12,6 +12,28 @@ import {
 import { addCartItem } from "../shared/cart.js?v=5";
 import { normalizeProduct } from "../shared/catalog.js?v=5";
 
+/* ─── Recently viewed ─── */
+const RV_KEY = "trident_recently_viewed";
+const RV_MAX = 8;
+
+function saveRecentlyViewed(product) {
+  try {
+    const item = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      category: product.category,
+      stock: product.stock,
+    };
+    let list = JSON.parse(localStorage.getItem(RV_KEY) || "[]");
+    list = list.filter(p => String(p.id) !== String(product.id)); // dedupe
+    list.unshift(item);
+    if (list.length > RV_MAX) list = list.slice(0, RV_MAX);
+    localStorage.setItem(RV_KEY, JSON.stringify(list));
+  } catch (_) {}
+}
+
 let currentProduct = null;
 
 async function loadProductDetail() {
@@ -44,6 +66,9 @@ async function loadProductDetail() {
     }
 
     currentProduct = product;
+
+    // Track as recently viewed
+    saveRecentlyViewed(product);
 
     // Populate data
     document.getElementById("breadcrumb-product-name").textContent = product.name;

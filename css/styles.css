@@ -8996,3 +8996,220 @@ input:focus, textarea:focus, select:focus {
   .hero-scroll-hint { display: none; }
   .manifesto-headline { font-size: 2rem; }
 }
+
+/* ═══════════════════════════════════════════════════════
+   BUTTON RIPPLE EFFECT (all pages)
+═══════════════════════════════════════════════════════ */
+
+.btn {
+  position: relative;
+  overflow: hidden;
+}
+.btn-ripple-wave {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  pointer-events: none;
+  transform: scale(0);
+  animation: rippleAnim 0.65s ease-out forwards;
+}
+@keyframes rippleAnim {
+  to { transform: scale(1); opacity: 0; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   CHECKOUT STEP INDICATOR
+═══════════════════════════════════════════════════════ */
+
+.checkout-stepper {
+  background: var(--white);
+  border-bottom: 1px solid #e9ecef;
+  padding: 1.25rem 0;
+}
+
+.stepper-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.stepper-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  position: relative;
+}
+
+.stepper-circle {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: 2px solid #e0e0e0;
+  background: var(--white);
+  color: var(--gray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+  transition: all 0.3s ease;
+}
+
+.stepper-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--gray);
+  letter-spacing: 0.03em;
+  font-family: var(--font-display);
+}
+
+.stepper-line {
+  flex: 1;
+  height: 2px;
+  background: #e0e0e0;
+  margin: 0 0.5rem;
+  margin-bottom: 1.2rem;
+}
+.stepper-line-done {
+  background: var(--primary);
+}
+
+.stepper-done .stepper-circle {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--white);
+}
+.stepper-done .stepper-label { color: var(--primary); }
+
+.stepper-active .stepper-circle {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--white);
+  box-shadow: 0 0 0 4px rgba(98,68,197,0.15);
+}
+.stepper-active .stepper-label {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* ═══════════════════════════════════════════════════════
+   CHECKOUT TRUST BADGES
+═══════════════════════════════════════════════════════ */
+
+.checkout-trust-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: var(--radius);
+  border: 1px solid #e9ecef;
+}
+.checkout-trust-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--gray-dark);
+  padding: 0.35rem 0.75rem;
+  background: var(--white);
+  border: 1px solid #e0e0e0;
+  border-radius: var(--radius-pill);
+}
+.checkout-trust-badge i { color: var(--primary); }
+
+/* ═══════════════════════════════════════════════════════
+   CARD HOVER LIFT — PREMIUM MICRO-INTERACTIONS
+═══════════════════════════════════════════════════════ */
+
+.product-card {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.3s ease;
+}
+.product-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 16px 40px rgba(98,68,197,0.14);
+}
+
+/* Soft tilt on image hover */
+.product-media {
+  transition: transform 0.4s ease;
+}
+.product-card:hover .product-media {
+  transform: scale(1.02);
+}
+
+/* Badge float animation */
+.product-badge {
+  animation: badgeFloat 3s ease-in-out infinite;
+}
+@keyframes badgeFloat {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-2px); }
+}
+
+/* ═══════════════════════════════════════════════════════
+   BRAND SIGNATURE DIVIDER
+═══════════════════════════════════════════════════════ */
+
+.trident-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+.trident-divider::before,
+.trident-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(98,68,197,0.3), transparent);
+}
+.trident-divider-symbol {
+  font-size: 1.1rem;
+  color: var(--primary);
+  opacity: 0.7;
+}
+
+/* ═══════════════════════════════════════════════════════
+   HERO PARALLAX — Ken Burns kept via JS
+═══════════════════════════════════════════════════════ */
+
+.hero-cinema-bg {
+  will-change: transform;
+}
+
+/* ═══════════════════════════════════════════════════════
+   BRAND SIGNATURE GLOW — global consistency
+═══════════════════════════════════════════════════════ */
+
+/* Signature glow on primary accent elements */
+.hero-cta-glow,
+.new-drop-btn:hover,
+.btn-primary:focus {
+  box-shadow: 0 0 24px rgba(98,68,197,0.45), 0 4px 16px rgba(98,68,197,0.2);
+}
+
+/* Consistent accent underline for section headings */
+.section-title .accent::after {
+  content: '';
+  display: block;
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  border-radius: 2px;
+  margin-top: 2px;
+}
+
+/* ── Responsive checkout stepper ── */
+@media (max-width: 36rem) {
+  .stepper-label { display: none; }
+  .stepper-line { margin: 0 0.25rem 0; }
+}

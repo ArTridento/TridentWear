@@ -11,7 +11,7 @@
       content="Complete your TridentWear order — choose COD or online payment, apply coupons."
     />
     <title>Checkout | TridentWear</title>
-    <link rel="stylesheet" href="./css/styles.css?v=20260421-5" />
+    <link rel="stylesheet" href="./css/styles.css?v=20260421-7" />
     <link rel="icon" type="image/png" href="./images/Logo.png" />
     <!-- Razorpay SDK - loads only when needed -->
     <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
@@ -71,6 +71,27 @@
       </div>
     </header>
 
+    <!-- Checkout Progress Stepper -->
+    <div class="checkout-stepper">
+      <div class="container">
+        <div class="stepper-row">
+          <div class="stepper-step stepper-done">
+            <div class="stepper-circle"><i class="fa-solid fa-check"></i></div>
+            <span class="stepper-label">Cart</span>
+          </div>
+          <div class="stepper-line stepper-line-done"></div>
+          <div class="stepper-step stepper-active">
+            <div class="stepper-circle">2</div>
+            <span class="stepper-label">Details</span>
+          </div>
+          <div class="stepper-line"></div>
+          <div class="stepper-step">
+            <div class="stepper-circle">3</div>
+            <span class="stepper-label">Confirm</span>
+          </div>
+        </div>
+      </div>
+    </div>
     <main>
       <section class="page-hero">
         <div class="container">
