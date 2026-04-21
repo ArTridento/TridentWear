@@ -10185,3 +10185,257 @@ body[data-page="home"] .site-header:not(.is-scrolled) {
 .trident-divider::after {
   background: linear-gradient(to right, transparent, rgba(0,0,0,0.1), transparent) !important;
 }
+
+/* ═══════════════════════════════════════════════════════
+   NAVBAR FINAL CLEANUP v11
+   Target layout: [LOGO]  [Home Shop About]  [🔍 ❤️ 🛒 👤]
+═══════════════════════════════════════════════════════ */
+
+/* ── Fix flex layout: brand LEFT, icons RIGHT ── */
+.header-inner {
+  justify-content: flex-start !important;
+}
+
+/* Search wrapper → push to right with margin-left auto */
+.search-wrapper {
+  margin-left: auto !important;
+  margin-right: 0.25rem;
+  display: flex;
+  align-items: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* ── Collapse search input → ICON only ── */
+.search-input {
+  width: 0 !important;
+  opacity: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  pointer-events: none !important;
+  position: absolute;
+  right: 2.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: width 0.3s ease, opacity 0.3s ease !important;
+  border-radius: 100px !important;
+  color: var(--white);
+  font-size: 0.82rem;
+  font-family: var(--font-display);
+}
+
+/* Expand on focus/when search is active */
+.search-wrapper.is-search-open .search-input {
+  width: 200px !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  padding: 0.4rem 1rem !important;
+  background: rgba(255,255,255,0.1) !important;
+  border: 1px solid rgba(255,255,255,0.15) !important;
+}
+
+/* Make search icon a premim icon button */
+.search-wrapper .search-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  cursor: pointer;
+  stroke: rgba(255,255,255,0.78);
+  transition: background 0.18s ease;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+.search-wrapper:hover .search-icon,
+.search-wrapper.is-search-open .search-icon {
+  background: rgba(255,255,255,0.1);
+  stroke: var(--white);
+}
+
+/* ── Remove ALL background from nav links ── */
+.nav-link,
+.nav-link:hover,
+.nav-link.is-active,
+.nav-link:focus {
+  background: none !important;
+  box-shadow: none !important;
+  outline: none;
+}
+
+/* Active = gold color only */
+.nav-link.is-active {
+  color: var(--secondary) !important;
+  font-weight: 700 !important;
+}
+
+/* Hover = white only */
+.nav-link:hover { color: rgba(255,255,255,1) !important; }
+
+/* More generous gap between nav links */
+.site-nav {
+  gap: 0.5rem !important;
+}
+.nav-link {
+  padding: 0.5rem 1rem !important;
+  font-size: 0.85rem !important;
+  letter-spacing: 0.03em !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   HOMEPAGE — ONE ACCENT, CLEAN SECTIONS
+═══════════════════════════════════════════════════════ */
+
+/* ── Remove purple from non-hero sections ── */
+
+/* Stats bar: simple dark line */
+.stats-section, .stats-bar {
+  background: #0c0a16 !important;
+  border-top: none !important;
+  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+}
+.stats-bar-number { color: var(--secondary) !important; }
+.stats-bar-rating { color: var(--secondary) !important; }
+
+/* Category section: clean white */
+.cat-section {
+  background: #fff !important;
+  padding: 6rem 0 !important;
+}
+.cat-section .eyebrow { color: var(--primary); opacity: 0.6; }
+.cat-section .section-title { color: #111 !important; }
+
+/* Category cards: flat, image-forward */
+.cat-card {
+  background: #f4f4f4 !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 4px !important;
+  transition: transform 0.22s ease !important;
+  overflow: hidden;
+}
+.cat-card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: none !important;
+}
+.cat-card-overlay, .cat-card-label {
+  background: none !important;
+  background-image: none !important;
+}
+.cat-card-label {
+  color: #111 !important;
+  font-weight: 700 !important;
+  font-size: 0.9rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.75rem !important;
+}
+
+/* Featured products: white bg */
+.featured-section, [id^="featured"] {
+  background: #fff !important;
+  padding: 6rem 0 !important;
+}
+.featured-section .section-title { color: #111 !important; }
+.featured-section .eyebrow { color: var(--primary); opacity: 0.6; }
+
+/* Product cards on white bg */
+.featured-section .product-card,
+.product-card {
+  background: #fff !important;
+  border: 1px solid #ececec !important;
+  border-radius: 6px !important;
+}
+.product-card:hover {
+  border-color: #ddd !important;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.07) !important;
+}
+
+/* Product image: taller, more presence */
+.product-image {
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  width: 100%;
+}
+
+/* Product body: clean text */
+.product-name {
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  color: #111 !important;
+  letter-spacing: 0 !important;
+}
+.product-price { color: #111 !important; font-weight: 700 !important; }
+.product-type {
+  font-size: 0.68rem !important;
+  letter-spacing: 0.12em !important;
+  color: #888 !important;
+  text-transform: uppercase;
+}
+
+/* Trending section: white bg */
+.trending-section {
+  background: #fafafa !important;
+  padding: 6rem 0 !important;
+}
+
+/* New Drop section: keep dark, but simpler */
+.new-drop-section {
+  background: #0c0a16 !important;
+  padding: 5rem 0 !important;
+}
+
+/* Lifestyle grid: white */
+.lifestyle-section, .ig-section {
+  background: #fff !important;
+  padding: 6rem 0 !important;
+}
+
+/* Manifesto: dark, ONE decoration */
+.manifesto-section {
+  background: #090710 !important;
+  padding: 7rem 0 !important;
+}
+
+/* Testimonials: very light */
+.testimonials-section {
+  background: #f8f8f8 !important;
+}
+.testi-card {
+  background: #fff !important;
+  border: 1px solid #ebebeb !important;
+}
+.testi-card-featured {
+  background: #0c0a16 !important;
+  border-color: transparent !important;
+}
+
+/* Newsletter: dark end */
+.newsletter-section, .newsletter {
+  background: #0c0a16 !important;
+}
+
+/* ── Gold as the ONE accent ── */
+.accent { color: var(--secondary) !important; }
+
+/* Remove purple gradients from decorative elements */
+.hero-badge-float { background: var(--secondary) !important; color: #111 !important; }
+
+/* ── Breathe: consistent whitespace ── */
+.section { padding: 6rem 0 !important; }
+.section-tight { padding: 4.5rem 0 !important; }
+
+/* Section headings on white pages */
+.cat-section .section-header,
+.featured-section .section-header,
+.trending-section .section-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SEARCH ICON — JS click to expand (small script appended)
+═══════════════════════════════════════════════════════ */

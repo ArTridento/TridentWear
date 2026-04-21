@@ -1,4 +1,4 @@
-import { getWithFallback } from "../shared/api.js?v=8";
+import { getWithFallback } from "../shared/api.js?v=9";
 import {
   bindProductCardActions,
   createEmptyMarkup,
@@ -6,7 +6,7 @@ import {
   productCardMarkup,
   startProgress,
   endProgress,
-} from "../shared/site.js?v=8";
+} from "../shared/site.js?v=9";
 
 /* ───────────────────────────────────────────
    STATE & CATEGORY MAP

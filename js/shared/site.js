@@ -878,7 +878,33 @@ function initNavbarScroll() {
     header.classList.toggle("is-scrolled", scrolled || !hasHero);
   };
   window.addEventListener("scroll", update, { passive: true });
-  update(); // run on load
+  update();
+
+  // Search icon: click to expand/collapse input
+  const searchWrapper = document.querySelector("[data-search-wrapper]");
+  const searchIcon    = searchWrapper?.querySelector(".search-icon");
+  const searchInput   = searchWrapper?.querySelector("[data-search-input]");
+  if (searchWrapper && searchIcon && searchInput) {
+    searchIcon.addEventListener("click", () => {
+      const open = searchWrapper.classList.toggle("is-search-open");
+      if (open) {
+        setTimeout(() => searchInput.focus(), 50);
+      }
+    });
+    // Collapse on outside click
+    document.addEventListener("click", e => {
+      if (!searchWrapper.contains(e.target)) {
+        searchWrapper.classList.remove("is-search-open");
+      }
+    });
+    // Collapse on Escape
+    searchInput.addEventListener("keydown", e => {
+      if (e.key === "Escape") {
+        searchWrapper.classList.remove("is-search-open");
+        searchInput.blur();
+      }
+    });
+  }
 }
 
 /* ───────── Button ripple (all pages) ───────── */
