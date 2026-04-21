@@ -900,10 +900,9 @@ function initButtonRipple() {
 /* ───────── Init ───────── */
 
 export async function initSite() {
-  // Enable CSS animation guard + scroll reveal + ripple + glass navbar on every page
+  // Guard, scroll reveal, glass navbar — clean global init
   document.body.classList.add("js-loaded");
   initGlobalScrollReveal();
-  initButtonRipple();
   initNavbarScroll();
 
   setActiveNav();

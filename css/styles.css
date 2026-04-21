@@ -9890,3 +9890,298 @@ body { font-family: var(--font-body); }
   width: 210px;
 }
 .search-input::placeholder { color: rgba(255,255,255,0.4); font-size: 0.8rem; }
+
+/* ═══════════════════════════════════════════════════════
+   PREMIUM MINIMALIST REFACTOR v10
+   Less is more. Luxury through restraint.
+═══════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────
+   1. KILL ALL PULSING / FLOATING / GLOW ANIMATIONS
+───────────────────────────────────────────────────── */
+
+/* Badge float */
+.product-badge { animation: none !important; }
+.badge-selling  { animation: none !important; }
+
+/* Hero accent pulse */
+@keyframes accentPulse { 0%, 100% { filter: none; opacity: 1; } }
+
+/* Sticky CTA glow pulse */
+@keyframes glowPulse { 0%, 100% { box-shadow: 0 2px 12px rgba(98,68,197,0.25); } }
+
+/* Badge float */
+@keyframes badgeFloat { 0%, 100% { transform: translateY(0); } }
+
+/* Scroll bounce */
+@keyframes scrollBounce { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.7; } }
+
+/* Kill CTA glow on buttons */
+.hero-cta-glow,
+.btn-primary:focus,
+.new-drop-btn,
+.new-drop-btn:hover {
+  box-shadow: none !important;
+}
+
+/* Kill ripple (too tech-dashboard) */
+.btn-ripple-wave { display: none !important; }
+
+/* Kill hero accent drop-shadow filter */
+.hero-accent-glow {
+  filter: none !important;
+  -webkit-text-fill-color: var(--secondary);
+  background: none;
+  -webkit-background-clip: unset;
+  background-clip: unset;
+  color: var(--secondary) !important;
+}
+
+/* Kill section-title underline decoration */
+.section-title .accent::after { display: none !important; }
+
+/* ─────────────────────────────────────────────────────
+   2. NAVBAR — CLEAN DARK, MINIMAL BLUR
+───────────────────────────────────────────────────── */
+
+/* Base — always solid dark, no theatrical effects */
+.site-header,
+.site-header.is-scrolled,
+body:not([data-page="home"]) .site-header {
+  background: #0c0a16 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.07) !important;
+  border-bottom: none !important;
+  transition: background 0.3s ease !important;
+}
+
+/* Homepage hero: very subtle semi-transparent */
+body[data-page="home"] .site-header:not(.is-scrolled) {
+  background: rgba(10, 8, 20, 0.72) !important;
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+  box-shadow: none !important;
+}
+
+/* Nav links — color change only, no sliding underline */
+.nav-link { transition: color 0.18s ease !important; }
+.nav-link::after { display: none !important; }
+.nav-link:hover { color: var(--white) !important; }
+.nav-link.is-active {
+  color: var(--secondary) !important;
+  background: none !important;
+}
+
+/* Dropdown — simplified glass */
+.nav-dropdown-menu {
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.28) !important;
+  transition: opacity 0.18s ease, transform 0.18s ease !important;
+}
+
+/* Mobile menu — simpler easing */
+.site-nav {
+  transition: clip-path 0.38s ease !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+}
+
+/* ─────────────────────────────────────────────────────
+   3. PRODUCT CARDS — Subtle, clean
+───────────────────────────────────────────────────── */
+
+.product-card {
+  transition: transform 0.22s ease, box-shadow 0.22s ease !important;
+  box-shadow: none !important;
+}
+.product-card:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.1) !important;
+}
+.product-card:hover .product-media {
+  transform: none !important;
+}
+
+/* ─────────────────────────────────────────────────────
+   4. BUTTONS — Flat, bold, no glow
+───────────────────────────────────────────────────── */
+
+.btn-primary {
+  transition: background 0.18s ease, opacity 0.18s ease !important;
+}
+.btn-primary:hover {
+  box-shadow: none !important;
+  opacity: 0.9;
+}
+.btn-outline:hover {
+  box-shadow: none !important;
+}
+.sticky-mob-btn {
+  box-shadow: none !important;
+  animation: none !important;
+}
+.manifesto-cta-btn {
+  transition: background 0.2s ease, color 0.2s ease !important;
+}
+
+/* ─────────────────────────────────────────────────────
+   5. HERO — Remove theatrical extras
+───────────────────────────────────────────────────── */
+
+/* Remove cinematic letterbox bars */
+.cinema-bar { display: none !important; }
+
+/* Reduce orb opacity significantly */
+.hero-orb { opacity: 0.05 !important; filter: blur(80px) !important; }
+.hero-orb-1 { opacity: 0.06 !important; }
+.hero-orb-2 { opacity: 0.04 !important; }
+
+/* Remove particle dots overlay */
+.hero-slide-animated::after { display: none !important; }
+
+/* Hero scroll hint — much subtler */
+.hero-scroll-hint { opacity: 0.25 !important; }
+
+/* Hero cta glow button — flat */
+.btn-hero-primary {
+  box-shadow: none !important;
+}
+.btn-hero-primary:hover {
+  box-shadow: none !important;
+  opacity: 0.88;
+}
+
+/* ─────────────────────────────────────────────────────
+   6. SPACING — More breathing room (luxury = whitespace)
+───────────────────────────────────────────────────── */
+
+.section { padding: 5.5rem 0; }
+.section-tight { padding: 4rem 0; }
+
+/* More margin between section header and content */
+.section-header { margin-bottom: 2.5rem; }
+
+/* ─────────────────────────────────────────────────────
+   7. TYPOGRAPHY — Let type do the heavy lifting
+───────────────────────────────────────────────────── */
+
+/* Cleaner section titles */
+.section-title {
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+
+/* Eyebrow — refined */
+.eyebrow {
+  letter-spacing: 0.22em;
+  font-size: 0.68rem;
+  opacity: 0.6;
+  color: var(--gray-dark);
+}
+
+/* On dark backgrounds, eyebrow stays visible */
+.page-hero .eyebrow,
+.manifesto-section .eyebrow,
+.new-drop-section .eyebrow {
+  color: var(--secondary) !important;
+  opacity: 0.85;
+}
+
+/* ─────────────────────────────────────────────────────
+   8. MANIFESTO SECTION — Typography-led, no decoration
+───────────────────────────────────────────────────── */
+
+.manifesto-line {
+  background: rgba(255,255,255,0.08) !important;
+  height: 1px !important;
+  margin: 2rem 0 !important;
+}
+
+/* ─────────────────────────────────────────────────────
+   9. TESTIMONIALS — Clean, no hover lift
+───────────────────────────────────────────────────── */
+
+.testi-card {
+  transition: none !important;
+  border: 1px solid #ebebeb !important;
+}
+.testi-card:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ─────────────────────────────────────────────────────
+   10. STEPPER — Understated
+───────────────────────────────────────────────────── */
+
+.stepper-active .stepper-circle {
+  box-shadow: none !important;
+}
+
+/* ─────────────────────────────────────────────────────
+   11. GLOBAL ANIMATION — Fade only, no spring bounces
+───────────────────────────────────────────────────── */
+
+/* Override spring easing globally with simple ease */
+:root {
+  --ease-spring: ease !important;
+}
+
+/* Scroll reveal — simple fade, no translate3d bounce */
+[data-animate] {
+  transition: opacity 0.5s ease, transform 0.5s ease !important;
+}
+
+/* ─────────────────────────────────────────────────────
+   12. REMOVE NEW-DROP URGENCY PULSE / CLUTTER
+───────────────────────────────────────────────────── */
+
+/* Product-page hero — simpler */
+.product-card-rating { opacity: 0.75; }
+
+/* Cart-added animation — less aggressive */
+@keyframes cartPop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+/* ─────────────────────────────────────────────────────
+   13. PAGE CTA STRIP — Flat gradient, no shadow
+───────────────────────────────────────────────────── */
+
+.page-cta-strip {
+  background: #1a1030 !important;
+  padding: 3rem 0 !important;
+}
+.page-cta-strip .btn {
+  box-shadow: none !important;
+}
+
+/* ─────────────────────────────────────────────────────
+   14. PRODUCT BADGES — Understated, no animation
+───────────────────────────────────────────────────── */
+
+.product-badge {
+  font-size: 0.64rem !important;
+  padding: 0.2rem 0.55rem !important;
+  letter-spacing: 0.04em !important;
+  font-weight: 700 !important;
+  border-radius: 4px !important;
+}
+.badge-bestseller { background: #b45309 !important; }
+.badge-trending   { background: #4c1d95 !important; }
+.badge-limited    { background: #991b1b !important; }
+.badge-selling    { background: #7f1d1d !important; }
+
+/* ─────────────────────────────────────────────────────
+   15. BRAND SIGNATURE — Consistent, quiet
+───────────────────────────────────────────────────── */
+
+.trident-divider::before,
+.trident-divider::after {
+  background: linear-gradient(to right, transparent, rgba(0,0,0,0.1), transparent) !important;
+}

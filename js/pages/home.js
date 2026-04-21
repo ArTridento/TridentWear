@@ -1,4 +1,4 @@
-import { get } from "../shared/api.js?v=7";
+import { get } from "../shared/api.js?v=8";
 import {
   bindProductCardActions,
   createSkeletonCards,
@@ -6,7 +6,7 @@ import {
   productCardMarkup,
   startProgress,
   endProgress,
-} from "../shared/site.js?v=7";
+} from "../shared/site.js?v=8";
 
 /* ─── Hero Slider ─── */
 function initHeroSlider() {

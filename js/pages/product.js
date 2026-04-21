@@ -1,4 +1,4 @@
-import { getWithFallback } from "../shared/api.js?v=7";
+import { getWithFallback } from "../shared/api.js?v=8";
 import {
   formatCurrency,
   escapeHtml,
@@ -8,9 +8,9 @@ import {
   productCardMarkup,
   bindProductCardActions,
   promptLoginOverlay,
-} from "../shared/site.js?v=7";
-import { addCartItem } from "../shared/cart.js?v=7";
-import { normalizeProduct } from "../shared/catalog.js?v=7";
+} from "../shared/site.js?v=8";
+import { addCartItem } from "../shared/cart.js?v=8";
+import { normalizeProduct } from "../shared/catalog.js?v=8";
 
 /* ─── Recently viewed ─── */
 const RV_KEY = "trident_recently_viewed";

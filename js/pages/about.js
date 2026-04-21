@@ -1,4 +1,4 @@
-import { initSite } from "../shared/site.js?v=7";
+import { initSite } from "../shared/site.js?v=8";
 
 window.addEventListener("DOMContentLoaded", async () => {
   await initSite();
