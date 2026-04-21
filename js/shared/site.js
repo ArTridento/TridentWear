@@ -856,6 +856,20 @@ export async function refreshAuthState() {
 
 export function getCurrentUser() { return currentUser; }
 
+/* ───────── Navbar scroll glass effect (all pages) ───────── */
+function initNavbarScroll() {
+  const header = document.querySelector(".site-header");
+  if (!header) return;
+  const hasHero = document.querySelector(".hero-cinematic");
+
+  const update = () => {
+    const scrolled = window.scrollY > 60;
+    header.classList.toggle("is-scrolled", scrolled || !hasHero);
+  };
+  window.addEventListener("scroll", update, { passive: true });
+  update(); // run on load
+}
+
 /* ───────── Button ripple (all pages) ───────── */
 function initButtonRipple() {
   document.addEventListener("click", (e) => {
@@ -875,10 +889,11 @@ function initButtonRipple() {
 /* ───────── Init ───────── */
 
 export async function initSite() {
-  // Enable CSS animation guard + scroll reveal + ripple on every page
+  // Enable CSS animation guard + scroll reveal + ripple + glass navbar on every page
   document.body.classList.add("js-loaded");
   initGlobalScrollReveal();
   initButtonRipple();
+  initNavbarScroll();
 
   setActiveNav();
   await refreshAuthState();

@@ -1,6 +1,6 @@
-import { get, post } from "../shared/api.js?v=5";
-import { formatCurrency, getCurrentUser, initSite, showToast } from "../shared/site.js?v=5";
-import { resolveAssetUrl } from "../shared/api.js?v=5";
+import { get, post } from "../shared/api.js?v=6";
+import { formatCurrency, getCurrentUser, initSite, showToast } from "../shared/site.js?v=6";
+import { resolveAssetUrl } from "../shared/api.js?v=6";
 
 async function loadWishlist() {
   const container = document.querySelector("[data-wishlist-grid]");
@@ -58,7 +58,7 @@ async function loadWishlist() {
 
 // Custom DELETE helper since api.js doesn't export one for payload
 async function removeFromWishlist(productId) {
-  const { request } = await import("../shared/api.js?v=5");
+  const { request } = await import("../shared/api.js?v=6");
   return request("/api/wishlist/remove", {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },

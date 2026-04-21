@@ -1,5 +1,5 @@
-import { initSite, getCurrentUser, showToast } from "../shared/site.js?v=5";
-import { get, post } from "../shared/api.js?v=5";
+import { initSite, getCurrentUser, showToast } from "../shared/site.js?v=6";
+import { get, post } from "../shared/api.js?v=6";
 
 async function loadProfile() {
   await initSite();

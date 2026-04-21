@@ -1,6 +1,6 @@
-import { resolveAssetUrl } from "../shared/api.js?v=5";
-import { getCartSubtotal, loadCart, removeCartItem, updateCartItemQuantity } from "../shared/cart.js?v=5";
-import { createEmptyMarkup, formatCurrency, initSite } from "../shared/site.js?v=5";
+import { resolveAssetUrl } from "../shared/api.js?v=6";
+import { getCartSubtotal, loadCart, removeCartItem, updateCartItemQuantity } from "../shared/cart.js?v=6";
+import { createEmptyMarkup, formatCurrency, initSite } from "../shared/site.js?v=6";
 
 function renderSummary(items) {
   const summary = document.querySelector("[data-cart-summary]");
