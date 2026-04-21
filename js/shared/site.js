@@ -102,9 +102,27 @@ export function productCardMarkup(product) {
     return `<i class="fa-regular fa-star"></i>`;
   }).join('');
 
+  // Urgency + badge logic
+  const stock = Number(product.stock || 0);
+  const pid = Number(item.id);
+  let badge = "";
+  let urgencyHtml = "";
+
+  if (stock > 0 && stock <= 8) {
+    badge = `<span class="product-badge badge-selling"><i class="fa-solid fa-fire"></i> Selling Fast</span>`;
+    urgencyHtml = `<div class="product-urgency"><i class="fa-solid fa-circle-dot"></i> Only ${stock} left</div>`;
+  } else if (pid % 5 === 0) {
+    badge = `<span class="product-badge badge-bestseller"><i class="fa-solid fa-trophy"></i> Best Seller</span>`;
+  } else if (pid % 5 === 1) {
+    badge = `<span class="product-badge badge-trending"><i class="fa-solid fa-arrow-trend-up"></i> Trending</span>`;
+  } else if (pid % 5 === 2) {
+    badge = `<span class="product-badge badge-limited"><i class="fa-solid fa-bolt"></i> Limited Drop</span>`;
+  }
+
   return `
     <article class="product-card reveal" data-product-card data-product-id="${item.id}">
       <div class="product-media" data-product-hover-gallery data-images='${escapeHtml(imagesJson)}'>
+        ${badge ? `<div class="product-badge-wrap">${badge}</div>` : ""}
         <img src="${escapeHtml(productImage)}" alt="${escapeHtml(item.name)}" loading="lazy" class="product-image">
         <div class="product-media-overlay">
           <span class="hover-hint">Hover for more</span>
@@ -115,6 +133,7 @@ export function productCardMarkup(product) {
         <a href="product.html?id=${item.id}" class="quick-view-btn" tabindex="-1">
           <i class="fa-solid fa-eye"></i> Quick View
         </a>
+        ${urgencyHtml}
       </div>
       <div class="product-body">
         <span class="product-type">${escapeHtml(subcategoryLabel)}</span>

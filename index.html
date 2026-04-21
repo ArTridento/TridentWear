@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./css/styles.css?v=20260421-5" />
+    <link rel="stylesheet" href="./css/styles.css?v=20260421-6" />
     <link rel="icon" type="image/png" href="./images/Logo.png" />
     <link
       rel="stylesheet"
@@ -135,58 +135,53 @@
     </header>
 
     <main>
-          <!-- ─── HERO BANNER ─── -->
-      <section class="hero-banner">
-        <div class="hero-banner-slides" data-hero-slider>
-          <div class="hero-slide is-active hero-slide-animated">
-            <!-- Animated mesh orbs -->
-            <div class="hero-mesh">
-              <div class="hero-orb hero-orb-1"></div>
-              <div class="hero-orb hero-orb-2"></div>
-              <div class="hero-orb hero-orb-3"></div>
-            </div>
-            <div class="container hero-slide-inner">
-              <div class="hero-text-col">
-                <span class="hero-kicker" data-animate="fade-up">NEW SEASON DROP</span>
-                <h1 class="hero-headline" data-animate="fade-up" data-delay="100">
-                  Trends fade.<br>
-                  <span class="hero-accent">Identity stays.</span>
-                </h1>
-                <p class="hero-sub" data-animate="fade-up" data-delay="200">
-                  Wear what defines you. Premium 220 GSM cotton — built for India's streets.
-                </p>
-                <div class="hero-cta-row" data-animate="fade-up" data-delay="300">
-                  <a class="btn btn-hero-primary hero-cta-glow" href="products.html">
-                    Shop Your Identity <i class="fa-solid fa-fire"></i>
-                  </a>
-                  <a class="btn btn-hero-outline" href="products.html?cat=tshirt">Explore the Drop</a>
-                </div>
-                <div class="hero-pills" data-animate="fade-up" data-delay="400">
-                  <span class="hero-pill"><i class="fa-solid fa-star" style="color:var(--secondary);"></i> 4.8 Rated</span>
-                  <span class="hero-pill"><i class="fa-solid fa-users"></i> 10K+ Customers</span>
-                  <span class="hero-pill"><i class="fa-solid fa-indian-rupee-sign"></i> Made in India</span>
-                </div>
-              </div>
-              <div class="hero-img-col">
-                <div class="hero-img-wrap hero-img-float">
-                  <img src="./images/hero-banner.jpg" alt="TridentWear Collection" class="hero-img" />
-                  <div class="hero-badge-float"><span>NEW</span><br>DROP</div>
-                </div>
-              </div>
-            </div>
+          <!-- ─── CINEMATIC HERO ─── -->
+      <section class="hero-banner hero-cinematic">
+
+        <!-- Cinematic letterbox bars -->
+        <div class="cinema-bar cinema-bar-top"></div>
+        <div class="cinema-bar cinema-bar-bottom"></div>
+
+        <!-- Background with Ken Burns -->
+        <div class="hero-cinema-bg" style="background-image: url('./images/hero-banner.jpg');"></div>
+
+        <!-- Dark overlay + animated orbs -->
+        <div class="hero-overlay"></div>
+        <div class="hero-mesh">
+          <div class="hero-orb hero-orb-1"></div>
+          <div class="hero-orb hero-orb-2"></div>
+          <div class="hero-orb hero-orb-3"></div>
+        </div>
+
+        <!-- Centered text content -->
+        <div class="container hero-cinema-content">
+          <span class="hero-kicker" data-animate="fade-up">IDENTITY COLLECTION 2026</span>
+          <h1 class="hero-headline hero-headline-cinema" data-animate="fade-up" data-delay="100">
+            Trends fade.<br>
+            <span class="hero-accent hero-accent-glow">Identity stays.</span>
+          </h1>
+          <p class="hero-sub" data-animate="fade-up" data-delay="200">
+            Wear what defines you. Not what trends demand.
+          </p>
+          <div class="hero-cta-row" data-animate="fade-up" data-delay="300">
+            <a class="btn btn-hero-primary hero-cta-glow" href="products.html">
+              Own Your Identity <i class="fa-solid fa-fire"></i>
+            </a>
+            <a class="btn btn-hero-outline" href="products.html?cat=tshirt">Shop the Drop</a>
+          </div>
+          <div class="hero-pills" data-animate="fade-up" data-delay="400">
+            <span class="hero-pill"><i class="fa-solid fa-star" style="color:var(--secondary);"></i> 4.8 Rated</span>
+            <span class="hero-pill"><i class="fa-solid fa-users"></i> 10K+ Customers</span>
+            <span class="hero-pill"><i class="fa-solid fa-indian-rupee-sign"></i> Made in India</span>
           </div>
         </div>
 
-        <!-- Slider Controls -->
-        <div class="hero-dots" data-hero-dots>
-          <button class="hero-dot is-active" data-slide="0"></button>
+        <!-- Scroll hint -->
+        <div class="hero-scroll-hint">
+          <span class="hero-scroll-label">Scroll</span>
+          <div class="hero-scroll-line"></div>
         </div>
-        <button class="hero-arrow hero-arrow-prev" data-hero-prev aria-label="Previous slide">
-          <i class="fa-solid fa-chevron-left"></i>
-        </button>
-        <button class="hero-arrow hero-arrow-next" data-hero-next aria-label="Next slide">
-          <i class="fa-solid fa-chevron-right"></i>
-        </button>
+
       </section>
 
       <!-- TRUST STATISTICS -->
@@ -380,6 +375,18 @@
         </div>
       </section>
 
+
+      <!-- BRAND MANIFESTO -->
+      <section class="manifesto-section" data-animate="fade-up">
+        <div class="manifesto-inner">
+          <div class="manifesto-line"></div>
+          <span class="manifesto-eyebrow">WHO WE ARE</span>
+          <h2 class="manifesto-headline">This is not fashion.<br>This is <em>identity</em>.</h2>
+          <p class="manifesto-copy">Fashion tells you what to wear. We tell you who you are. TridentWear is not about chasing trends � it's about declaring yourself in every stitch, every fabric, every fit. You don't follow the story. You <strong>are</strong> the story.</p>
+          <a href="about.html" class="btn manifesto-cta-btn">Our Manifesto <i class="fa-solid fa-arrow-right"></i></a>
+          <div class="manifesto-line"></div>
+        </div>
+      </section>
       <!-- LIFESTYLE GRID -->
       <section class="lifestyle-section" data-animate="fade-up">
         <div class="container">
@@ -514,6 +521,38 @@
         </div>
       </section>
 
+
+      <!-- TESTIMONIALS -->
+      <section class="testimonials-section" data-animate="fade-up">
+        <div class="container">
+          <div style="text-align:center; margin-bottom:2.5rem;">
+            <span class="eyebrow">Real People. Real Identity.</span>
+            <h2 class="section-title">Loved by <span class="accent">10,000+</span> Trident Crew</h2>
+          </div>
+          <div class="testimonials-grid">
+            <div class="testi-card">
+              <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+              <p class="testi-text">"The oversized fit is exactly what I wanted. Heavy cotton, doesn't shrink. This is the only brand I wear now."</p>
+              <div class="testi-author"><div class="testi-avatar">AK</div><div><strong>Arjun K.</strong><span>Mumbai</span></div></div>
+            </div>
+            <div class="testi-card testi-card-featured">
+              <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+              <p class="testi-text">"Finally a brand that gets it. Not just clothes � actual identity. The quality is insane for the price. Ordered 4 times already."</p>
+              <div class="testi-author"><div class="testi-avatar">SR</div><div><strong>Siddharth R.</strong><span>Chennai</span></div></div>
+            </div>
+            <div class="testi-card">
+              <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div>
+              <p class="testi-text">"220 GSM � you can actually feel the difference. Zero pilling after 6 months. Worth every rupee."</p>
+              <div class="testi-author"><div class="testi-avatar">VN</div><div><strong>Vikram N.</strong><span>Bangalore</span></div></div>
+            </div>
+            <div class="testi-card">
+              <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+              <p class="testi-text">"Wore the graphic tee to a concert � got 3 people asking where it's from. That alone says everything."</p>
+              <div class="testi-author"><div class="testi-avatar">KP</div><div><strong>Karthik P.</strong><span>Hyderabad</span></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
       <!-- NEWSLETTER -->
       <section class="newsletter-section">
         <div class="container">
@@ -756,6 +795,12 @@
       </a>
     </nav>
 
+    <!-- Sticky Mobile CTA -->
+    <div class="sticky-mob-cta" id="sticky-mob-cta">
+      <a href="products.html" class="btn sticky-mob-btn">
+        <i class="fa-solid fa-bag-shopping"></i> Shop Your Identity
+      </a>
+    </div>
     <script type="module" src="./js/pages/home.js?v=5"></script>
   </body>
 </html>

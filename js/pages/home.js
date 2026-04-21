@@ -185,6 +185,19 @@ function initScrollReveal() {
   });
 }
 
+/* ─── Sticky mobile CTA — show after hero ─── */
+function initStickyCTA() {
+  const cta = document.getElementById("sticky-mob-cta");
+  if (!cta) return;
+  const hero = document.querySelector(".hero-cinematic");
+  const threshold = hero ? hero.offsetHeight * 0.8 : 400;
+  window.addEventListener("scroll", () => {
+    cta.style.transform = window.scrollY > threshold ? "translateY(0)" : "translateY(100%)";
+  }, { passive: true });
+  cta.style.transform = "translateY(100%)";
+  cta.style.transition = "transform 0.35s ease";
+}
+
 /* ─── Boot ─── */
 window.addEventListener("DOMContentLoaded", async () => {
   document.body.classList.add("js-loaded"); // Enable scroll-reveal CSS guard
@@ -192,6 +205,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   initHeroSlider();
   initNewsletter();
   initScrollReveal();
+  initStickyCTA();
   loadStats();
   loadFeaturedProducts();
   loadTrendingProducts();
