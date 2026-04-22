@@ -10642,3 +10642,709 @@ body[data-page="home"] .site-header:not(.is-scrolled) {
     justify-content: flex-end !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════
+   NAVBAR COMPLETE OVERHAUL v12 — TridentWear Premium
+   Total redesign: amber accent, glass tools pill,
+   uppercase bottom-border nav, gradient header line
+═══════════════════════════════════════════════════════ */
+
+@media (min-width: 56.063rem) {
+
+  /* ── 1. Header base — glassmorphism transparent ── */
+  .site-header,
+  .site-header.is-scrolled,
+  body[data-page="home"] .site-header,
+  body[data-page="home"] .site-header:not(.is-scrolled) {
+    height: 80px !important;
+    background: rgba(8, 6, 22, 0.5) !important;
+    backdrop-filter: blur(16px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+    position: sticky !important;
+  }
+
+  /* Gradient shimmer line at bottom of header */
+  .site-header::after {
+    content: '' !important;
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 1px !important;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(98, 68, 197, 0.5) 25%,
+      rgba(245, 158, 11, 0.7) 50%,
+      rgba(98, 68, 197, 0.5) 75%,
+      transparent 100%
+    ) !important;
+    pointer-events: none !important;
+  }
+
+  /* ── 2. Header inner layout ── */
+  .header-inner {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    height: 80px !important;
+    padding: 0 !important;
+    gap: 0 !important;
+    position: relative !important;
+    width: 100% !important;
+  }
+
+  /* ── 3. Logo — left, static, amber "Wear" ── */
+  .site-header .brand {
+    position: static !important;
+    transform: none !important;
+    left: auto !important;
+    top: auto !important;
+    flex: 0 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.65rem !important;
+    z-index: 105 !important;
+    text-decoration: none !important;
+  }
+  .site-header .brand-logo {
+    height: 2.4rem !important;
+    width: auto !important;
+  }
+  .site-header .brand-name {
+    display: flex !important;
+    flex-direction: column !important;
+    font-family: var(--font-display) !important;
+    font-size: 1.05rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.06em !important;
+    text-transform: uppercase !important;
+    line-height: 1.15 !important;
+  }
+  .site-header .brand-trident {
+    color: rgba(255, 255, 255, 0.95) !important;
+  }
+  .site-header .brand-wear {
+    color: #f59e0b !important;
+  }
+
+  /* ── 4. Site nav — absolute center ── */
+  .site-nav {
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0rem !important;
+    background: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    z-index: 5 !important;
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* ── 5. Nav links — UPPERCASE, bottom-border active ── */
+  .site-nav .nav-link,
+  .site-nav .nav-dropdown-trigger {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.3rem !important;
+    padding: 0.55rem 1.1rem !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    font-family: var(--font-display) !important;
+    letter-spacing: 0.12em !important;
+    text-transform: uppercase !important;
+    color: rgba(255, 255, 255, 0.5) !important;
+    background: none !important;
+    border-radius: 0 !important;
+    border: none !important;
+    border-bottom: 2px solid transparent !important;
+    position: relative !important;
+    transition: color 0.2s ease, border-color 0.2s ease !important;
+    white-space: nowrap !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+  }
+
+  /* Hover state */
+  .site-nav .nav-link:hover,
+  .site-nav .nav-dropdown-trigger:hover {
+    color: rgba(255, 255, 255, 0.95) !important;
+    border-bottom-color: rgba(245, 158, 11, 0.45) !important;
+    background: none !important;
+  }
+
+  /* Active state — full white + amber underline */
+  .site-nav .nav-link.is-active,
+  .site-nav .nav-link[aria-current] {
+    color: #ffffff !important;
+    border-bottom-color: #f59e0b !important;
+    background: none !important;
+  }
+
+  /* Kill ::after pseudo-element underlines */
+  .site-nav .nav-link::after,
+  .site-nav .nav-dropdown-trigger::after {
+    display: none !important;
+    content: none !important;
+  }
+  .site-nav .nav-link::before,
+  .site-nav .nav-dropdown-trigger::before {
+    display: none !important;
+    content: none !important;
+  }
+
+  /* ── 6. Dropdown menu — glass card, amber accents ── */
+  .nav-dropdown { position: relative !important; }
+
+  .nav-dropdown-menu {
+    position: absolute !important;
+    top: calc(100% + 14px) !important;
+    left: 50% !important;
+    transform: translateX(-50%) translateY(-5px) !important;
+    background: rgba(9, 7, 20, 0.97) !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+    border-top: 1px solid rgba(245, 158, 11, 0.2) !important;
+    border-radius: 16px !important;
+    padding: 0.55rem !important;
+    min-width: 220px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.05rem !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.2s ease, transform 0.2s ease !important;
+    z-index: 500 !important;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(245, 158, 11, 0.06) !important;
+  }
+  .nav-dropdown:hover .nav-dropdown-menu,
+  .nav-dropdown.is-open .nav-dropdown-menu {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translateX(-50%) translateY(0) !important;
+  }
+
+  .nav-dropdown-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+    padding: 0.65rem 1rem !important;
+    border-radius: 10px !important;
+    font-size: 0.82rem !important;
+    font-weight: 500 !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    transition: background 0.15s ease, color 0.15s ease !important;
+    text-decoration: none !important;
+  }
+  .nav-dropdown-item:hover {
+    background: rgba(245, 158, 11, 0.1) !important;
+    color: #f59e0b !important;
+  }
+  .nav-dropdown-item i {
+    color: #f59e0b !important;
+    font-size: 0.82rem !important;
+    width: 1rem !important;
+    text-align: center !important;
+    opacity: 0.85 !important;
+  }
+  .nav-dropdown-all {
+    border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+    margin-top: 0.2rem !important;
+    padding-top: 0.7rem !important;
+    color: #f59e0b !important;
+    font-weight: 700 !important;
+  }
+  .nav-chevron {
+    font-size: 0.58rem !important;
+    opacity: 0.55 !important;
+    transition: transform 0.22s ease, opacity 0.22s ease !important;
+    margin-left: 0.1rem !important;
+  }
+  .nav-dropdown:hover .nav-chevron,
+  .nav-dropdown.is-open .nav-chevron {
+    transform: rotate(180deg) !important;
+    opacity: 1 !important;
+    color: #f59e0b !important;
+  }
+
+  /* ── 7. Right side: search then tools ── */
+  .search-wrapper {
+    order: 2 !important;
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+    margin-right: 0.6rem !important;
+    z-index: 10 !important;
+    position: relative !important;
+  }
+
+  /* Tools group — glass pill container */
+  .header-tools {
+    order: 3 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.15rem !important;
+    flex: 0 0 auto !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 100px !important;
+    padding: 0.2rem 0.3rem !important;
+  }
+
+  /* ── 8. Utility pills — icon circles ── */
+  .utility-pill {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 2.1rem !important;
+    height: 2.1rem !important;
+    border-radius: 50% !important;
+    color: rgba(255, 255, 255, 0.58) !important;
+    font-size: 0.95rem !important;
+    background: transparent !important;
+    transition: background 0.18s ease, color 0.18s ease !important;
+    position: relative !important;
+    text-decoration: none !important;
+    border: none !important;
+  }
+  .utility-pill:hover {
+    background: rgba(245, 158, 11, 0.12) !important;
+    color: #f59e0b !important;
+  }
+
+  /* ── 9. Cart badge — amber/gold ── */
+  .cart-badge {
+    position: absolute !important;
+    top: 0px !important;
+    right: 0px !important;
+    min-width: 1.1rem !important;
+    height: 1.1rem !important;
+    padding: 0 3px !important;
+    background: #f59e0b !important;
+    color: #080616 !important;
+    font-size: 0.56rem !important;
+    font-weight: 900 !important;
+    border-radius: 100px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 1.5px solid #080616 !important;
+    line-height: 1 !important;
+    font-family: var(--font-display) !important;
+  }
+  .cart-pill { position: relative !important; }
+
+  /* ── 10. Search input — pill, amber focus ── */
+  .search-input {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    border-radius: 100px !important;
+    padding: 0.42rem 1rem 0.42rem 2.1rem !important;
+    font-size: 0.78rem !important;
+    font-family: var(--font-display) !important;
+    width: 140px !important;
+    transition: width 0.28s ease, background 0.2s ease, border-color 0.2s ease !important;
+  }
+  .search-input:focus {
+    width: 190px !important;
+    background: rgba(255, 255, 255, 0.09) !important;
+    border-color: rgba(245, 158, 11, 0.45) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.07) !important;
+  }
+  .search-input::placeholder {
+    color: rgba(255, 255, 255, 0.28) !important;
+    font-size: 0.76rem !important;
+  }
+  .search-icon {
+    color: rgba(255, 255, 255, 0.3) !important;
+    width: 0.85rem !important;
+    height: 0.85rem !important;
+  }
+}
+
+
+/* ── 1. Nav height: slightly more breathing room ── */
+@media (min-width: 56.063rem) {
+  .site-header {
+    height: 76px !important;
+  }
+  .header-inner {
+    height: 76px !important;
+  }
+
+  /* ── 2. Nav links: semi-bold, wider letter-spacing ── */
+  .site-nav .nav-link,
+  .site-nav .nav-dropdown-trigger {
+    font-size: 0.875rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.04em !important;
+    text-transform: uppercase !important;
+    padding: 0.5rem 1rem !important;
+    color: rgba(255, 255, 255, 0.72) !important;
+    position: relative !important;
+    transition: color 0.22s ease !important;
+  }
+
+  /* ── 3. Hover underline slide animation (re-enabled, premium) ── */
+  .site-nav .nav-link::after,
+  .site-nav .nav-dropdown-trigger::after {
+    display: block !important;
+    content: '' !important;
+    position: absolute !important;
+    bottom: 0px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 0 !important;
+    height: 2px !important;
+    background: linear-gradient(90deg, var(--primary), var(--secondary)) !important;
+    border-radius: 2px !important;
+    transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  }
+  .site-nav .nav-link:hover::after,
+  .site-nav .nav-dropdown-trigger:hover::after {
+    width: 60% !important;
+  }
+  .site-nav .nav-link.is-active::after {
+    width: 60% !important;
+  }
+  .site-nav .nav-link:hover,
+  .site-nav .nav-dropdown-trigger:hover {
+    color: rgba(255, 255, 255, 1) !important;
+  }
+  .site-nav .nav-link.is-active {
+    color: var(--white) !important;
+    background: none !important;
+  }
+
+  /* ── 4. Nav gap — more comfortable spacing ── */
+  .site-nav {
+    gap: 0.1rem !important;
+  }
+
+  /* ── 5. Cart badge → amber/gold (brand-fit, not blue) ── */
+  .cart-badge {
+    background: #f59e0b !important;
+    color: #0c0a16 !important;
+    font-weight: 900 !important;
+    border: 2px solid #0c0a16 !important;
+    min-width: 1.2rem !important;
+    height: 1.2rem !important;
+    font-size: 0.6rem !important;
+    top: -1px !important;
+    right: -1px !important;
+  }
+
+  /* ── 6. Search + Tools: grouped together on right ── */
+  .search-wrapper {
+    order: 2 !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    flex: 0 0 auto !important;
+  }
+  .header-tools {
+    order: 3 !important;
+    margin-left: 0.75rem !important;
+    margin-right: 0 !important;
+    gap: 0.25rem !important;
+  }
+
+  /* Right group: search + tools flush to right edge */
+  .header-inner {
+    justify-content: space-between !important;
+  }
+
+  /* ── 7. Utility icon hover — subtle glow ring ── */
+  .utility-pill {
+    width: 2.3rem !important;
+    height: 2.3rem !important;
+    border-radius: 50% !important;
+    color: rgba(255, 255, 255, 0.72) !important;
+    transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease !important;
+  }
+  .utility-pill:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: var(--white) !important;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15) !important;
+  }
+
+  /* ── 8. Search input — expand on focus, clean pill ── */
+  .search-input {
+    width: 150px !important;
+    transition: width 0.3s ease, background 0.2s ease, border-color 0.2s ease !important;
+  }
+  .search-input:focus {
+    width: 200px !important;
+    border-color: rgba(98, 68, 197, 0.6) !important;
+    background: rgba(255, 255, 255, 0.13) !important;
+  }
+
+  /* ── 9. Dropdown — refined glass card ── */
+  .nav-dropdown-menu {
+    border-radius: 16px !important;
+    padding: 0.5rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(98,68,197,0.1) !important;
+    min-width: 220px !important;
+  }
+  .nav-dropdown-item {
+    border-radius: 10px !important;
+    font-size: 0.83rem !important;
+    padding: 0.65rem 1rem !important;
+  }
+  .nav-dropdown-item:hover {
+    background: rgba(98, 68, 197, 0.2) !important;
+    color: var(--white) !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   NAVBAR FIXES v13 — 4 User Issues Fixed
+   1. Logo spacing from edge
+   2. Products dropdown removed
+   3. Double underline killed completely
+   4. Search icon size + position fixed
+═══════════════════════════════════════════════════════ */
+
+@media (min-width: 56.063rem) {
+
+  /* ── FIX 1: Logo too far left — add breathing room ── */
+  .header-inner {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+
+  /* ── FIX 2: Products dropdown — COMPLETELY HIDDEN ── */
+  .nav-dropdown-menu,
+  .nav-dropdown:hover .nav-dropdown-menu,
+  .nav-dropdown.is-open .nav-dropdown-menu,
+  .nav-dropdown:focus-within .nav-dropdown-menu {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+  }
+
+  /* ── FIX 3: Kill ALL underline / line effects on nav links ── */
+
+  /* Kill border-bottom underline */
+  .site-nav .nav-link,
+  .site-nav .nav-dropdown-trigger,
+  .site-nav .nav-link:hover,
+  .site-nav .nav-dropdown-trigger:hover,
+  .site-nav .nav-link.is-active,
+  .site-nav .nav-link[aria-current],
+  .site-nav .nav-link:focus,
+  .site-nav .nav-dropdown-trigger:focus {
+    border-bottom: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
+    outline: none !important;
+  }
+
+  /* Kill ::after pseudo underline (ALL nav links, not just .site-nav scoped) */
+  .nav-link::after,
+  .nav-link::before,
+  .nav-dropdown-trigger::after,
+  .nav-dropdown-trigger::before,
+  .site-nav .nav-link::after,
+  .site-nav .nav-link::before,
+  .site-nav .nav-dropdown-trigger::after,
+  .site-nav .nav-dropdown-trigger::before {
+    display: none !important;
+    content: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+
+  /* Hover — color change ONLY, no underline */
+  .site-nav .nav-link:hover,
+  .site-nav .nav-dropdown-trigger:hover {
+    color: rgba(255, 255, 255, 0.95) !important;
+    background: none !important;
+  }
+
+  /* Active — white text ONLY, no underline */
+  .site-nav .nav-link.is-active,
+  .site-nav .nav-link[aria-current] {
+    color: #ffffff !important;
+    background: none !important;
+  }
+
+  /* ── FIX 4: Search icon — bigger + correct position ── */
+  .search-wrapper {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .search-icon {
+    position: absolute !important;
+    left: 0.8rem !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 1rem !important;
+    height: 1rem !important;
+    color: rgba(255, 255, 255, 0.45) !important;
+    pointer-events: none !important;
+    z-index: 2 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .search-input {
+    padding-left: 2.3rem !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   NAVBAR FIXES v14 — MOBILE VIEW REFINEMENT
+   1. Show brand name on mobile (was hidden)
+   2. Hide header tools on mobile (since bottom nav exists)
+   3. Ensure logo and hamburger are correctly spaced
+═══════════════════════════════════════════════════════ */
+
+@media (max-width: 767px) {
+  /* ── 1. Show brand name text ── */
+  .site-header .brand-name {
+    display: flex !important;
+    font-size: 1.15rem !important;
+  }
+
+  /* Make logo a bit smaller to fit with text */
+  .site-header .brand-logo {
+    height: 1.8rem !important;
+  }
+
+  /* ── 2. Hide floating tools ── */
+  .header-tools {
+    display: none !important;
+  }
+
+  /* ── 3. Align brand left, hamburger right ── */
+  .header-inner {
+    justify-content: space-between !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   NAVBAR FIXES v16 — TRANSPARENT NAV & SEARCH FIX
+═══════════════════════════════════════════════════════ */
+
+@media (min-width: 56.063rem) {
+  /* 1. Remove that weird dark background from the nav links container */
+  .site-nav {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  
+  /* 2. Ensure search input is visible and has space to type */
+  .search-input {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    width: 200px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #fff !important;
+    border-radius: 100px !important;
+    padding: 0.5rem 1rem 0.5rem 2.5rem !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   NAVBAR FIXES v17 — FINAL POLISH (BACKGROUNDS & ICONS)
+═══════════════════════════════════════════════════════ */
+
+@media (min-width: 56.063rem) {
+  /* ── 1. Destroy any background on nav container AND links ── */
+  .site-nav,
+  .site-nav::before,
+  .site-nav::after {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .site-nav .nav-link {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+  
+  /* ── 2. Remove oval background from header tools ── */
+  .header-tools {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    gap: 0.8rem !important;
+  }
+
+  /* ── 3. Fix Search Icon placement ── */
+  .search-wrapper {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    margin-right: 1.5rem !important; /* Space between search and tools */
+  }
+  .search-icon {
+    position: absolute !important;
+    left: 1rem !important; /* Proper inset inside input */
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 1rem !important;
+    height: 1rem !important;
+    color: rgba(255, 255, 255, 0.5) !important;
+    z-index: 10 !important;
+    pointer-events: none !important;
+    margin: 0 !important;
+  }
+  .search-input {
+    width: 220px !important;
+    height: 40px !important;
+    border-radius: 100px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #fff !important;
+    padding: 0 1rem 0 2.5rem !important; /* Left padding ensures text doesn't overlap icon */
+    font-size: 0.8rem !important;
+    margin: 0 !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   NAVBAR FIXES v20 — GLOBAL TRANSPARENT HEADER
+═══════════════════════════════════════════════════════ */
+
+@media (min-width: 56.063rem) {
+  /* Force transparent glassmorphism header on ALL pages (overriding body:not([data-page="home"])) */
+  .site-header,
+  .site-header.is-scrolled,
+  body[data-page="home"] .site-header,
+  body[data-page="home"] .site-header:not(.is-scrolled),
+  body:not([data-page="home"]) .site-header,
+  body:not([data-page="home"]) .site-header.is-scrolled {
+    height: 80px !important;
+    background: rgba(8, 6, 22, 0.5) !important;
+    backdrop-filter: blur(16px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+  }
+}
