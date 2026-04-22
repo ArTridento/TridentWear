@@ -10568,3 +10568,77 @@ body[data-page="home"] .site-header:not(.is-scrolled) {
     margin-left: 0 !important;
   }
 }
+/* -------------------------------------------------------
+   FINAL CLEAN NAVBAR DESKTOP FIX V16
+------------------------------------------------------- */
+@media (min-width: 56.063rem) {
+  /* Ensure header flex layout */
+  .header-inner {
+    display: flex !important;
+    align-items: center !important;
+    position: relative !important;
+    justify-content: flex-start !important;
+  }
+
+  /* 1. Brand strictly left */
+  .brand {
+    margin-right: auto !important; /* Pushes the next elements right */
+    flex: 0 0 auto !important;
+  }
+
+  /* 2. Nav strictly centered, completely decoupled from flex flow */
+  .site-nav {
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    display: flex !important;
+    flex-direction: row !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    width: auto !important;
+    clip-path: none !important;
+  }
+
+  /* Force links to have auto width so they don't blow out */
+  .site-nav .nav-link,
+  .site-nav .nav-dropdown-trigger {
+    width: auto !important;
+    max-width: none !important;
+    background: transparent !important;
+    justify-content: center !important;
+  }
+
+  /* Fix dropdown black box issue: strictly hide by default */
+  .site-nav .nav-dropdown-menu {
+    display: none !important; 
+    background: rgba(12,10,22,0.95) !important;
+  }
+
+  /* Show dropdown only on hover */
+  .site-nav .nav-dropdown:hover .nav-dropdown-menu {
+    display: flex !important;
+  }
+
+  /* 3. Search and Icons bound to the right */
+  /* Remove order attributes to respect DOM order (Search -> Tools) OR set them explicitly */
+  /* If DOM is <search-wrapper> -> <header-tools> */
+  /* And we want Header Tools first, then Search Icon on the extreme right: */
+  
+  .header-tools {
+    order: 1 !important;
+    display: flex !important;
+    margin-left: 0 !important;
+    margin-right: 1.5rem !important; /* Spacing between tools and search */
+  }
+
+  .search-wrapper {
+    order: 2 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important; /* Search on extreme right */
+    display: flex !important;
+    justify-content: flex-end !important;
+  }
+}
