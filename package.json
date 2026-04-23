@@ -1,4 +1,10 @@
 {
+  "scripts": {
+    "validate:css": "node scripts/validators/validate-css.js",
+    "sync:headers": "python scripts/maintenance/sync_headers.py",
+    "check:headers": "python scripts/maintenance/check_headers.py",
+    "deploy": "bash scripts/deployment/deploy.sh"
+  },
   "devDependencies": {
     "css": "^3.0.0",
     "postcss": "^8.5.10"
