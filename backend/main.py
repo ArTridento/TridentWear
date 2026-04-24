@@ -2,11 +2,11 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from contextlib import asynccontextmanager
-from config import get_settings
-from database import create_all_tables
-from routers import auth_router, products_router, orders_router, payments_router
-from middleware.security import add_security_headers, setup_cors, setup_trusted_hosts
-from middleware.rate_limit import limiter, rate_limit_exception_handler
+from .config import get_settings
+from .database import create_all_tables
+from .routers import auth_router, products_router, orders_router, payments_router
+from .middleware.security import add_security_headers, setup_cors, setup_trusted_hosts
+from .middleware.rate_limit import limiter, rate_limit_exception_handler
 from slowapi.errors import RateLimitExceeded
 import logging
 from logging.config import dictConfig

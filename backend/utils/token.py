@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 from jose import JWTError, jwt
-from config import get_settings
+from ..config import get_settings
 import logging
 from uuid import UUID
 

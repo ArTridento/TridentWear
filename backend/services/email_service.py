@@ -1,7 +1,7 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from config import get_settings
+from ..config import get_settings
 from typing import List
 import logging
 from decimal import Decimal

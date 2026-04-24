@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine, pool
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
-from config import get_settings
+from .config import get_settings
 import logging
 
 logger = logging.getLogger(__name__)

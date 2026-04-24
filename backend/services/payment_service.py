@@ -3,7 +3,7 @@ import hmac
 import hashlib
 from sqlalchemy.orm import Session
 from models.order import Order, OrderStatus, PaymentStatus
-from config import get_settings
+from ..config import get_settings
 from typing import Dict, Any
 import logging
 from datetime import datetime

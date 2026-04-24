@@ -1,7 +1,7 @@
 import random
 import string
 from datetime import datetime, timedelta
-from config import get_settings
+from ..config import get_settings
 import logging
 from utils.hashing import hash_password, verify_password
 
