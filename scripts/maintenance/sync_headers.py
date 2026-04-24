@@ -1,7 +1,7 @@
 import os
 import re
 
-dir_path = r'd:\TridentWear'
+dir_path = r'd:\TridentWear\frontend'
 index_path = os.path.join(dir_path, 'index.html')
 
 # 1. Read index.html and extract the header
