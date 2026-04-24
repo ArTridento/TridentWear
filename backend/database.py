@@ -1,26 +1,61 @@
-import os
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy import create_engine, pool
+from sqlalchemy.orm import sessionmaker, declarative_base, Session
+from config import get_settings
+import logging
 
-# Fallback to a local SQLite database for local dev if Postgres isn't running yet.
-# When in production, this should be: postgresql://user:password@localhost/tridentwear db
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./tridentwear.db")
+logger = logging.getLogger(__name__)
 
-# SQLite needs check_same_thread=False for FastAPI. Postgres does not.
-is_sqlite = DATABASE_URL.startswith("sqlite")
-connect_args = {"check_same_thread": False} if is_sqlite else {}
+settings = get_settings()
 
+# ========== ENGINE CONFIGURATION ==========
+# Using connection pooling for production
 engine = create_engine(
-    DATABASE_URL, connect_args=connect_args
+    settings.DATABASE_URL,
+    poolclass=pool.NullPool,  # Use NullPool to avoid connection issues in production
+    echo=settings.DEBUG,
+    connect_args={
+        "connect_timeout": 10,
+        "application_name": "tridentwear_api",
+    },
 )
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# ========== SESSION FACTORY ==========
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine,
+)
 
+# ========== BASE FOR MODELS ==========
 Base = declarative_base()
 
-def get_db():
+
+# ========== DEPENDENCY INJECTION ==========
+def get_db() -> Session:
+    """
+    FastAPI dependency to get database session.
+    Ensures session is properly closed after request.
+    """
     db = SessionLocal()
     try:
         yield db
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Database error: {str(e)}")
+        raise
     finally:
         db.close()
+
+
+# ========== CREATE ALL TABLES ==========
+def create_all_tables():
+    """Create all tables in the database"""
+    Base.metadata.create_all(bind=engine)
+    logger.info("Database tables created successfully")
+
+
+# ========== DROP ALL TABLES (ONLY FOR DEVELOPMENT) ==========
+def drop_all_tables():
+    """Drop all tables - ONLY USE IN DEVELOPMENT"""
+    Base.metadata.drop_all(bind=engine)
+    logger.warning("All database tables dropped")

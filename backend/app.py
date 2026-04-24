@@ -16,33 +16,61 @@ from typing import Any, Dict, List, Optional
 from urllib.parse import quote
 
 from fastapi import APIRouter, Depends, FastAPI, File, Form, HTTPException, Request, UploadFile, status
+from fastapi.responses import HTMLResponse
 from fastapi.exceptions import StarletteHTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import FileResponse, RedirectResponse  # noqa: F811 – HTMLResponse already imported above
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from starlette.middleware.sessions import SessionMiddleware
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-FRONTEND_DIR = BASE_DIR
-HTML_DIR = FRONTEND_DIR
-CSS_DIR = FRONTEND_DIR / "css"
-JS_DIR = FRONTEND_DIR / "js"
-IMAGES_DIR = FRONTEND_DIR / "images"
-UPLOADS_DIR = IMAGES_DIR / "uploads"
 
+# ── Frontend layout ──────────────────────────────────────────────────────────
+FRONTEND_ROOT  = BASE_DIR / "frontend"          # d:\TridentWear\frontend
+ASSETS_DIR     = FRONTEND_ROOT / "assets"       # frontend/assets/
+COMPONENTS_DIR = FRONTEND_ROOT / "components"   # frontend/components/
+IMAGES_DIR     = ASSETS_DIR / "images"          # frontend/assets/images/
+UPLOADS_DIR    = IMAGES_DIR / "uploads"         # frontend/assets/images/uploads/
+
+# Page → file mapping (flat filename → actual subpath)
+PAGE_FILE_MAP: dict[str, Path] = {
+    "index.html":         FRONTEND_ROOT / "index.html",
+    "products.html":      FRONTEND_ROOT / "pages" / "shop"    / "products.html",
+    "cart.html":          FRONTEND_ROOT / "pages" / "shop"    / "cart.html",
+    "product.html":       FRONTEND_ROOT / "pages" / "shop"    / "product.html",
+    "checkout.html":      FRONTEND_ROOT / "pages" / "shop"    / "checkout.html",
+    "wishlist.html":      FRONTEND_ROOT / "pages" / "shop"    / "wishlist.html",
+    "login.html":         FRONTEND_ROOT / "pages" / "account" / "login.html",
+    "register.html":      FRONTEND_ROOT / "pages" / "account" / "register.html",
+    "profile.html":       FRONTEND_ROOT / "pages" / "account" / "profile.html",
+    "profile-setup.html": FRONTEND_ROOT / "pages" / "account" / "profile-setup.html",
+    "verify.html":        FRONTEND_ROOT / "pages" / "account" / "verify.html",
+    "about.html":         FRONTEND_ROOT / "pages" / "info"    / "about.html",
+    "contact.html":       FRONTEND_ROOT / "pages" / "info"    / "contact.html",
+    "admin.html":         FRONTEND_ROOT / "pages" / "admin"   / "admin.html",
+    "privacy.html":       FRONTEND_ROOT / "pages" / "legal"   / "privacy.html",
+    "terms.html":         FRONTEND_ROOT / "pages" / "legal"   / "terms.html",
+    "returns.html":       FRONTEND_ROOT / "pages" / "legal"   / "returns.html",
+    "shipping.html":      FRONTEND_ROOT / "pages" / "legal"   / "shipping.html",
+    "track.html":         FRONTEND_ROOT / "pages" / "support" / "track.html",
+    "404.html":           FRONTEND_ROOT / "pages" / "error"   / "404.html",
+}
+
+# ── Database layout ───────────────────────────────────────────────────────────
 DB_DIR = BASE_DIR / "db"
-PRODUCTS_PATH = DB_DIR / "products.json"
-ORDERS_PATH = DB_DIR / "orders.json"
-USERS_PATH = DB_DIR / "users.json"
-CONTACTS_PATH = DB_DIR / "contacts.json"
-REVIEWS_PATH = DB_DIR / "reviews.json"
-COUPONS_PATH = DB_DIR / "coupons.json"
-WISHLIST_PATH = DB_DIR / "wishlist.json"
-CHAT_PATH = DB_DIR / "chat.json"
+PRODUCTS_PATH  = DB_DIR / "products.json"
+ORDERS_PATH    = DB_DIR / "orders.json"
+USERS_PATH     = DB_DIR / "users.json"
+CONTACTS_PATH  = DB_DIR / "contacts.json"
+REVIEWS_PATH   = DB_DIR / "reviews.json"
+COUPONS_PATH   = DB_DIR / "coupons.json"
+WISHLIST_PATH  = DB_DIR / "wishlist.json"
+CHAT_PATH      = DB_DIR / "chat.json"
 
-FRONTEND_PRODUCTS_PATH = JS_DIR / "products.json"
+# Mirror products.json into frontend/assets/data/ for JS static-mode fallback
+FRONTEND_PRODUCTS_PATH = FRONTEND_ROOT / "assets" / "data" / "products.json"
 
 PASSWORD_ITERATIONS = 120_000
 ALLOWED_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".gif"}
@@ -679,8 +707,9 @@ app.add_middleware(
 
 ensure_data_files()
 
-app.mount("/css", StaticFiles(directory=CSS_DIR), name="css")
-app.mount("/js", StaticFiles(directory=JS_DIR), name="js")
+# /assets → frontend/assets/  (CSS, JS, images, fonts, data)
+app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="assets")
+# /images → frontend/assets/images/ (product image paths stored as /images/xxx.png)
 app.mount("/images", StaticFiles(directory=IMAGES_DIR), name="images")
 
 pages_router = APIRouter()
@@ -752,11 +781,30 @@ def apply_coupon(payload: ApplyCouponPayload) -> Dict[str, Any]:
 
 
 
-def html_response(filename: str) -> FileResponse:
-    path = HTML_DIR / filename
-    if not path.exists():
-        raise HTTPException(status_code=404, detail=f"Page {filename} not found")
-    return FileResponse(path)
+def _load_component(name: str) -> str:
+    """Read a shared component HTML file and return its content (empty string on failure)."""
+    comp_path = COMPONENTS_DIR / f"{name}.html"
+    try:
+        return comp_path.read_text(encoding="utf-8")
+    except OSError:
+        return ""
+
+
+def html_response(filename: str) -> HTMLResponse:
+    """Serve an HTML page from the correct frontend sub-directory, substituting component tags."""
+    path = PAGE_FILE_MAP.get(filename)
+    if not path or not path.exists():
+        raise HTTPException(status_code=404, detail=f"Page '{filename}' not found")
+
+    content = path.read_text(encoding="utf-8")
+
+    # Server-side component injection
+    if "{{ component:header }}" in content:
+        content = content.replace("{{ component:header }}", _load_component("header"))
+    if "{{ component:footer }}" in content:
+        content = content.replace("{{ component:footer }}", _load_component("footer"))
+
+    return HTMLResponse(content=content, status_code=200)
 
 
 @pages_router.get("/", include_in_schema=False)
@@ -1464,7 +1512,10 @@ app.include_router(coupon_router)
 @app.exception_handler(StarletteHTTPException)
 async def custom_404_handler(request: Request, exc: StarletteHTTPException):
     if exc.status_code == 404 and "text/html" in request.headers.get("accept", ""):
-        return FileResponse(HTML_DIR / "404.html", status_code=404)
+        try:
+            return html_response("404.html")
+        except Exception:
+            pass
     from fastapi.responses import JSONResponse
     return JSONResponse({"detail": exc.detail}, status_code=exc.status_code)
 
