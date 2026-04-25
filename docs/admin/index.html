@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Admin panel for managing Trident products, featured flags, pricing, stock, and image uploads."
+    />
+    <title>Admin Panel | TridentWear</title>
+    <link rel="stylesheet" href="../assets/css/styles.css?v=20260424-mobile-grid" />
+    <link rel="icon" type="image/png" href="../assets/images/Logo.png" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+  </head>
+  <body data-page="admin">
+        <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="../">
+          <img
+            src="../assets/images/Logo.png"
+            alt="TridentWear Logo"
+            class="brand-logo"
+          />
+          <span class="brand-name"
+            ><span class="brand-trident">Trident</span
+            ><span class="brand-wear">Wear</span></span
+          >
+        </a>
+        <button
+          class="mobile-toggle"
+          type="button"
+          data-mobile-toggle
+          aria-label="Open navigation"
+        >
+          <span class="mobile-toggle-line"></span>
+          <span class="mobile-toggle-line"></span>
+          <span class="mobile-toggle-line"></span>
+        </button>
+        <nav class="site-nav" data-mobile-nav>
+          <a class="nav-link" href="../" data-nav-link="home">Home</a>
+          <a class="nav-link" href="../products/" data-nav-link="products"
+            >Products</a
+          >
+          <a class="nav-link" href="../about/" data-nav-link="about">About</a>
+          <a class="nav-link" href="../contact/" data-nav-link="contact"
+            >Contact</a
+          >
+        </nav>
+        <div class="search-wrapper" data-search-wrapper>
+          <svg
+            class="search-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            class="search-input"
+            type="text"
+            placeholder="Search streetwear..."
+            data-search-input
+          />
+          <div class="search-results" data-search-results hidden></div>
+        </div>
+        <div class="header-tools">
+          <a class="utility-pill" href="../wishlist/" title="Wishlist"
+            ><i class="fa-regular fa-heart"></i
+          ></a>
+          <a class="utility-pill cart-pill" href="../cart/" title="Cart"
+            ><i class="fa-sharp fa-solid fa-cart-shopping"></i
+            ><span class="cart-badge" data-cart-count>0</span></a
+          >
+          <a
+            class="utility-pill"
+            href="../login/"
+            data-login-link
+            title="Profile"
+            ><i class="fa-regular fa-user"></i
+          ></a>
+        </div>
+      </div>
+    </header>
+
+
+    <main>
+      <section class="page-hero">
+        <div class="container">
+          <div class="page-hero-panel reveal-scale">
+            <span class="eyebrow">Admin Control</span>
+            <h1 class="page-title">
+              Manage the <span class="accent">catalog</span>.
+            </h1>
+            <p class="page-copy">
+              Add new products, edit stock and feature states, and keep the
+              storefront live from one panel.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-tight">
+        <div class="container">
+          <div class="admin-summary-grid">
+            <article class="summary-card reveal reveal-delay-1">
+              <span class="label">Total Products</span>
+              <strong class="stat-value" data-summary-total>0</strong>
+            </article>
+            <article class="summary-card reveal reveal-delay-2">
+              <span class="label">T-Shirts</span>
+              <strong class="stat-value" data-summary-shirts>0</strong>
+            </article>
+            <article class="summary-card reveal reveal-delay-3">
+              <span class="label">Featured</span>
+              <strong class="stat-value" data-summary-featured>0</strong>
+            </article>
+          </div>
+
+          <div class="admin-grid">
+            <section class="admin-form-panel reveal-left">
+              <div class="section-header">
+                <span class="eyebrow">Product Form</span>
+                <h2 class="section-title" data-admin-form-title>
+                  Add New Product
+                </h2>
+                <p class="section-copy">
+                  All updates write back to the JSON database and refresh the
+                  storefront automatically.
+                </p>
+              </div>
+              <form class="admin-form-grid" data-admin-form>
+                <div class="form-group">
+                  <label class="label" for="admin-name">Name</label
+                  ><input class="field" id="admin-name" type="text" required />
+                </div>
+                <div class="form-group">
+                  <label class="label" for="admin-category">Category</label
+                  ><select class="select" id="admin-category">
+                    <option value="tshirt">T-Shirt</option>
+                    <option value="shirt">Shirt</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="label" for="admin-price">Price</label
+                  ><input
+                    class="field"
+                    id="admin-price"
+                    type="number"
+                    min="1"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="label" for="admin-stock">Stock</label
+                  ><input
+                    class="field"
+                    id="admin-stock"
+                    type="number"
+                    min="0"
+                    required
+                  />
+                </div>
+                <div class="form-group full">
+                  <label class="label" for="admin-description"
+                    >Description</label
+                  ><textarea
+                    class="textarea"
+                    id="admin-description"
+                    required
+                  ></textarea>
+                </div>
+                <div class="form-group">
+                  <label class="label" for="admin-tag">Tag</label
+                  ><input
+                    class="field"
+                    id="admin-tag"
+                    type="text"
+                    placeholder="Core Drop, Heavyweight, New Arrival"
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="label" for="admin-sizes">Sizes</label
+                  ><input
+                    class="field"
+                    id="admin-sizes"
+                    type="text"
+                    placeholder="S, M, L, XL"
+                  />
+                </div>
+                <div class="form-group full">
+                  <label class="label" for="admin-image">Image Upload</label
+                  ><input
+                    class="file-input"
+                    id="admin-image"
+                    type="file"
+                    accept="image/*"
+                  />
+                </div>
+                <div class="form-group full">
+                  <div class="preview-frame">
+                    <img
+                      src=""
+                      alt="Upload preview"
+                      data-preview-image
+                      hidden
+                    />
+                  </div>
+                </div>
+                <div class="form-group full">
+                  <label class="checkbox-row" for="admin-featured"
+                    ><input id="admin-featured" type="checkbox" /><span
+                      >Mark as featured on the home page</span
+                    ></label
+                  >
+                </div>
+                <div class="form-group full">
+                  <div class="admin-actions">
+                    <button
+                      class="btn btn-primary"
+                      type="submit"
+                      data-admin-submit
+                    >
+                      Save Product</button
+                    ><button
+                      class="btn btn-outline"
+                      type="button"
+                      data-admin-cancel
+                      hidden
+                    >
+                      Cancel Edit
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </section>
+
+            <section class="admin-list-panel reveal-right">
+              <div class="section-header">
+                <span class="eyebrow">Live Catalog</span>
+                <h2 class="section-title">Current products</h2>
+              </div>
+              <div class="admin-product-list" data-admin-product-list></div>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="footer-top-strip">
+      <div class="container">
+        <span>🇮🇳 Proudly Made in India — Wear the Pride</span>
+      </div>
+    </div>
+        <footer class="site-footer">
+      <div class="container footer-main">
+        <div class="footer-brand-col">
+          <div class="brand">
+            <span class="brand-name"
+              ><span class="brand-trident">Trident</span
+              ><span class="brand-wear">Wear</span></span
+            >
+
+          </div>
+          <p class="footer-note">
+            Premium men's clothing built for India's everyday uniform. Heritage
+            quality, modern fit.
+          </p>
+          <div class="footer-trust-badges">
+            <span class="footer-badge"
+              ><i class="fa-solid fa-indian-rupee-sign"></i> COD Available</span
+            >
+            <span class="footer-badge"
+              ><i class="fa-solid fa-rotate-left"></i> 30-Day Returns</span
+            >
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-title">Need Help</h3>
+          <div class="footer-links">
+            <a href="../contact/"
+              ><i class="fa-regular fa-envelope footer-link-icon"></i>Contact
+              Us</a
+            >
+            <a href="../track/"
+              ><i class="fa-solid fa-location-dot footer-link-icon"></i>Track
+              Order</a
+            >
+            <a href="../returns/"
+              ><i class="fa-solid fa-rotate-left footer-link-icon"></i>Returns
+              &amp; Refunds</a
+            >
+            <a href="../contact/"
+              ><i class="fa-regular fa-circle-question footer-link-icon"></i
+              >FAQs</a
+            >
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-title">Company</h3>
+          <div class="footer-links">
+            <a href="../about/">About Us</a>
+            <a href="../products/">Shop All</a>
+            <a href="../wishlist/">Wishlist</a>
+            <a href="../contact/">Careers</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-title">More Info</h3>
+          <div class="footer-links">
+            <a href="../terms/">T&amp;C</a>
+            <a href="../privacy/">Privacy Policy</a>
+            <a href="../shipping/">Shipping Policy</a>
+            <a href="../returns/">Returns Policy</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3 class="footer-title">Contact Us</h3>
+          <div class="footer-links">
+            <a href="mailto:hello@tridentwear.com"
+              ><i class="fa-regular fa-envelope footer-link-icon"></i
+              >hello@tridentwear.com</a
+            >
+            <a href="tel:+919876543210"
+              ><i class="fa-solid fa-phone footer-link-icon"></i>+91 98765
+              43210</a
+            >
+            <a
+              href="https://wa.me/919876543210"
+              target="_blank"
+              rel="noreferrer"
+              ><i class="fa-brands fa-whatsapp footer-link-icon"></i>WhatsApp</a
+            >
+          </div>
+          <div class="footer-app-badges">
+            <a class="footer-app-btn" href="#"
+              ><i class="fa-brands fa-google-play"></i> Google Play</a
+            >
+            <a class="footer-app-btn" href="#"
+              ><i class="fa-brands fa-apple"></i> App Store</a
+            >
+          </div>
+        </div>
+      </div>
+      <div class="footer-middle">
+        <div class="container footer-middle-inner">
+          <div class="footer-payment">
+            <span class="footer-payment-label">100% Secure Payment:</span>
+            <div class="footer-payment-icons">
+              <span class="payment-pill"
+                ><i class="fa-brands fa-google-pay"></i> GPay</span
+              >
+              <span class="payment-pill"
+                ><i class="fa-brands fa-cc-mastercard"></i> Mastercard</span
+              >
+              <span class="payment-pill"
+                ><i class="fa-brands fa-cc-visa"></i> Visa</span
+              >
+              <span class="payment-pill"
+                ><i class="fa-solid fa-money-bill-wave"></i> COD</span
+              >
+              <span class="payment-pill">UPI</span>
+            </div>
+          </div>
+          <div class="footer-social-wrap">
+            <span class="footer-payment-label">Follow Us:</span>
+                        <div class="footer-socials">
+              <a
+                class="footer-social-link"
+                href="https://www.instagram.com/trident_wear/"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Instagram"
+                ><i class="fa-brands fa-instagram"></i
+              ></a>
+              <a
+                class="footer-social-link"
+                href="https://www.youtube.com/@TridentWear"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="YouTube"
+                ><i class="fa-brands fa-youtube"></i
+              ></a>
+              <a
+                class="footer-social-link"
+                href="https://in.pinterest.com/artridento/"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Pinterest"
+                ><i class="fa-brands fa-pinterest"></i
+              ></a>
+              <a
+                class="footer-social-link"
+                href="#"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="LinkedIn"
+                ><i class="fa-brands fa-linkedin"></i
+              ></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="footer-bottom">
+          <span class="footer-copy"
+            >&copy; 2026 TridentWear. All rights reserved.</span
+          >
+          <div class="footer-bottom-links">
+            <a href="../privacy/">Privacy</a>
+            <a href="../terms/">Terms</a>
+            <a href="../shipping/">Shipping</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+
+    <script type="module" src="../assets/js/pages/admin.js?v=20260423-frontend"></script>
+  </body>
+</html>

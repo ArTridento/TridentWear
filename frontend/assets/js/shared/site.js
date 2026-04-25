@@ -1,8 +1,14 @@
-import { clearAuthSession, get, getAuthSession, post, resolveAssetUrl, saveAuthSession } from "./api.js";
+import { clearAuthSession, get, getAuthSession, post, resolveAssetUrl, resolveUrl, saveAuthSession } from "./api.js";
 import { addCartItem, getCartCount, loadCart, syncCart } from "./cart.js";
 import { normalizeProduct } from "./catalog.js";
 
 let currentUser = null;
+
+export { resolveAssetUrl };
+
+export function pageUrl(path = "/") {
+  return resolveUrl(path);
+}
 
 /* ───────── Currency ───────── */
 
@@ -77,7 +83,7 @@ export function createEmptyMarkup(title, copy, href = "/products", label = "Brow
     <div class="empty-state">
       <strong class="section-title">${escapeHtml(title)}</strong>
       <span class="empty-copy">${escapeHtml(copy)}</span>
-      <a class="btn btn-secondary" href="${href}">${escapeHtml(label)}</a>
+      <a class="btn btn-secondary" href="${pageUrl(href)}">${escapeHtml(label)}</a>
     </div>
   `;
 }
@@ -87,67 +93,31 @@ export function createEmptyMarkup(title, copy, href = "/products", label = "Brow
 export function productCardMarkup(product) {
   const item = normalizeProduct(product);
   const productImage = resolveAssetUrl(item.image);
-  const imagesJson = JSON.stringify(product.images || [item.image]);
-  const wishlisted = isWishlisted(item.id);
-  const subcategoryLabel = product.subcategory ? product.subcategory.replace(/-/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'T-Shirt';
-
-  // Rating UI — use product rating or generate realistic one
-  const rating = product.rating || (4.5 + Math.random() * 0.5).toFixed(1);
-  const reviewCount = product.review_count || Math.floor(40 + Math.random() * 200);
-  const fullStars = Math.floor(rating);
-  const halfStar = (rating - fullStars) >= 0.5;
-  const starsHtml = Array.from({length: 5}, (_, i) => {
-    if (i < fullStars) return `<i class="fa-solid fa-star"></i>`;
-    if (i === fullStars && halfStar) return `<i class="fa-solid fa-star-half-stroke"></i>`;
-    return `<i class="fa-regular fa-star"></i>`;
-  }).join('');
-
-  // Urgency + badge logic
-  const stock = Number(product.stock || 0);
-  const pid = Number(item.id);
-  let badge = "";
-  let urgencyHtml = "";
-
-  if (stock > 0 && stock <= 8) {
-    badge = `<span class="product-badge badge-selling"><i class="fa-solid fa-fire"></i> Selling Fast</span>`;
-    urgencyHtml = `<div class="product-urgency"><i class="fa-solid fa-circle-dot"></i> Only ${stock} left</div>`;
-  } else if (pid % 5 === 0) {
-    badge = `<span class="product-badge badge-bestseller"><i class="fa-solid fa-trophy"></i> Best Seller</span>`;
-  } else if (pid % 5 === 1) {
-    badge = `<span class="product-badge badge-trending"><i class="fa-solid fa-arrow-trend-up"></i> Trending</span>`;
-  } else if (pid % 5 === 2) {
-    badge = `<span class="product-badge badge-limited"><i class="fa-solid fa-bolt"></i> Limited Drop</span>`;
-  }
+  const subcategoryLabel = product.subcategory
+    ? product.subcategory
+        .replace(/-/g, " ")
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ")
+    : "T-Shirt";
 
   return `
     <article class="product-card reveal" data-product-card data-product-id="${item.id}">
-      <div class="product-media" data-product-hover-gallery data-images='${escapeHtml(imagesJson)}'>
-        ${badge ? `<div class="product-badge-wrap">${badge}</div>` : ""}
-        <img src="${escapeHtml(productImage)}" alt="${escapeHtml(item.name)}" loading="lazy" class="product-image">
-        <div class="product-media-overlay">
-          <span class="hover-hint">Hover for more</span>
-        </div>
-        <button class="wishlist-btn${wishlisted ? " is-wishlisted" : ""}" type="button" data-wishlist-toggle data-product-id="${item.id}" aria-label="Toggle wishlist">
-          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        </button>
-        <a href="/product?id=${item.id}" class="quick-view-btn" tabindex="-1">
-          <i class="fa-solid fa-eye"></i> Quick View
-        </a>
-        ${urgencyHtml}
-      </div>
+      <a class="product-media" href="${pageUrl(`/product?id=${item.id}`)}" aria-label="View ${escapeHtml(item.name)}">
+        <img
+          src="${escapeHtml(productImage)}"
+          alt="${escapeHtml(item.name)}"
+          loading="lazy"
+          class="product-image"
+          data-product-image
+        >
+      </a>
       <div class="product-body">
         <span class="product-type">${escapeHtml(subcategoryLabel)}</span>
         <h3 class="product-name">${escapeHtml(item.name)}</h3>
-        <div class="product-card-rating">
-          ${starsHtml}
-          <span>(${reviewCount})</span>
-        </div>
         <div class="product-footer">
           <strong class="product-price">${formatCurrency(item.price)}</strong>
-        </div>
-        <div class="product-actions" style="display:flex; gap:0.5rem; margin-top:0.75rem;">
-          <a href="/product?id=${item.id}" class="btn btn-outline" style="flex:1; padding:0.5rem; font-size:0.8rem; text-align:center; display:flex; align-items:center; justify-content:center;">View Details</a>
-          <button class="btn btn-primary" type="button" data-add-cart-mock style="flex:1; padding:0.5rem; font-size:0.8rem; display:flex; align-items:center; justify-content:center;"><i class="fa-solid fa-cart-shopping" style="margin-right:4px;"></i> Add to Cart</button>
+          <a href="${pageUrl(`/product?id=${item.id}`)}" class="btn btn-primary product-card-cta">View</a>
         </div>
       </div>
     </article>
@@ -162,38 +132,14 @@ export function bindProductCardActions(container, products) {
     return [String(item.id), product];
   }));
 
-  // Hover image cycling
-  container.querySelectorAll("[data-product-hover-gallery]").forEach((gallery) => {
-    const imageElement = gallery.querySelector(".product-image");
-    try {
-      const images = JSON.parse(gallery.dataset.images);
-      let currentIndex = 0;
-      
-      gallery.addEventListener("mouseenter", () => {
-        const cycleInterval = setInterval(() => {
-          if (!gallery.matches(":hover")) {
-            clearInterval(cycleInterval);
-            return;
-          }
-          currentIndex = (currentIndex + 1) % images.length;
-          imageElement.style.opacity = "0.7";
-          setTimeout(() => {
-            imageElement.src = images[currentIndex];
-            imageElement.style.opacity = "1";
-          }, 150);
-        }, 800);
-        
-        gallery._cycleInterval = cycleInterval;
-      });
-      
-      gallery.addEventListener("mouseleave", () => {
-        if (gallery._cycleInterval) clearInterval(gallery._cycleInterval);
-        currentIndex = 0;
-        imageElement.src = images[0];
-      });
-    } catch (e) {
-      console.warn("Could not parse images", e);
+  container.querySelectorAll("[data-product-image]").forEach((image) => {
+    const markLoaded = () => image.classList.add("is-loaded");
+    if (image.complete) {
+      markLoaded();
+      return;
     }
+    image.addEventListener("load", markLoaded, { once: true });
+    image.addEventListener("error", markLoaded, { once: true });
   });
 
   // Click to open product detail page
@@ -203,7 +149,7 @@ export function bindProductCardActions(container, products) {
       event.preventDefault();
       event.stopPropagation();
       const productId = card.dataset.productId;
-      if (productId) window.location.href = `/product?id=${productId}`;
+      if (productId) window.location.href = pageUrl(`/product?id=${productId}`);
     });
   });
 
@@ -283,7 +229,7 @@ function openProductDetail(product) {
             <span class="detail-qty-label" style="font-size: 0.85rem;">Quantity</span>
             <div class="detail-qty-counter">
               <button class="qty-btn qty-minus" type="button" aria-label="Decrease">&minus;</button>
-              <span class="qty-value" id="detail-qty-val">0</span>
+              <span class="qty-value" id="detail-qty-val">1</span>
               <button class="qty-btn qty-plus" type="button" aria-label="Increase">+</button>
             </div>
           </div>
@@ -388,10 +334,10 @@ function openProductDetail(product) {
   });
 
   // Qty counter
-  let qty = 0;
+  let qty = 1;
   const qtyValEl = modal.querySelector("#detail-qty-val");
   modal.querySelector(".qty-plus").addEventListener("click", () => { qty++; qtyValEl.textContent = qty; });
-  modal.querySelector(".qty-minus").addEventListener("click", () => { if (qty > 0) qty--; qtyValEl.textContent = qty; });
+  modal.querySelector(".qty-minus").addEventListener("click", () => { if (qty > 1) qty--; qtyValEl.textContent = qty; });
   const getQty = () => Math.max(1, qty);
 
   // Add to cart
@@ -412,7 +358,7 @@ function openProductDetail(product) {
       const q = getQty();
       for (let i = 0; i < q; i++) addCartItem(product, { size: selectedSize });
       closeModal();
-      window.location.href = "/checkout";
+      window.location.href = pageUrl("/checkout");
     } catch (err) { 
       promptLoginOverlay();
     }
@@ -526,7 +472,7 @@ function openQuickView(product) {
           <article class="spec-card"><span class="label">Neck</span><strong>${escapeHtml(item.neck_type)}</strong></article>
         </div>
         <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-          <a class="btn btn-primary" href="/product?id=${item.id}">Full Details</a>
+            <a class="btn btn-primary" href="${pageUrl(`/product?id=${item.id}`)}">Full Details</a>
           <button class="btn btn-secondary" type="button" data-qv-add data-product-id="${item.id}">Add to Cart</button>
         </div>
       </div>
@@ -595,7 +541,7 @@ function setAccountUi() {
     if (!currentUser) {
       // Logged out state
       loginLink.innerHTML = `<i class="fa-regular fa-user"></i>`;
-      loginLink.setAttribute("href", "/login");
+      loginLink.setAttribute("href", pageUrl("/login"));
       loginLink.classList.remove("is-greeting");
       loginLink.setAttribute("title", "Login / Register");
       return;
@@ -603,7 +549,7 @@ function setAccountUi() {
 
     // Logged in state
     loginLink.innerHTML = `<i class="fa-solid fa-circle-user" style="color: var(--primary);"></i>`;
-    loginLink.setAttribute("href", currentUser.role === "admin" ? "/admin" : "/profile");
+    loginLink.setAttribute("href", pageUrl(currentUser.role === "admin" ? "/admin" : "/profile"));
     loginLink.classList.add("is-greeting");
     loginLink.setAttribute("title", `Hello, ${firstName}`);
   });
@@ -702,7 +648,7 @@ function bindLogout() {
         currentUser = null;
         setAccountUi();
         window.setTimeout(() => {
-          window.location.href = "/login";
+          window.location.href = pageUrl("/login");
         }, 120);
       } catch (error) {
         showToast(error.message, "error");
@@ -748,7 +694,7 @@ function bindSearch() {
       }
       
       dropdown.innerHTML = matches.map((p) => `
-        <a class="search-result-item" href="/product?id=${p.id}">
+        <a class="search-result-item" href="${pageUrl(`/product?id=${p.id}`)}">
           <img class="search-result-thumb" src="${resolveAssetUrl(p.image)}" alt="${escapeHtml(p.name)}">
           <div class="search-result-info">
             <span class="search-result-name">${escapeHtml(p.name)}</span>
@@ -858,7 +804,7 @@ export async function refreshAuthState() {
     const isSetupPage = path.includes("profile-setup");
     const isAuthPage = page === "auth" || path.includes("login") || path.includes("register") || path.includes("verify");
     if (!isSetupPage && !isAuthPage) {
-      window.location.href = "/profile-setup";
+      window.location.href = pageUrl("/profile-setup");
     }
   }
 
@@ -1003,6 +949,6 @@ export function promptLoginOverlay() {
   
   modal.querySelector("[data-cancel]").addEventListener("click", () => modal.remove());
   modal.querySelector("[data-login]").addEventListener("click", () => {
-    window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`;
+    window.location.href = pageUrl(`/login?next=${encodeURIComponent(window.location.pathname)}`);
   });
 }

@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Create a TridentWear account to unlock early drops, saved wishlist, and faster checkout."
+    />
+    <title>Register | TridentWear</title>
+    <link rel="stylesheet" href="../assets/css/styles.css?v=20260424-mobile-grid" />
+    <link rel="icon" type="image/png" href="../assets/images/Logo.png" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+  </head>
+  <body data-page="auth">
+    <main class="auth-page-main">
+      <div class="auth-split">
+        <!-- Left Brand Panel -->
+        <div class="auth-brand-panel">
+          <div class="auth-brand-inner">
+            <div class="auth-brand-logo">
+              <span class="brand-name" style="font-size: 2rem"
+                ><span class="brand-trident" style="color: #fff">Trident</span
+                ><span class="brand-wear" style="color: var(--secondary)"
+                  >Wear</span
+                ></span
+              >
+            </div>
+            <h2 class="auth-brand-headline">
+              Join the<br /><span style="color: var(--secondary)"
+                >Trident crew.</span
+              >
+            </h2>
+            <p class="auth-brand-copy">
+              Create your account and unlock the full TridentWear experience —
+              exclusive drops, saved cart, and fast checkout every time.
+            </p>
+            <div class="auth-brand-perks">
+              <div class="auth-perk">
+                <i class="fa-solid fa-bolt"></i
+                ><span>Early access to new drops</span>
+              </div>
+              <div class="auth-perk">
+                <i class="fa-solid fa-heart"></i
+                ><span>Save your wishlist permanently</span>
+              </div>
+              <div class="auth-perk">
+                <i class="fa-solid fa-bag-shopping"></i
+                ><span>Faster checkout on every order</span>
+              </div>
+              <div class="auth-perk">
+                <i class="fa-solid fa-tag"></i
+                ><span>Member-only discount codes</span>
+              </div>
+            </div>
+            <div class="auth-brand-quote">
+              <i class="fa-solid fa-quote-left"></i>
+              <span>"One account. All the drops. Zero hassle."</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Form Panel -->
+        <div class="auth-form-panel">
+          <div class="auth-form-inner">
+            <div class="auth-form-header">
+              <h1 class="auth-form-title">Create account</h1>
+              <p class="auth-form-sub">
+                Join TridentWear — it's free and takes 30 seconds
+              </p>
+            </div>
+
+            <!-- Google Sign-up -->
+            <div class="auth-social-row">
+              <button type="button" id="google-login-btn" class="btn-social">
+                <svg width="20" height="20" viewBox="0 0 48 48">
+                  <path
+                    fill="#EA4335"
+                    d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+                  />
+                  <path
+                    fill="#4285F4"
+                    d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+                  />
+                </svg>
+                Continue with Google
+              </button>
+            </div>
+
+            <div class="auth-divider"><span>or register with email</span></div>
+
+            <div data-auth-status hidden></div>
+
+            <form class="auth-form" data-register-form>
+              <div class="form-group full">
+                <label class="label" for="register-name">Full Name</label>
+                <div class="input-icon-wrap">
+                  <i class="fa-regular fa-user input-icon"></i>
+                  <input
+                    class="field field-icon"
+                    id="register-name"
+                    type="text"
+                    autocomplete="name"
+                    placeholder="Your full name"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-group full">
+                <label class="label" for="register-email">Email Address</label>
+                <div class="input-icon-wrap">
+                  <i class="fa-regular fa-envelope input-icon"></i>
+                  <input
+                    class="field field-icon"
+                    id="register-email"
+                    type="email"
+                    autocomplete="email"
+                    placeholder="you@example.com"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-group full">
+                <label class="label" for="register-password">Password</label>
+                <div class="input-icon-wrap">
+                  <i class="fa-solid fa-lock input-icon"></i>
+                  <input
+                    class="field field-icon"
+                    id="register-password"
+                    type="password"
+                    minlength="8"
+                    autocomplete="new-password"
+                    placeholder="Min 8 characters"
+                    required
+                  />
+                  <button
+                    type="button"
+                    class="toggle-pass"
+                    onclick="togglePass('register-password', this)"
+                  >
+                    <i class="fa-regular fa-eye"></i>
+                  </button>
+                </div>
+                <div
+                  class="password-strength-wrap"
+                  id="pw-strength-wrap"
+                  hidden
+                >
+                  <div class="password-strength-bar">
+                    <div class="password-strength-fill" id="pw-fill"></div>
+                  </div>
+                  <span class="password-strength-label" id="pw-label"
+                    >Weak</span
+                  >
+                </div>
+              </div>
+
+              <div class="form-group full">
+                <label class="label" for="register-confirm-password"
+                  >Confirm Password</label
+                >
+                <div class="input-icon-wrap">
+                  <i class="fa-solid fa-lock input-icon"></i>
+                  <input
+                    class="field field-icon"
+                    id="register-confirm-password"
+                    type="password"
+                    minlength="8"
+                    autocomplete="new-password"
+                    placeholder="Repeat password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    class="toggle-pass"
+                    onclick="togglePass('register-confirm-password', this)"
+                  >
+                    <i class="fa-regular fa-eye"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-group full">
+                <label class="register-terms-label">
+                  <input type="checkbox" id="register-terms" required />
+                  <span
+                    >I agree to the
+                    <a href="../terms/" target="_blank"
+                      >Terms &amp; Conditions</a
+                    >
+                    and
+                    <a href="../privacy/" target="_blank"
+                      >Privacy Policy</a
+                    ></span
+                  >
+                </label>
+              </div>
+
+              <button class="btn btn-primary btn-full" type="submit">
+                <i class="fa-solid fa-user-plus"></i> Create Account
+              </button>
+            </form>
+
+            <p class="auth-switch-text">
+              Already have an account?
+              <a href="../login/" class="auth-switch-link">Sign in</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      function togglePass(id, btn) {
+        const i = document.getElementById(id);
+        const ic = btn.querySelector("i");
+        i.type = i.type === "password" ? "text" : "password";
+        ic.className =
+          i.type === "password"
+            ? "fa-regular fa-eye"
+            : "fa-regular fa-eye-slash";
+      }
+
+      // Password strength meter
+      document
+        .getElementById("register-password")
+        ?.addEventListener("input", function () {
+          const val = this.value;
+          const wrap = document.getElementById("pw-strength-wrap");
+          const fill = document.getElementById("pw-fill");
+          const label = document.getElementById("pw-label");
+          if (!val) {
+            wrap.hidden = true;
+            return;
+          }
+          wrap.hidden = false;
+
+          let score = 0;
+          if (val.length >= 8) score++;
+          if (/[A-Z]/.test(val)) score++;
+          if (/[0-9]/.test(val)) score++;
+          if (/[^A-Za-z0-9]/.test(val)) score++;
+
+          const levels = [
+            { w: "25%", c: "#dc3545", t: "Weak" },
+            { w: "50%", c: "#fd7e14", t: "Fair" },
+            { w: "75%", c: "#ffc107", t: "Good" },
+            { w: "100%", c: "#198754", t: "Strong" },
+          ];
+          const l = levels[score - 1] || levels[0];
+          fill.style.width = l.w;
+          fill.style.background = l.c;
+          label.textContent = l.t;
+          label.style.color = l.c;
+        });
+    </script>
+    <script type="module" src="../assets/js/pages/register.js?v=20260423-frontend"></script>
+  </body>
+</html>
+
+
