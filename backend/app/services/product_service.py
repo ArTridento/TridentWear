@@ -1,0 +1,338 @@
+import json
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+from fastapi import HTTPException, status
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
+DB_DIR = BASE_DIR / "db"
+PRODUCTS_PATH = DB_DIR / "products.json"
+FRONTEND_ROOT = BASE_DIR / "frontend"
+FRONTEND_PRODUCTS_PATH = FRONTEND_ROOT / "assets" / "data" / "products.json"
+
+DEFAULT_PRODUCTS: List[Dict[str, Any]] = [
+    {
+        "id": 1,
+        "name": "Classic Black Tee",
+        "category": "tshirt",
+        "price": 799,
+        "description": "Premium 220 GSM cotton crew neck tee in timeless black. Relaxed fit, pre-shrunk fabric.",
+        "image": "/images/black-tshirt.png",
+        "tag": "Bestseller",
+        "sizes": ["S", "M", "L", "XL", "XXL"],
+        "stock": 150,
+        "featured": True,
+    },
+    {
+        "id": 2,
+        "name": "White Minimal Tee",
+        "category": "tshirt",
+        "price": 699,
+        "description": "Clean white tee with a minimal cut. 200 GSM bio-washed cotton for an ultra-soft feel.",
+        "image": "/images/white-tshirt.png",
+        "tag": "New Drop",
+        "sizes": ["S", "M", "L", "XL"],
+        "stock": 200,
+        "featured": True,
+    },
+    {
+        "id": 3,
+        "name": "Navy Formal Shirt",
+        "category": "shirt",
+        "price": 1299,
+        "description": "Slim-fit navy blue formal shirt with wrinkle-resistant fabric built for all-day structure.",
+        "image": "/images/navy-shirt.png",
+        "tag": "Premium",
+        "sizes": ["S", "M", "L", "XL"],
+        "stock": 80,
+        "featured": True,
+    },
+    {
+        "id": 4,
+        "name": "Olive Casual Shirt",
+        "category": "shirt",
+        "price": 1099,
+        "description": "Relaxed-fit olive button-up with breathable cotton blend and easy street-luxury styling.",
+        "image": "/images/olive-shirt.png",
+        "tag": "Street Essential",
+        "sizes": ["M", "L", "XL", "XXL"],
+        "stock": 120,
+        "featured": True,
+    },
+    {
+        "id": 5,
+        "name": "Charcoal Oversized Tee",
+        "category": "tshirt",
+        "price": 899,
+        "description": "Oversized drop-shoulder tee in charcoal grey. Heavy cotton weight with a clean structured drape.",
+        "image": "/images/grey-tshirt.png",
+        "tag": "Trending",
+        "sizes": ["M", "L", "XL", "XXL"],
+        "stock": 100,
+        "featured": False,
+    },
+    {
+        "id": 6,
+        "name": "Stone Linen Shirt",
+        "category": "shirt",
+        "price": 1199,
+        "description": "Lightweight linen-blend shirt in a clean stone tone with a refined mandarin collar finish.",
+        "image": "/images/olive-shirt.png",
+        "tag": "Summer Edit",
+        "sizes": ["S", "M", "L", "XL"],
+        "stock": 90,
+        "featured": False,
+    },
+]
+
+from app.db.json_manager import read_json, update_json, write_json as db_write_json
+
+def normalize_image_path(value: str) -> str:
+    image_value = str(value or "").strip()
+    if not image_value:
+        return "/images/hero-banner.png"
+    if image_value.startswith("/images/"):
+        return image_value
+    if image_value.startswith("../images/"):
+        return f"/images/{Path(image_value).name}"
+    return f"/images/{Path(image_value).name}"
+
+def normalize_sizes(value: Any) -> List[str]:
+    if isinstance(value, list):
+        sizes = [str(size).strip().upper() for size in value if str(size).strip()]
+    else:
+        sizes = [segment.strip().upper() for segment in str(value or "").split(",") if segment.strip()]
+    return sizes or ["S", "M", "L", "XL"]
+
+def normalize_bool(value: Any) -> bool:
+    if isinstance(value, bool):
+        return value
+    return str(value).strip().lower() in {"1", "true", "yes", "on"}
+
+def normalize_product(raw_product: Dict[str, Any], index: int = 0) -> Dict[str, Any]:
+    return {
+        "id": int(raw_product.get("id", index + 1)),
+        "name": str(raw_product.get("name", "")).strip(),
+        "category": "shirt" if str(raw_product.get("category", "")).strip().lower() == "shirt" else "tshirt",
+        "price": int(float(raw_product.get("price", 0) or 0)),
+        "description": str(raw_product.get("description", "")).strip(),
+        "image": normalize_image_path(str(raw_product.get("image", ""))),
+        "tag": str(raw_product.get("tag", "")).strip(),
+        "sizes": normalize_sizes(raw_product.get("sizes", [])),
+        "stock": max(int(float(raw_product.get("stock", 0) or 0)), 0),
+        "featured": normalize_bool(raw_product.get("featured", index < 4)),
+    }
+
+def product_sort_key(product: Dict[str, Any]) -> Any:
+    return (product["category"] != "tshirt", not product["featured"], product["id"])
+
+def load_products() -> List[Dict[str, Any]]:
+    raw_products = read_json(str(PRODUCTS_PATH))
+    if not raw_products:
+        raw_products = DEFAULT_PRODUCTS
+    products = [normalize_product(product, index) for index, product in enumerate(raw_products)]
+    return sorted(products, key=product_sort_key)
+
+def save_products(products: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    normalized = [normalize_product(product, index) for index, product in enumerate(products)]
+    normalized.sort(key=product_sort_key)
+    # Using update_json inside the caller is preferred, but for backward compatibility:
+    db_write_json(str(PRODUCTS_PATH), normalized)
+    
+    # We shouldn't necessarily write to frontend synchronously in high traffic, 
+    # but maintaining compatibility for now without locking the frontend file.
+    db_write_json(str(FRONTEND_PRODUCTS_PATH), normalized)
+    return normalized
+
+def get_all_products(category: Optional[str] = None, featured: Optional[bool] = None) -> Dict[str, Any]:
+    products = load_products()
+    if category:
+        category_value = category.strip().lower()
+        products = [product for product in products if product.get("category") == category_value]
+    if featured is not None:
+        products = [product for product in products if product.get("featured") is featured]
+    return {"success": True, "count": len(products), "products": products}
+
+def get_single_product(product_id: int) -> Dict[str, Any]:
+    for product in load_products():
+        if product.get("id") == product_id:
+            return {"success": True, "product": product}
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found.")
+
+def deduct_stock(order_items: List[Dict[str, Any]]) -> None:
+    """Reduce product stock atomically after an order is saved."""
+    def _deduct(raw_products: list):
+        if not raw_products:
+            raw_products = DEFAULT_PRODUCTS
+        products = [normalize_product(product, index) for index, product in enumerate(raw_products)]
+        product_map = {p["id"]: p for p in products}
+        
+        for item in order_items:
+            pid = int(item.get("id", 0))
+            qty = int(item.get("qty", 1))
+            if pid in product_map:
+                product_map[pid]["stock"] = max(0, product_map[pid]["stock"] - qty)
+        
+        normalized = list(product_map.values())
+        normalized.sort(key=product_sort_key)
+        db_write_json(str(FRONTEND_PRODUCTS_PATH), normalized)
+        return normalized
+
+    update_json(str(PRODUCTS_PATH), _deduct)
+
+# Admin Product Management Logic
+IMAGES_DIR = FRONTEND_ROOT / "assets" / "images"
+UPLOADS_DIR = IMAGES_DIR / "uploads"
+ALLOWED_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".gif"}
+
+def next_id(items: List[Dict[str, Any]]) -> int:
+    if not items:
+        return 1
+    return max(int(item.get("id", 0)) for item in items) + 1
+
+def save_uploaded_image(upload: Any) -> str: # using Any for UploadFile to avoid importing it if not there
+    import shutil
+    import uuid
+    extension = Path(upload.filename or "").suffix.lower()
+    if extension not in ALLOWED_EXTENSIONS:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Unsupported image type.")
+
+    filename = f"{uuid.uuid4().hex}{extension}"
+    destination = UPLOADS_DIR / filename
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    with destination.open("wb") as target:
+        shutil.copyfileobj(upload.file, target)
+    return f"/images/uploads/{filename}"
+
+def delete_uploaded_image(image_url: str) -> None:
+    if not image_url.startswith("/images/uploads/"):
+        return
+    relative_path = image_url.removeprefix("/images/")
+    file_path = IMAGES_DIR / relative_path
+    if file_path.exists():
+        file_path.unlink()
+
+def validate_product_fields(
+    name: str,
+    category: str,
+    price: str,
+    description: str,
+    tag: str,
+    sizes: str,
+    stock: str,
+    featured: str,
+) -> Dict[str, Any]:
+    product_name = name.strip()
+    category_value = category.strip().lower()
+    description_value = description.strip()
+
+    if len(product_name) < 3:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Product name must be at least 3 characters.")
+    if category_value not in {"tshirt", "shirt"}:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Category must be tshirt or shirt.")
+
+    try:
+        price_value = int(float(price))
+    except ValueError as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Price must be a valid number.") from error
+    if price_value <= 0:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Price must be greater than zero.")
+
+    try:
+        stock_value = max(int(float(stock or 0)), 0)
+    except ValueError as error:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Stock must be a valid number.") from error
+
+    return {
+        "name": product_name,
+        "category": category_value,
+        "price": price_value,
+        "description": description_value,
+        "tag": tag.strip(),
+        "sizes": normalize_sizes(sizes),
+        "stock": stock_value,
+        "featured": normalize_bool(featured),
+    }
+
+async def process_create_product(name, category, price, description, tag, sizes, stock, featured, image) -> Dict[str, Any]:
+    product_data = validate_product_fields(name, category, price, description, tag, sizes, stock, featured)
+
+    image_path = "/images/hero-banner.png"
+    if image and getattr(image, "filename", None):
+        image_path = save_uploaded_image(image)
+        await image.close()
+
+    returned_product = None
+    def _create(products: list):
+        nonlocal returned_product
+        if not products:
+            products = DEFAULT_PRODUCTS
+        
+        new_product = {
+            "id": next_id(products),
+            **product_data,
+            "image": image_path,
+        }
+        products.append(new_product)
+        normalized = [normalize_product(product, index) for index, product in enumerate(products)]
+        normalized.sort(key=product_sort_key)
+        db_write_json(str(FRONTEND_PRODUCTS_PATH), normalized)
+        
+        returned_product = next(product for product in normalized if product["id"] == new_product["id"])
+        return normalized
+
+    update_json(str(PRODUCTS_PATH), _create)
+    return {"success": True, "message": "Product added successfully.", "product": returned_product}
+
+async def process_update_product(product_id: int, name, category, price, description, tag, sizes, stock, featured, image) -> Dict[str, Any]:
+    product_data = validate_product_fields(name, category, price, description, tag, sizes, stock, featured)
+    
+    # Pre-flight check to fail early if product not found
+    products = load_products()
+    existing = next((product for product in products if product["id"] == product_id), None)
+    if not existing:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found.")
+
+    image_path = existing["image"]
+    if image and getattr(image, "filename", None):
+        new_image_path = save_uploaded_image(image)
+        await image.close()
+        delete_uploaded_image(existing["image"])
+        image_path = new_image_path
+
+    returned_product = None
+    def _update(products: list):
+        nonlocal returned_product
+        updated_product = {
+            "id": product_id,
+            **product_data,
+            "image": image_path,
+        }
+        updated_products = [updated_product if product["id"] == product_id else product for product in products]
+        normalized = [normalize_product(product, index) for index, product in enumerate(updated_products)]
+        normalized.sort(key=product_sort_key)
+        db_write_json(str(FRONTEND_PRODUCTS_PATH), normalized)
+        
+        returned_product = next(product for product in normalized if product["id"] == product_id)
+        return normalized
+
+    update_json(str(PRODUCTS_PATH), _update)
+    return {"success": True, "message": "Product updated successfully.", "product": returned_product}
+
+def process_delete_product(product_id: int) -> Dict[str, Any]:
+    # Pre-flight check
+    products = load_products()
+    existing = next((product for product in products if product["id"] == product_id), None)
+    if not existing:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found.")
+
+    delete_uploaded_image(existing["image"])
+
+    def _delete(products: list):
+        remaining_products = [product for product in products if product["id"] != product_id]
+        normalized = [normalize_product(product, index) for index, product in enumerate(remaining_products)]
+        normalized.sort(key=product_sort_key)
+        db_write_json(str(FRONTEND_PRODUCTS_PATH), normalized)
+        return normalized
+
+    update_json(str(PRODUCTS_PATH), _delete)
+    return {"success": True, "message": f'{existing["name"]} deleted.'}

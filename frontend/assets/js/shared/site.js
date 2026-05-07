@@ -1,4 +1,4 @@
-import { clearAuthSession, get, getAuthSession, post, resolveAssetUrl, resolveUrl, saveAuthSession } from "./api.js";
+import { clearAuthSession, get, getAuthSession, post, resolveAssetUrl, resolveUrl, saveAuthSession, withLoading } from "./api.js";
 import { addCartItem, getCartCount, loadCart, syncCart } from "./cart.js";
 import { normalizeProduct } from "./catalog.js";
 
@@ -101,9 +101,21 @@ export function productCardMarkup(product) {
         .join(" ")
     : "T-Shirt";
 
+  let scarcityTag = "";
+  if (item.stock < 5) {
+    scarcityTag = `<span class="product-badge danger">Only ${item.stock} Left</span>`;
+  } else if (item.stock < 20) {
+    scarcityTag = `<span class="product-badge warning">Fast Selling</span>`;
+  } else if (item.featured) {
+    scarcityTag = `<span class="product-badge primary">Trending</span>`;
+  }
+
+  const tagline = item.description ? `<p class="product-tagline">${escapeHtml(item.description.split('.')[0])}</p>` : `<p class="product-tagline">Built for movement.</p>`;
+
   return `
     <article class="product-card reveal" data-product-card data-product-id="${item.id}">
-      <a class="product-media" href="${pageUrl(`/product?id=${item.id}`)}" aria-label="View ${escapeHtml(item.name)}">
+      <a class="product-media image-wrap" href="${pageUrl(`/product?id=${item.id}`)}" aria-label="View ${escapeHtml(item.name)}">
+        ${scarcityTag}
         <img
           src="${escapeHtml(productImage)}"
           alt="${escapeHtml(item.name)}"
@@ -113,11 +125,15 @@ export function productCardMarkup(product) {
         >
       </a>
       <div class="product-body">
-        <span class="product-type">${escapeHtml(subcategoryLabel)}</span>
-        <h3 class="product-name">${escapeHtml(item.name)}</h3>
-        <div class="product-footer">
-          <strong class="product-price">${formatCurrency(item.price)}</strong>
-          <a href="${pageUrl(`/product?id=${item.id}`)}" class="btn btn-primary product-card-cta">View</a>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span class="product-type">${escapeHtml(subcategoryLabel)}</span>
+          <span style="font-size: 0.65rem; color: var(--gray); font-weight: 600;"><i class="fa-solid fa-fire" style="color: var(--danger);"></i> High Demand</span>
+        </div>
+        <h3 class="product-name" style="margin-top: 4px; margin-bottom: 2px;">${escapeHtml(item.name)}</h3>
+        ${tagline}
+        <div class="product-footer" style="margin-top: 12px;">
+          <strong class="product-price" style="font-size: 1.1rem;">${formatCurrency(item.price)}</strong>
+          <a href="${pageUrl(`/product?id=${item.id}`)}" class="btn btn-premium-primary product-card-cta" style="padding: 0.4rem 1rem; font-size: 0.8rem; border-radius: 4px;">Select Size</a>
         </div>
       </div>
     </article>

@@ -14,7 +14,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/css/styles.css?v=20260430-v3" />
-    <link rel="stylesheet" href="/assets/css/premium.css?v=1" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   </head>
 
@@ -37,49 +36,63 @@
     <main>
 
       <!-- ════════════════════════════════════
-           PREMIUM LUXURY HERO
+           CINEMATIC HERO (RESTORED)
       ════════════════════════════════════ -->
-      <section class="hero-premium" aria-label="Hero">
-        <div class="hero-bg-gradient"></div>
-        <div class="hero-noise"></div>
-        <div class="container hero-premium-content">
-          <div class="hero-text-wrap" data-animate="fade-up">
-            <span class="eyebrow" style="color:var(--secondary);margin-bottom:1rem;display:inline-block;">SS/26 Collection Live</span>
-            <h1 class="hero-headline-premium">
-              WEAR THE<br/>STANDARD.
-            </h1>
-            <p class="hero-sub-premium">
-              Heavyweight essentials crafted for those who refuse to blend in. 100% Premium Cotton. Zero Compromise.
-            </p>
-            <div class="hero-cta-group">
-              <a class="btn btn-premium-primary" href="/products">
-                Shop The Drop <i class="fa-solid fa-arrow-right" style="margin-left: 8px;"></i>
-              </a>
-              <a class="btn btn-premium-secondary" href="/about">
-                Our Manifesto
-              </a>
-            </div>
+      <section class="hero-banner hero-cinematic" aria-label="Hero">
+        <!-- letterbox bars -->
+        <div class="cinema-bar cinema-bar-top" aria-hidden="true"></div>
+        <div class="cinema-bar cinema-bar-bottom" aria-hidden="true"></div>
+
+        <!-- background image with Ken Burns -->
+        <div class="hero-cinema-bg" style="background-image: url('/assets/images/hero-banner.jpg');"></div>
+
+        <!-- dark overlay -->
+        <div class="hero-overlay" aria-hidden="true"></div>
+
+        <!-- centered content -->
+        <div class="container hero-cinema-content">
+          <span class="hero-kicker" data-animate="fade-up">TRIDENTWEAR 2026</span>
+
+          <h1 class="hero-headline hero-headline-cinema" data-animate="fade-up" data-delay="100">
+            Trends fade.<br />
+            <span class="hero-accent hero-accent-glow">Presence stays.</span>
+          </h1>
+
+          <p class="hero-sub" data-animate="fade-up" data-delay="200">
+            Heavyweight cotton. Clean fit. Built to be worn every day.
+          </p>
+
+          <div class="hero-cta-row" data-animate="fade-up" data-delay="300">
+            <a class="btn btn-hero-primary hero-cta-glow" href="/products">
+              Shop the Collection
+            </a>
+            <a class="btn btn-hero-outline" href="/products?cat=tshirt">
+              Explore Tees
+            </a>
+          </div>
+
+          <div class="hero-pills" data-animate="fade-up" data-delay="400">
+            <span class="hero-pill">
+              <i class="fa-solid fa-shirt" style="color:var(--secondary)"></i>
+              220 GSM Cotton
+            </span>
+            <span class="hero-pill">
+              <i class="fa-solid fa-scissors"></i>
+              Clean Everyday Fit
+            </span>
+            <span class="hero-pill">
+              <i class="fa-solid fa-indian-rupee-sign"></i>
+              Made in India
+            </span>
           </div>
         </div>
-      </section>
 
-      <!-- ════════════════════════════════════
-           PREMIUM MARQUEE
-      ════════════════════════════════════ -->
-      <div class="premium-marquee">
-        <div class="marquee-content">
-          <span>STREETWEAR</span><span class="dot">•</span>
-          <span>HEAVYWEIGHT ESSENTIALS</span><span class="dot">•</span>
-          <span>PREMIUM CRAFTSMANSHIP</span><span class="dot">•</span>
-          <span>MADE IN INDIA</span><span class="dot">•</span>
-          <span>OVERSIZED FITS</span><span class="dot">•</span>
-          <span>STREETWEAR</span><span class="dot">•</span>
-          <span>HEAVYWEIGHT ESSENTIALS</span><span class="dot">•</span>
-          <span>PREMIUM CRAFTSMANSHIP</span><span class="dot">•</span>
-          <span>MADE IN INDIA</span><span class="dot">•</span>
-          <span>OVERSIZED FITS</span><span class="dot">•</span>
+        <!-- scroll hint -->
+        <div class="hero-scroll-hint" aria-hidden="true">
+          <span class="hero-scroll-label">Scroll</span>
+          <div class="hero-scroll-line"></div>
         </div>
-      </div>
+      </section>
 
       <!-- ════════════════════════════════════
            TRUST STRIP
@@ -88,24 +101,24 @@
         <div class="container">
           <div class="trust-strip-inner">
             <div class="trust-item">
-              <i class="fa-solid fa-fire"></i>
-              <span>Trusted by 15,000+ Mavericks</span>
-            </div>
-            <div class="trust-item">
               <i class="fa-solid fa-truck-fast"></i>
-              <span>Lightning Delivery ₹799+</span>
-            </div>
-            <div class="trust-item">
-              <i class="fa-solid fa-shield-halved"></i>
-              <span>Zero-Shrink Guarantee</span>
+              <span>Free Shipping ₹799+</span>
             </div>
             <div class="trust-item">
               <i class="fa-solid fa-rotate-left"></i>
-              <span>No-Questions 30-Day Returns</span>
+              <span>30-Day Easy Returns</span>
+            </div>
+            <div class="trust-item">
+              <i class="fa-solid fa-shield-halved"></i>
+              <span>Secure Payments</span>
+            </div>
+            <div class="trust-item">
+              <i class="fa-solid fa-award"></i>
+              <span>220 GSM Premium</span>
             </div>
             <div class="trust-item">
               <i class="fa-brands fa-whatsapp"></i>
-              <span>Direct WhatsApp Support</span>
+              <span>24/7 Support</span>
             </div>
           </div>
         </div>
@@ -158,38 +171,58 @@
           <div class="section-head-row" data-animate="fade-up">
             <div>
               <span class="eyebrow">Browse</span>
-              <h2 class="section-title" id="cat-heading">Explore By Fit</h2>
+              <h2 class="section-title" id="cat-heading">Shop by Category</h2>
             </div>
             <a class="btn-link" href="/products">All Products <i class="fa-solid fa-arrow-right"></i></a>
           </div>
-          <div class="cat-grid premium-glass-grid" data-animate="fade-up" data-delay="80">
-            <a class="cat-glass-card" href="/products?filter=regular-fit">
-              <div class="cat-glass-bg" style="background-image: url('https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80')"></div>
-              <div class="cat-glass-content">
+          <div class="cat-grid" data-animate="fade-up" data-delay="80">
+            <a class="cat-card" href="/products?filter=regular-fit">
+              <div class="cat-card-icon"><i class="fa-solid fa-shirt"></i></div>
+              <div class="cat-card-body">
                 <span class="cat-card-name">Regular Fit</span>
                 <span class="cat-card-sub">Everyday essentials</span>
               </div>
+              <i class="fa-solid fa-chevron-right cat-card-arrow"></i>
             </a>
-            <a class="cat-glass-card" href="/products?filter=oversized-fit">
-              <div class="cat-glass-bg" style="background-image: url('https://images.unsplash.com/photo-1618354691373-d851c5c3a990?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80')"></div>
-              <div class="cat-glass-content">
+            <a class="cat-card" href="/products?filter=oversized-fit">
+              <div class="cat-card-icon"><i class="fa-solid fa-person"></i></div>
+              <div class="cat-card-body">
                 <span class="cat-card-name">Oversized Fit</span>
                 <span class="cat-card-sub">Relaxed streetwear</span>
               </div>
+              <i class="fa-solid fa-chevron-right cat-card-arrow"></i>
             </a>
-            <a class="cat-glass-card" href="/products?filter=graphic">
-              <div class="cat-glass-bg" style="background-image: url('https://images.unsplash.com/photo-1576566588028-4147f3842f27?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80')"></div>
-              <div class="cat-glass-content">
+            <a class="cat-card" href="/products?filter=graphic">
+              <div class="cat-card-icon"><i class="fa-solid fa-palette"></i></div>
+              <div class="cat-card-body">
                 <span class="cat-card-name">Graphic Tees</span>
                 <span class="cat-card-sub">Statement pieces</span>
               </div>
+              <i class="fa-solid fa-chevron-right cat-card-arrow"></i>
             </a>
-            <a class="cat-glass-card" href="/products?filter=drop-shoulder">
-              <div class="cat-glass-bg" style="background-image: url('https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80')"></div>
-              <div class="cat-glass-content">
+            <a class="cat-card" href="/products?filter=plain">
+              <div class="cat-card-icon"><i class="fa-solid fa-square"></i></div>
+              <div class="cat-card-body">
+                <span class="cat-card-name">Plain Tees</span>
+                <span class="cat-card-sub">Minimal base pieces</span>
+              </div>
+              <i class="fa-solid fa-chevron-right cat-card-arrow"></i>
+            </a>
+            <a class="cat-card" href="/products?filter=slim-fit">
+              <div class="cat-card-icon"><i class="fa-solid fa-sliders"></i></div>
+              <div class="cat-card-body">
+                <span class="cat-card-name">Slim Fit</span>
+                <span class="cat-card-sub">Sharp silhouettes</span>
+              </div>
+              <i class="fa-solid fa-chevron-right cat-card-arrow"></i>
+            </a>
+            <a class="cat-card" href="/products?filter=drop-shoulder">
+              <div class="cat-card-icon"><i class="fa-solid fa-star"></i></div>
+              <div class="cat-card-body">
                 <span class="cat-card-name">Drop Shoulder</span>
                 <span class="cat-card-sub">Street-ready drops</span>
               </div>
+              <i class="fa-solid fa-chevron-right cat-card-arrow"></i>
             </a>
           </div>
         </div>

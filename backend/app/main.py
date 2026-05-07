@@ -1,0 +1,212 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.sessions import SessionMiddleware
+import os
+
+from app.api.health import router as health_router
+from app.api.auth import router as auth_router
+from app.api.products import router as products_router
+from app.api.orders import router as orders_router
+from app.api.admin import router as admin_router
+from app.api.payments import router as payments_router
+from app.api.frontend import router as frontend_router
+from app.api.contact import router as contact_router
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
+
+app = FastAPI(title="Trident Premium Store - Modular", docs_url="/docs", redoc_url="/redoc")
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+FRONTEND_ROOT = BASE_DIR / "frontend"
+ASSETS_DIR = FRONTEND_ROOT / "assets"
+IMAGES_DIR = FRONTEND_ROOT / "assets" / "images"
+
+app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="assets")
+app.mount("/images", StaticFiles(directory=IMAGES_DIR), name="images")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=os.getenv("TRIDENT_SESSION_SECRET", "trident-local-session-secret"),
+    same_site="lax",
+    https_only=os.getenv("ENVIRONMENT", "development") == "production",
+)
+
+# Mount our extracted routes!
+app.include_router(health_router)
+app.include_router(auth_router)
+app.include_router(products_router)
+app.include_router(orders_router)
+app.include_router(admin_router)
+app.include_router(payments_router)
+app.include_router(contact_router)
+app.include_router(frontend_router)
+
+from fastapi import Request, HTTPException
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
+import json
+import time
+import logging
+import os
+
+import uuid
+from app.core.logger import app_logger
+from app.db.json_manager import recover_db_files
+
+@app.on_event("startup")
+async def startup_event():
+    DB_DIR = os.path.join(BASE_DIR, "db")
+    recover_db_files(DB_DIR)
+
+# Idempotency cache: { "key": {"timestamp": 123456, "status_code": 200, "response": {...}} }
+idempotency_cache = {}
+
+@app.middleware("http")
+async def api_response_wrapper(request: Request, call_next):
+    start_time = time.time()
+    request_id = uuid.uuid4().hex
+    request.state.request_id = request_id
+    
+    # --- IDEMPOTENCY PRE-CHECK ---
+    idempotency_key = request.headers.get("Idempotency-Key")
+    is_idempotent_target = request.url.path.startswith(("/api/v1/payments", "/api/v1/orders", "/api/v1/chat/send"))
+    
+    if is_idempotent_target and idempotency_key:
+        now = time.time()
+        # Cleanup expired keys
+        keys_to_delete = [k for k, v in idempotency_cache.items() if now - v['timestamp'] > 600]
+        for k in keys_to_delete:
+            del idempotency_cache[k]
+            
+        if idempotency_key in idempotency_cache:
+            cached = idempotency_cache[idempotency_key]
+            wrapped_data = cached['response'].copy()
+            wrapped_data['request_id'] = request_id
+            wrapped_data['idempotent'] = True
+            
+            app_logger.info(
+                f"API Request (IDEMPOTENT CACHE): {request.method} {request.url.path} - {cached['status_code']}",
+                extra={
+                    "request_id": request_id,
+                    "endpoint": request.url.path,
+                    "method": request.method,
+                    "response_time_ms": 0,
+                    "status_code": cached['status_code'],
+                    "user_id": request.session.get("user_id") if hasattr(request, "session") else None
+                }
+            )
+            return JSONResponse(status_code=cached['status_code'], content=wrapped_data)
+    
+    # --- PROCEED WITH REQUEST ---
+    response = await call_next(request)
+    
+    process_time_ms = (time.time() - start_time) * 1000
+    is_success = response.status_code < 400
+    
+    if request.url.path.startswith("/api/"):
+        app_logger.info(
+            f"API Request: {request.method} {request.url.path} - {response.status_code}",
+            extra={
+                "request_id": request_id,
+                "endpoint": request.url.path,
+                "method": request.method,
+                "response_time_ms": round(process_time_ms, 2),
+                "status_code": response.status_code,
+                "user_id": request.session.get("user_id") if hasattr(request, "session") else None
+            }
+        )
+        
+        if is_success and response.headers.get("content-type") == "application/json":
+            body = b""
+            async for chunk in response.body_iterator:
+                body += chunk
+            
+            try:
+                data = json.loads(body)
+                if isinstance(data, dict) and "success" in data and "error" in data:
+                    wrapped_data = data
+                    if "request_id" not in wrapped_data:
+                        wrapped_data["request_id"] = request_id
+                else:
+                    wrapped_data = {
+                        "success": True,
+                        "request_id": request_id,
+                        "data": data,
+                        "error": None
+                    }
+                
+                # --- IDEMPOTENCY STORE ---
+                if is_idempotent_target and idempotency_key:
+                    idempotency_cache[idempotency_key] = {
+                        "timestamp": time.time(),
+                        "status_code": response.status_code,
+                        "response": wrapped_data.copy()
+                    }
+                
+                response = JSONResponse(status_code=response.status_code, content=wrapped_data)
+            except json.JSONDecodeError:
+                pass
+                
+    return response
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    request_id = getattr(request.state, "request_id", None)
+    if not request.url.path.startswith("/api/"):
+        return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+    
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "success": False,
+            "request_id": request_id,
+            "data": None,
+            "error": {
+                "message": str(exc.detail),
+                "code": exc.status_code
+            }
+        }
+    )
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    request_id = getattr(request.state, "request_id", None)
+    return JSONResponse(
+        status_code=422,
+        content={
+            "success": False,
+            "request_id": request_id,
+            "data": None,
+            "error": {
+                "message": "Validation Error",
+                "details": exc.errors(),
+                "code": 422
+            }
+        }
+    )
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    request_id = getattr(request.state, "request_id", None)
+    if not request.url.path.startswith("/api/"):
+        return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
+    return JSONResponse(
+        status_code=500,
+        content={
+            "success": False,
+            "request_id": request_id,
+            "data": None,
+            "error": {
+                "message": "Internal Server Error",
+                "code": 500
+            }
+        }
+    )

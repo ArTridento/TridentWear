@@ -1080,6 +1080,32 @@ export function clearAuthSession() {
   removeStorage(AUTH_STORAGE_KEY);
 }
 
+export async function withLoading(btnElement, asyncFn) {
+  if (!btnElement) return await asyncFn();
+  
+  if (btnElement.hasAttribute("data-loading")) {
+      return; // Prevent double execution
+  }
+  
+  const isAlreadyDisabled = btnElement.hasAttribute("disabled");
+  
+  btnElement.setAttribute("data-loading", "true");
+  if (!isAlreadyDisabled) {
+    btnElement.classList.add("is-loading");
+    btnElement.setAttribute("disabled", "true");
+  }
+  
+  try {
+    return await asyncFn();
+  } finally {
+    btnElement.removeAttribute("data-loading");
+    if (!isAlreadyDisabled) {
+      btnElement.classList.remove("is-loading");
+      btnElement.removeAttribute("disabled");
+    }
+  }
+}
+
 export async function request(path, options = {}) {
   const method = String(options.method || "GET").toUpperCase();
   const url = new URL(resolveUrl(path));
@@ -1098,10 +1124,21 @@ export async function request(path, options = {}) {
 
     const response = await fetch(resolveUrl(path), options);
     const contentType = response.headers.get("content-type") || "";
-    const payload = contentType.includes("application/json") ? await response.json() : null;
+    let payload = contentType.includes("application/json") ? await response.json() : null;
     if (!response.ok) {
-      throw createHttpError(response.status, payload?.detail || payload?.message || "Request failed.");
+      const errMsg = payload?.error?.message || payload?.detail || payload?.message || "Request failed.";
+      throw createHttpError(response.status, errMsg);
     }
+    
+    // Unwrap standard API response {success, data}
+    if (payload && typeof payload === 'object' && 'success' in payload && 'data' in payload) {
+        if (payload.success) {
+            return payload.data;
+        } else {
+            throw createHttpError(400, payload.error?.message || "Request failed.");
+        }
+    }
+    
     return payload;
   } catch (error) {
     if (error instanceof Error) {

@@ -97,7 +97,7 @@ function renderProducts() {
             <div>
               <strong>${product.name}</strong>
               <div class="section-copy">T-Shirt - ${formatCurrency(product.price)}</div>
-              <div class="section-copy">${product.card_tags.join(" / ")}</div>
+              <div class="section-copy">${(product.card_tags || []).join(" / ")}</div>
               <div class="section-copy">${product.stock} stock - ${product.featured ? "Featured" : "Standard"}</div>
             </div>
             <img class="admin-thumb" src="${resolveAssetUrl(product.image)}" alt="${product.name}">

@@ -1,8 +1,9 @@
 const fs = require('fs');
+const path = require('path');
 const css = require('css');
 
 try {
-  const filePath = './css/styles.css';
+  const filePath = path.join(__dirname, '..', '..', 'frontend', 'assets', 'css', 'styles.css');
   const content = fs.readFileSync(filePath, 'utf-8');
   
   // Try to parse the CSS
@@ -16,7 +17,7 @@ try {
     });
     process.exit(1);
   } else {
-    console.log('CSS Validation: PASSED ?');
+    console.log('CSS Validation: PASSED');
     console.log(`Successfully parsed CSS file: ${filePath}`);
     console.log(`Total rules: ${parsed.stylesheet.rules.length}`);
     process.exit(0);

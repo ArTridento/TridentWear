@@ -5,8 +5,11 @@ import hashlib
 import hmac
 import json
 import os
+import random
 import re
 import shutil
+import smtplib
+import ssl
 import uuid
 import bcrypt
 import jwt
@@ -16,10 +19,9 @@ from typing import Any, Dict, List, Optional
 from urllib.parse import quote
 
 from fastapi import APIRouter, Depends, FastAPI, File, Form, HTTPException, Request, UploadFile, status
-from fastapi.responses import HTMLResponse
 from fastapi.exceptions import StarletteHTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, RedirectResponse  # noqa: F811 – HTMLResponse already imported above
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from starlette.middleware.sessions import SessionMiddleware
@@ -81,11 +83,7 @@ EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 REVOKED_TOKEN_IDS: set[str] = set()
 
 
-class RegisterPayload(BaseModel):
-    name: str
-    email: str
-    password: str
-    confirm_password: Optional[str] = None
+
 
 
 class OTPPayload(BaseModel):
@@ -98,9 +96,7 @@ class GooglePayload(BaseModel):
     credential: str
 
 
-class LoginPayload(BaseModel):
-    email: str
-    password: str
+
 
 class ForgotPasswordPayload(BaseModel):
     email: str
@@ -359,15 +355,7 @@ def load_chat() -> List[Dict[str, Any]]:
 def save_chat(chats: List[Dict[str, Any]]) -> None:
     write_json(CHAT_PATH, chats)
 
-def create_shiprocket_shipment(order: Dict[str, Any]) -> Dict[str, Any]:
-    """Stub for creating shipment on Shiprocket."""
-    # In production, use os.getenv("SHIPROCKET_API_KEY") 
-    # and make requests to Shiprocket API.
-    return {
-        "tracking_id": f"SR{uuid.uuid4().hex[:8].upper()}",
-        "courier": "Delhivery",
-        "estimated_delivery": (datetime.now(timezone.utc) + timedelta(days=4)).strftime("%Y-%m-%d")
-    }
+# Note: create_shiprocket_shipment is defined below near the Shiprocket section
 
 def load_contacts() -> List[Dict[str, Any]]:
     return read_json(CONTACTS_PATH, [])
@@ -417,8 +405,12 @@ def validate_coupon(code: str, subtotal: float) -> Dict[str, Any]:
             if c.get("usage_count", 0) >= c.get("usage_limit", 1):
                 raise HTTPException(status_code=400, detail="Coupon usage limit reached.")
             discount_amount = round(subtotal * c["discount"] / 100, 2)
-            return {**c, "discount_amount": discount_amount,
-                    "final_total": round(subtotal - discount_amount, 2)}
+            return {
+                **c,
+                "discount_pct": c["discount"],
+                "discount_amount": discount_amount,
+                "final_total": round(subtotal - discount_amount, 2),
+            }
     raise HTTPException(status_code=404, detail="Invalid coupon code.")
 
 def use_coupon(code: str) -> None:
@@ -430,7 +422,6 @@ def use_coupon(code: str) -> None:
 
 def send_order_email(order: Dict[str, Any]) -> None:
     """Non-blocking email; silently skips if SMTP not configured."""
-    import smtplib, ssl
     from email.mime.text import MIMEText
     host = os.getenv("SMTP_HOST", "")
     port = int(os.getenv("SMTP_PORT", "587"))
@@ -645,25 +636,25 @@ def validate_email(email: str) -> str:
     return normalized
 
 
-def save_uploaded_image(upload: UploadFile) -> str:
-    extension = Path(upload.filename or "").suffix.lower()
-    if extension not in ALLOWED_EXTENSIONS:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Unsupported image type.")
-
-    filename = f"{uuid.uuid4().hex}{extension}"
-    destination = UPLOADS_DIR / filename
-    with destination.open("wb") as target:
-        shutil.copyfileobj(upload.file, target)
-    return f"/images/uploads/{filename}"
 
 
-def delete_uploaded_image(image_url: str) -> None:
-    if not image_url.startswith("/images/uploads/"):
-        return
-    relative_path = image_url.removeprefix("/images/")
-    file_path = IMAGES_DIR / relative_path
-    if file_path.exists():
-        file_path.unlink()
+
+DEFAULT_COUPONS: List[Dict[str, Any]] = [
+    {
+        "code": "TRIDENTFIRST",
+        "discount": 20,
+        "expiry": "2027-12-31",
+        "usage_limit": 1000,
+        "usage_count": 0,
+    },
+    {
+        "code": "TRIDENT10",
+        "discount": 10,
+        "expiry": "2027-12-31",
+        "usage_limit": 5000,
+        "usage_count": 0,
+    },
+]
 
 
 def ensure_data_files() -> None:
@@ -687,6 +678,19 @@ def ensure_data_files() -> None:
     contacts = read_json(CONTACTS_PATH, [])
     write_json(CONTACTS_PATH, contacts)
 
+    # Seed reviews and coupons if files are missing or empty
+    if not REVIEWS_PATH.exists():
+        write_json(REVIEWS_PATH, [])
+
+    if not COUPONS_PATH.exists() or not read_json(COUPONS_PATH, []):
+        write_json(COUPONS_PATH, DEFAULT_COUPONS)
+
+    if not WISHLIST_PATH.exists():
+        write_json(WISHLIST_PATH, [])
+
+    if not CHAT_PATH.exists():
+        write_json(CHAT_PATH, [])
+
 
 app = FastAPI(title="Trident Premium Store", docs_url=None, redoc_url=None)
 
@@ -707,12 +711,7 @@ app.add_middleware(
 
 ensure_data_files()
 
-# /assets → frontend/assets/  (CSS, JS, images, fonts, data)
-app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="assets")
-# /images → frontend/assets/images/ (product image paths stored as /images/xxx.png)
-app.mount("/images", StaticFiles(directory=IMAGES_DIR), name="images")
 
-pages_router = APIRouter()
 auth_router = APIRouter(tags=["auth"])
 products_router = APIRouter(prefix="/api", tags=["products"])
 admin_router = APIRouter(prefix="/api/admin", tags=["admin"])
@@ -781,293 +780,16 @@ def apply_coupon(payload: ApplyCouponPayload) -> Dict[str, Any]:
 
 
 
-def _load_component(name: str) -> str:
-    """Read a shared component HTML file and return its content (empty string on failure)."""
-    comp_path = COMPONENTS_DIR / f"{name}.html"
-    try:
-        return comp_path.read_text(encoding="utf-8")
-    except OSError:
-        return ""
-
-
-def html_response(filename: str) -> HTMLResponse:
-    """Serve an HTML page from the correct frontend sub-directory, substituting component tags."""
-    path = PAGE_FILE_MAP.get(filename)
-    if not path or not path.exists():
-        raise HTTPException(status_code=404, detail=f"Page '{filename}' not found")
-
-    content = path.read_text(encoding="utf-8")
-
-    # Server-side component injection
-    if "{{ component:header }}" in content:
-        content = content.replace("{{ component:header }}", _load_component("header"))
-    if "{{ component:footer }}" in content:
-        content = content.replace("{{ component:footer }}", _load_component("footer"))
-
-    return HTMLResponse(content=content, status_code=200)
-
-
-@pages_router.get("/", include_in_schema=False)
-def serve_home() -> FileResponse:
-    return html_response("index.html")
-
-
-@pages_router.get("/products", include_in_schema=False)
-def serve_products_page() -> FileResponse:
-    return html_response("products.html")
-
-
-@pages_router.get("/cart", include_in_schema=False)
-def serve_cart_page() -> FileResponse:
-    return html_response("cart.html")
-
-@pages_router.get("/product", include_in_schema=False)
-@pages_router.get("/product-detail", include_in_schema=False)
-@pages_router.get("/product-detail.html", include_in_schema=False)
-def serve_product_page() -> FileResponse:
-    return html_response("product.html")
-
-@pages_router.get("/checkout", include_in_schema=False)
-def serve_checkout_page() -> FileResponse:
-    return html_response("checkout.html")
 
 
 
-@pages_router.get("/auth", include_in_schema=False)
-def serve_auth_page(request: Request) -> RedirectResponse:
-    query = f"?{request.url.query}" if request.url.query else ""
-    return RedirectResponse(url=f"/login{query}", status_code=status.HTTP_307_TEMPORARY_REDIRECT)
 
 
-@pages_router.get("/login", include_in_schema=False)
-def serve_login_page() -> FileResponse:
-    return html_response("login.html")
 
 
-@pages_router.get("/register", include_in_schema=False)
-def serve_register_page() -> FileResponse:
-    return html_response("register.html")
 
 
-@pages_router.get("/about", include_in_schema=False)
-def serve_about_page() -> FileResponse:
-    return html_response("about.html")
 
-
-@pages_router.get("/contact", include_in_schema=False)
-def serve_contact_page() -> FileResponse:
-    return html_response("contact.html")
-
-
-@pages_router.get("/admin", include_in_schema=False, response_model=None)
-def serve_admin_page(request: Request):
-    user = get_session_user(request)
-    if not user or user.get("role") != "admin":
-        next_path = quote("/admin", safe="")
-        return RedirectResponse(url=f"/login?next={next_path}", status_code=status.HTTP_303_SEE_OTHER)
-    return html_response("admin.html")
-
-
-@pages_router.get("/wishlist", include_in_schema=False)
-def serve_wishlist_page() -> FileResponse:
-    return html_response("wishlist.html")
-
-
-@pages_router.get("/privacy", include_in_schema=False)
-def serve_privacy_page() -> FileResponse:
-    return html_response("privacy.html")
-
-
-@pages_router.get("/terms", include_in_schema=False)
-def serve_terms_page() -> FileResponse:
-    return html_response("terms.html")
-
-
-@pages_router.get("/returns", include_in_schema=False)
-def serve_returns_page() -> FileResponse:
-    return html_response("returns.html")
-
-
-@pages_router.get("/shipping", include_in_schema=False)
-def serve_shipping_page() -> FileResponse:
-    return html_response("shipping.html")
-
-
-@pages_router.get("/track", include_in_schema=False)
-def serve_track_page() -> FileResponse:
-    return html_response("track.html")
-
-@pages_router.get("/shop", include_in_schema=False)
-def legacy_shop_page() -> RedirectResponse:
-    return RedirectResponse(url="/products", status_code=status.HTTP_307_TEMPORARY_REDIRECT)
-
-
-@pages_router.get("/{page_name}.html", include_in_schema=False, response_model=None)
-def legacy_html_routes(page_name: str, request: Request):
-    mapping = {
-        "index": "/",
-        "shop": "/products",
-        "products": "/products",
-        "product": "/product",
-        "product-detail": "/product",
-        "cart": "/cart",
-        "checkout": "/checkout",
-        "auth": "/login",
-        "login": "/login",
-        "register": "/register",
-        "about": "/about",
-        "contact": "/contact",
-        "admin": "/admin",
-        "privacy": "/privacy",
-        "terms": "/terms",
-        "returns": "/returns",
-        "shipping": "/shipping",
-        "profile": "/profile",
-        "dashboard": "/profile",
-        "profile-setup": "/profile-setup",
-        "verify": "/verify"
-    }
-    target = mapping.get(page_name)
-    if not target:
-        return FileResponse(HTML_DIR / "404.html", status_code=404)
-    if target == "/admin":
-        return serve_admin_page(request)
-        
-    # Preserve query parameters
-    query_string = request.url.query
-    if query_string:
-        target = f"{target}?{query_string}"
-        
-    return RedirectResponse(url=target, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
-
-@pages_router.get("/profile", include_in_schema=False)
-def serve_profile_page() -> FileResponse:
-    return html_response("profile.html")
-
-@pages_router.get("/dashboard", include_in_schema=False)
-def serve_dashboard_page() -> RedirectResponse:
-    return RedirectResponse(url="/profile", status_code=status.HTTP_307_TEMPORARY_REDIRECT)
-
-@pages_router.get("/profile-setup", include_in_schema=False)
-def serve_profile_setup_page() -> FileResponse:
-    return html_response("profile-setup.html")
-
-@pages_router.get("/verify", include_in_schema=False)
-def serve_verify_page() -> FileResponse:
-    return html_response("verify.html")
-
-
-@auth_router.get("/api/auth/me")
-def get_auth_state(request: Request) -> Dict[str, Any]:
-    user = get_session_user(request)
-    return {"authenticated": bool(user), "user": serialize_user(user) if user else None}
-
-
-@auth_router.post("/register")
-@auth_router.post("/api/auth/register")
-def register(payload: RegisterPayload, request: Request) -> Dict[str, Any]:
-    name = payload.name.strip()
-    email = validate_email(payload.email)
-    password = payload.password.strip()
-
-    if len(name) < 2:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Name must be at least 2 characters.")
-    if len(password) < 8:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Password must be at least 8 characters.")
-    if payload.confirm_password is not None and payload.confirm_password.strip() != password:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Passwords do not match.")
-    if find_user_by_email(email):
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="An account with that email already exists.")
-
-    users = load_users()
-    current_year_suffix = datetime.now().strftime("%y")
-    
-    # Generate sequential ID starting from 001 for current year
-    highest_seq = 0
-    prefix = f"TW{current_year_suffix}-"
-    for u in users:
-        uid = str(u.get("user_id", ""))
-        if uid.startswith(prefix):
-            try:
-                seq = int(uid.split("-")[1])
-                if seq > highest_seq:
-                    highest_seq = seq
-            except Exception:
-                pass
-    
-    seq_number = str(highest_seq + 1).zfill(3)
-    user_id_formatted = f"{prefix}{seq_number}"
-    import random
-    otp = str(random.randint(100000, 999999))
-    
-    # ─── REAL EMAIL DISPATCH ───
-    import smtplib
-    from email.mime.text import MIMEText
-    
-    smtp_host = os.getenv("SMTP_HOST", "")
-    smtp_port = int(os.getenv("SMTP_PORT", "587"))
-    smtp_user = os.getenv("SMTP_USER", "")
-    smtp_pass = os.getenv("SMTP_PASS", "")
-    
-    if smtp_host and smtp_user:
-        msg = MIMEText(f"Hello {name},\n\nYour Trident Wear verification code is: {otp}\n\nThis code will expire in 10 minutes.\n\nThank you,\nTrident Wear Team")
-        msg["Subject"] = "Trident Wear - Email Verification OTP"
-        msg["From"] = smtp_user
-        msg["To"] = email
-        try:
-            with smtplib.SMTP(smtp_host, smtp_port) as server:
-                server.starttls()
-                server.login(smtp_user, smtp_pass)
-                server.sendmail(smtp_user, [email], msg.as_string())
-            print(f"Successfully dispatched real OTP email to {email}")
-        except Exception as e:
-            print(f"SMTP sending failed: {e}")
-            # Fallback to local log if email fails
-            print(f"FALLBACK OTP DISPLAY: {otp}")
-    else:
-        print(f"DEBUG (NO SMTP CONFIGURED): Sent OTP {otp} for registration of {email}")
-
-    new_user = {
-        "id": next_id(users),
-        "user_id": user_id_formatted,
-        "name": name,
-        "email": email,
-        "password_hash": hash_password(password),
-        "role": "customer",
-        "gender": getattr(payload, "gender", None),
-        "otp": otp,
-        "otp_expiry": (datetime.now(timezone.utc) + timedelta(minutes=10)).isoformat(),
-        "otp_verification_status": False,
-        "profile_completed_status": False,
-        "created_at": now_iso(),
-    }
-    users.append(new_user)
-    save_users(users)
-
-    if not (smtp_host and smtp_user):
-        return {"success": True, "message": f"Account created. (Dev Mode OTP: {otp})", "email": email, "dev_otp": otp}
-
-    return {"success": True, "message": "Account created. Please check your email for the OTP.", "email": email}
-
-
-@auth_router.post("/login")
-@auth_router.post("/api/auth/login")
-def login(payload: LoginPayload, request: Request) -> Dict[str, Any]:
-    email = validate_email(payload.email)
-    password = payload.password.strip()
-    user = find_user_by_email(email)
-
-    if not user or not verify_password(password, user.get("password_hash", "")):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password.")
-    
-    if user.get("role") != "admin" and not user.get("otp_verification_status", False):
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Please verify your email OTP before logging in.")
-
-    user = upgrade_password_hash_if_needed(user, password)
-    store_session_user(request, user)
-    token = issue_auth_token(user)
-
-    return {"success": True, "message": "Signed in successfully.", "token": token, "user": serialize_user(user)}
 
 
 @auth_router.post("/api/auth/otp/send")
@@ -1109,7 +831,6 @@ def forgot_password(payload: ForgotPasswordPayload) -> Dict[str, Any]:
         # Always return success to prevent email enumeration
         return {"success": True, "message": "If an account exists, a reset OTP was sent."}
     
-    import random
     otp = str(random.randint(100000, 999999))
     users[user_idx]["otp"] = otp
     users[user_idx]["otp_expiry"] = (datetime.now(timezone.utc) + timedelta(minutes=10)).isoformat()
@@ -1206,307 +927,23 @@ def setup_profile(payload: ProfileSetupPayload, request: Request) -> Dict[str, A
     raise HTTPException(status_code=404, detail="User not found.")
 
 
-@auth_router.post("/logout")
-@auth_router.post("/api/auth/logout")
-def logout(request: Request) -> Dict[str, Any]:
-    revoke_auth_token(get_request_token(request))
-    request.session.clear()
-    return {"success": True, "message": "Signed out."}
 
 
-@products_router.get("/products")
-def get_products(category: Optional[str] = None, featured: Optional[bool] = None) -> Dict[str, Any]:
-    products = load_products()
-
-    if category:
-        category_value = category.strip().lower()
-        products = [product for product in products if product["category"] == category_value]
-
-    if featured is not None:
-        products = [product for product in products if product["featured"] is featured]
-
-    return {"success": True, "count": len(products), "products": products}
 
 
-@products_router.get("/products/{product_id}")
-def get_single_product(product_id: int) -> Dict[str, Any]:
-    for product in load_products():
-        if product["id"] == product_id:
-            return {"success": True, "product": product}
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found.")
 
 
-def validate_product_fields(
-    name: str,
-    category: str,
-    price: str,
-    description: str,
-    tag: str,
-    sizes: str,
-    stock: str,
-    featured: str,
-) -> Dict[str, Any]:
-    product_name = name.strip()
-    category_value = category.strip().lower()
-    description_value = description.strip()
-
-    if len(product_name) < 3:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Product name must be at least 3 characters.")
-    if category_value not in {"tshirt", "shirt"}:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Category must be tshirt or shirt.")
-
-    try:
-        price_value = int(float(price))
-    except ValueError as error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Price must be a valid number.") from error
-    if price_value <= 0:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Price must be greater than zero.")
-
-    try:
-        stock_value = max(int(float(stock or 0)), 0)
-    except ValueError as error:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Stock must be a valid number.") from error
-
-    return {
-        "name": product_name,
-        "category": category_value,
-        "price": price_value,
-        "description": description_value,
-        "tag": tag.strip(),
-        "sizes": normalize_sizes(sizes),
-        "stock": stock_value,
-        "featured": normalize_bool(featured),
-    }
 
 
-@admin_router.post("/products")
-async def create_product(
-    request: Request,
-    name: str = Form(...),
-    category: str = Form(...),
-    price: str = Form(...),
-    description: str = Form(""),
-    tag: str = Form(""),
-    sizes: str = Form("S, M, L, XL"),
-    stock: str = Form("0"),
-    featured: str = Form("false"),
-    image: Optional[UploadFile] = File(None),
-    _: Dict[str, Any] = Depends(require_admin),
-) -> Dict[str, Any]:
-    product_data = validate_product_fields(name, category, price, description, tag, sizes, stock, featured)
-    products = load_products()
-
-    image_path = "/images/hero-banner.png"
-    if image and image.filename:
-        image_path = save_uploaded_image(image)
-        await image.close()
-
-    new_product = {
-        "id": next_id(products),
-        **product_data,
-        "image": image_path,
-    }
-    products.append(new_product)
-    normalized = save_products(products)
-    product = next(product for product in normalized if product["id"] == new_product["id"])
-    return {"success": True, "message": "Product added successfully.", "product": product}
 
 
-@admin_router.put("/products/{product_id}")
-async def update_product(
-    product_id: int,
-    request: Request,
-    name: str = Form(...),
-    category: str = Form(...),
-    price: str = Form(...),
-    description: str = Form(""),
-    tag: str = Form(""),
-    sizes: str = Form("S, M, L, XL"),
-    stock: str = Form("0"),
-    featured: str = Form("false"),
-    image: Optional[UploadFile] = File(None),
-    _: Dict[str, Any] = Depends(require_admin),
-) -> Dict[str, Any]:
-    product_data = validate_product_fields(name, category, price, description, tag, sizes, stock, featured)
-    products = load_products()
-    existing = next((product for product in products if product["id"] == product_id), None)
-    if not existing:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found.")
-
-    image_path = existing["image"]
-    if image and image.filename:
-        new_image_path = save_uploaded_image(image)
-        await image.close()
-        delete_uploaded_image(existing["image"])
-        image_path = new_image_path
-
-    updated_product = {
-        "id": product_id,
-        **product_data,
-        "image": image_path,
-    }
-    updated_products = [updated_product if product["id"] == product_id else product for product in products]
-    normalized = save_products(updated_products)
-    product = next(product for product in normalized if product["id"] == product_id)
-    return {"success": True, "message": "Product updated successfully.", "product": product}
 
 
-@admin_router.delete("/products/{product_id}")
-def delete_product(product_id: int, _: Dict[str, Any] = Depends(require_admin)) -> Dict[str, Any]:
-    products = load_products()
-    existing = next((product for product in products if product["id"] == product_id), None)
-    if not existing:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found.")
-
-    delete_uploaded_image(existing["image"])
-    remaining_products = [product for product in products if product["id"] != product_id]
-    save_products(remaining_products)
-    return {"success": True, "message": f'{existing["name"]} deleted.'}
 
 
-@orders_router.get("/stats")
-def get_stats() -> Dict[str, int]:
-    orders = load_orders()
-    # Count unique users based on email, fallback to 150 if none yet for display
-    unique_users = set(o.get("customer", {}).get("email") for o in orders if o.get("customer", {}).get("email"))
-    baseline = 150
-    return {"customers": baseline + len(unique_users) if unique_users else baseline + len(orders)}
 
-@orders_router.post("/orders")
-def create_order(payload: OrderPayload, request: Request) -> Dict[str, Any]:
-    if not payload.items:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Your cart is empty.")
-    # Stock check
-    products = load_products()
-    prod_map = {p["id"]: p for p in products}
-    for item in payload.items:
-        pid = int(item.get("id", 0))
-        qty = max(int(item.get("qty", 1)), 1)
-        if pid in prod_map and prod_map[pid]["stock"] < qty:
-            raise HTTPException(status_code=400, detail=f'Insufficient stock for {prod_map[pid]["name"]}')
-
-
-    customer_name = str(payload.customer.get("name", "")).strip()
-    customer_email = validate_email(str(payload.customer.get("email", "") or "guest@trident.local"))
-    shipping_address = str(payload.shipping.get("address", "")).strip()
-    shipping_city = str(payload.shipping.get("city", "")).strip()
-    shipping_phone = str(payload.customer.get("phone", "")).strip()
-
-    if len(customer_name) < 2:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Customer name is required.")
-    if len(shipping_address) < 6 or len(shipping_city) < 2:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Complete shipping details are required.")
-    if len(shipping_phone) < 8:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="A valid phone number is required.")
-
-    user = get_session_user(request)
-    items = []
-    for item in payload.items:
-        qty = max(int(item.get("qty", 1)), 1)
-        items.append(
-            {
-                "id": int(item.get("id", 0)),
-                "name": str(item.get("name", "")).strip(),
-                "price": int(float(item.get("price", 0) or 0)),
-                "image": normalize_image_path(str(item.get("image", ""))),
-                "qty": qty,
-                "size": str(item.get("size", "")).strip().upper(),
-            }
-        )
-
-    order = {
-        "order_id": f"TRI-{uuid.uuid4().hex[:8].upper()}",
-        "items": items,
-        "subtotal": int(float(payload.subtotal)),
-        "customer": {
-            "name": customer_name,
-            "email": customer_email if customer_email != "guest@trident.local" else str(payload.customer.get("email", "")).strip(),
-            "phone": shipping_phone,
-            "user_id": user["id"] if user else None,
-        },
-        "shipping": {
-            "address": shipping_address,
-            "city": shipping_city,
-            "postal_code": str(payload.shipping.get("postal_code", "")).strip(),
-            "country": str(payload.shipping.get("country", "India")).strip() or "India",
-            "notes": str(payload.shipping.get("notes", "")).strip(),
-        },
-        "status": "confirmed",
-        "created_at": now_iso(),
-    }
-
-    orders = load_orders()
-    orders.append(order)
-    save_orders(orders)
-    try:
-        deduct_stock(items)
-    except Exception:
-        pass
-    try:
-        send_order_email(order)
-    except Exception:
-        pass
-    return {"success": True, "message": "Order placed successfully.", "order_id": order["order_id"]}
-
-@orders_router.get("/orders")
-def get_user_orders(request: Request) -> Dict[str, Any]:
-    user = get_session_user(request)
-    if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Please log in to view orders.")
-    orders = load_orders()
-    user_orders = [o for o in orders if o.get("customer", {}).get("user_id") == user["id"]]
-    # Sort orders by created_at descending
-    user_orders.sort(key=lambda x: x.get("created_at", ""), reverse=True)
-    return {"success": True, "orders": user_orders}
-
-@orders_router.put("/orders/{order_id}/cancel")
-def cancel_order(order_id: str, request: Request) -> Dict[str, Any]:
-    user = get_session_user(request)
-    if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Please log in.")
-    orders = load_orders()
-    for o in orders:
-        if o.get("order_id") == order_id and o.get("customer", {}).get("user_id") == user["id"]:
-            if o.get("status") in ("shipped", "delivered"):
-                 raise HTTPException(status_code=400, detail="Cannot cancel a shipped order.")
-            o["status"] = "cancelled"
-            save_orders(orders)
-            return {"success": True, "message": "Order cancelled."}
-    raise HTTPException(status_code=404, detail="Order not found.")
-
-
-@contact_router.post("/contact")
-def create_contact_message(payload: ContactPayload) -> Dict[str, Any]:
-    name = payload.name.strip()
-    email = validate_email(payload.email)
-    message = payload.message.strip()
-
-    if len(name) < 2:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Name is required.")
-    if len(message) < 10:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Message must be at least 10 characters.")
-
-    contacts = load_contacts()
-    contact = {
-        "id": next_id(contacts),
-        "name": name,
-        "email": email,
-        "message": message,
-        "created_at": now_iso(),
-    }
-    contacts.append(contact)
-    save_contacts(contacts)
-    return {"success": True, "message": "Message sent successfully."}
-
-
-app.include_router(pages_router)
-app.include_router(auth_router)
-app.include_router(products_router)
-app.include_router(admin_router)
-app.include_router(orders_router)
-app.include_router(contact_router)
-app.include_router(wishlist_router)
-app.include_router(coupon_router)
+# ─── All include_router() calls are at the END of this file ───
+# (Routes must be fully defined before include_router copies them)
 
 
 @app.exception_handler(StarletteHTTPException)
@@ -1516,7 +953,6 @@ async def custom_404_handler(request: Request, exc: StarletteHTTPException):
             return html_response("404.html")
         except Exception:
             pass
-    from fastapi.responses import JSONResponse
     return JSONResponse({"detail": exc.detail}, status_code=exc.status_code)
 
 @products_router.post("/reviews")
@@ -1555,59 +991,10 @@ def get_reviews(product_id: int) -> List[Dict[str, Any]]:
 # ════════════════════════════════════════════════════════════
 # SHIPROCKET HELPERS
 # ════════════════════════════════════════════════════════════
-def create_shiprocket_shipment(order: Dict[str, Any]) -> Dict[str, Any]:
-    # In a real app, this would use Shiprocket API credentials from os.getenv("SHIPROCKET_EMAIL") etc.
-    # For now, we simulate a successful AWB generation.
-    return {
-        "status": "shipped",
-        "tracking_id": f"SR{uuid.uuid4().hex[:8].upper()}",
-        "courier": "Delhivery (Shiprocket)",
-        "estimated_delivery": (datetime.now(timezone.utc) + timedelta(days=4)).date().isoformat()
-    }
 
-@admin_router.get("/orders")
-def get_all_orders(_: Dict[str, Any] = Depends(require_admin)) -> List[Dict[str, Any]]:
-    return load_orders()
 
-@admin_router.put("/orders/{order_id}")
-def update_order_status(order_id: str, payload: OrderStatusUpdate, _: Dict[str, Any] = Depends(require_admin)) -> Dict[str, Any]:
-    orders = load_orders()
-    for o in orders:
-        if o.get("order_id") == order_id:
-            o["status"] = payload.status
-            # Trigger shipment logic
-            if payload.status == "shipped" and not o.get("tracking_id"):
-                try:
-                    shipment = create_shiprocket_shipment(o)
-                    o["tracking_id"] = shipment["tracking_id"]
-                    o["courier"] = shipment["courier"]
-                    o["estimated_delivery"] = shipment["estimated_delivery"]
-                except Exception:
-                    pass # Fallback handled by client tracking API
 
-            save_orders(orders)
-            return {"success": True, "message": "Order status updated.", "order": o}
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Order not found.")
 
-@orders_router.get("/orders/{order_id}/tracking")
-def track_order(order_id: str) -> Dict[str, Any]:
-    orders = load_orders()
-    for o in orders:
-        if o.get("order_id") == order_id:
-            if o.get("tracking_id"):
-                return {
-                    "status": "In Transit" if o.get("status") == "shipped" else o.get("status", "Unknown").title(),
-                    "courier": o.get("courier", "Standard Courier"),
-                    "tracking_id": o.get("tracking_id"),
-                    "estimated_delivery": o.get("estimated_delivery", "TBD")
-                }
-            return {
-                "status": o.get("status", "pending").title(),
-                "courier": "Pending Allocation",
-                "tracking_id": None,
-                "estimated_delivery": "Tracking will be updated soon"
-            }
-    raise HTTPException(status_code=404, detail="Order not found.")
 
 # ════════════════════════════════════════════════════════════
 # ADVANCED AUTH (OTP & GOOGLE)
@@ -1648,175 +1035,24 @@ def google_auth(payload: GooglePayload, request: Request) -> Dict[str, Any]:
     return {"success": True, "token": token, "user": serialize_user(user)}
 
 
-@admin_router.get("/analytics")
-def get_analytics(_: Dict[str, Any] = Depends(require_admin)) -> Dict[str, Any]:
-    orders = load_orders()
-    total_orders = len(orders)
-    total_revenue = sum(o.get("subtotal", 0) for o in orders)
-    unique_customers = len(set(o.get("customer", {}).get("email") for o in orders if o.get("customer", {}).get("email")))
-    
-    # Simple top products computation
-    product_sales = {}
-    for o in orders:
-        for item in o.get("items", []):
-            name = item.get("name")
-            qty = item.get("qty", 1)
-            if name:
-                product_sales[name] = product_sales.get(name, 0) + qty
-                
-    top_products = [{"name": k, "sold": v} for k, v in sorted(product_sales.items(), key=lambda x: x[1], reverse=True)[:5]]
-    
-    return {
-        "total_orders": total_orders,
-        "total_revenue": total_revenue,
-        "customers": unique_customers,
-        "top_products": top_products
-    }
 
 # ════════════════════════════════════════════════════════════
 # CHECKOUT & PAYMENT SYSTEM
 # ════════════════════════════════════════════════════════════
-payment_router = APIRouter(prefix="/api/payment", tags=["Payment"])
+# payment_router is declared at the top with other routers — see line 721
 
-@payment_router.post("/cod")
-def place_cod_order(payload: CODPayload, request: Request) -> Dict[str, Any]:
-    orders = load_orders()
-    order_id = f"TRD-{uuid.uuid4().hex[:8].upper()}"
-    
-    new_order = {
-        "id": next_id(orders),
-        "order_id": order_id,
-        "method": "COD",
-        "subtotal": payload.subtotal,
-        "customer": payload.customer,
-        "shipping": payload.shipping,
-        "items": payload.items,
-        "coupon_code": getattr(payload, "coupon_code", None),
-        "status": "pending",
-        "created_at": now_iso()
-    }
-    orders.append(new_order)
-    save_orders(orders)
-    
-    # Optionally send email
-    try:
-        send_order_email(payload.customer.get("email"), order_id, "COD")
-    except Exception:
-        pass
-        
-    return {"success": True, "order_id": order_id, "message": "COD order placed successfully"}
 
-@payment_router.post("/create-order")
-def create_razorpay_order(payload: RazorpayCreatePayload) -> Dict[str, Any]:
-    import os
-    rz_key = os.getenv("RAZORPAY_KEY", "rzp_test_mockkey")
-    # Normally we call razorpay.Client here
-    # Mock response for testing or offline
-    mock_order_id = f"order_{uuid.uuid4().hex[:14]}"
-    return {
-        "success": True,
-        "razorpay_order_id": mock_order_id,
-        "key_id": rz_key
-    }
 
-@payment_router.post("/verify")
-def verify_razorpay_payment(payload: RazorpayVerifyPayload) -> Dict[str, Any]:
-    # Mock signature verification
-    orders = load_orders()
-    order_id = f"TRD-{uuid.uuid4().hex[:8].upper()}"
-    
-    new_order = {
-        "id": next_id(orders),
-        "order_id": order_id,
-        "method": "Razorpay",
-        "razorpay_payment_id": payload.razorpay_payment_id,
-        "subtotal": payload.order_data.get("subtotal"),
-        "customer": payload.order_data.get("customer"),
-        "shipping": payload.order_data.get("shipping"),
-        "items": payload.order_data.get("items"),
-        "coupon_code": payload.order_data.get("coupon_code"),
-        "status": "paid",
-        "created_at": now_iso()
-    }
-    orders.append(new_order)
-    save_orders(orders)
-    
-    try:
-        user_email = payload.order_data.get("customer", {}).get("email")
-        send_order_email(user_email, order_id, "Online")
-    except Exception:
-        pass
-        
-    return {"success": True, "order_id": order_id, "message": "Payment verified and order placed"}
 
-app.include_router(payment_router)
+
 
 # ════════════════════════════════════════════════════════════
-# CHAT SYSTEM
+# ROUTER REGISTRATION — must come AFTER all route decorators
 # ════════════════════════════════════════════════════════════
-@app.post("/api/chat/send")
-def send_chat(payload: ChatMessagePayload, request: Request) -> Dict[str, Any]:
-    user = get_session_user(request)
-    chats = load_chat()
-    
-    # If anonymous, identify them by a generic thread_id
-    if user:
-        thread_id = f"user_{user['id']}"
-        author = user["name"]
-    else:
-        thread_id = payload.thread_id or f"anon_{uuid.uuid4().hex[:8]}"
-        author = "Guest"
-        
-    msg = {
-        "id": next_id(chats),
-        "thread_id": thread_id,
-        "author": author,
-        "role": "user",
-        "message": payload.message,
-        "timestamp": now_iso(),
-        "read": False
-    }
-    chats.append(msg)
-    save_chat(chats)
-    return {"success": True, "message": msg, "thread_id": thread_id}
-
-@app.get("/api/chat/messages")
-def get_chat_messages(thread_id: str) -> List[Dict[str, Any]]:
-    chats = load_chat()
-    return [c for c in chats if c["thread_id"] == thread_id]
-
-@admin_router.get("/chat")
-def admin_get_chats(_: Dict[str, Any] = Depends(require_admin)) -> Dict[str, Any]:
-    chats = load_chat()
-    threads = {}
-    for c in chats:
-        tid = c["thread_id"]
-        if tid not in threads:
-            threads[tid] = []
-        threads[tid].append(c)
-    return threads
-
-@admin_router.post("/chat/reply")
-def admin_reply_chat(payload: ChatMessagePayload, request: Request, _: Dict[str, Any] = Depends(require_admin)) -> Dict[str, Any]:
-    if not payload.thread_id:
-        raise HTTPException(status_code=400, detail="Thread ID required")
-    
-    chats = load_chat()
-    msg = {
-        "id": next_id(chats),
-        "thread_id": payload.thread_id,
-        "author": "Supporting Staff",
-        "role": "admin",
-        "message": payload.message,
-        "timestamp": now_iso(),
-        "read": True
-    }
-    
-    # mark whole thread as read by admin
-    for c in chats:
-        if c["thread_id"] == payload.thread_id:
-            c["read"] = True
-
-    chats.append(msg)
-    save_chat(chats)
-    return {"success": True, "message": msg}
+app.include_router(auth_router)
+app.include_router(products_router)
+app.include_router(admin_router)
+app.include_router(orders_router)
+app.include_router(contact_router)
+app.include_router(wishlist_router)
+app.include_router(coupon_router)

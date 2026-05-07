@@ -1,5 +1,5 @@
 import { post } from "../shared/api.js?v=9";
-import { initSite, showToast } from "../shared/site.js?v=9";
+import { initSite, showToast, withLoading } from "../shared/site.js?v=9";
 
 window.addEventListener("DOMContentLoaded", async () => {
   await initSite();
@@ -15,14 +15,17 @@ window.addEventListener("DOMContentLoaded", async () => {
       message: form.querySelector("#contact-message").value.trim(),
     };
 
-    try {
-      await post("/api/contact", payload);
-      form.reset();
-      status.innerHTML = `<div class="helper-note success">Message sent. We will reply from the Trident desk soon.</div>`;
-      showToast("Message sent successfully.");
-    } catch (error) {
-      status.innerHTML = `<div class="helper-note danger">${error.message}</div>`;
-      showToast(error.message, "error");
-    }
+    const btn = form.querySelector("button[type='submit']");
+    await withLoading(btn, async () => {
+      try {
+        await post("/api/contact", payload);
+        form.reset();
+        status.innerHTML = `<div class="helper-note success">Message sent. We will reply from the Trident desk soon.</div>`;
+        showToast("Message sent successfully.");
+      } catch (error) {
+        status.innerHTML = `<div class="helper-note danger">${error.message}</div>`;
+        showToast(error.message, "error");
+      }
+    });
   });
 });
