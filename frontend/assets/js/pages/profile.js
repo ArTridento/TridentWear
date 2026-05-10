@@ -1,5 +1,5 @@
-import { getCurrentUser, initSite, pageUrl, showToast } from "../shared/site.js?v=9";
-import { get, post } from "../shared/api.js?v=9";
+import { escapeHtml, getCurrentUser, initSite, pageUrl, showToast } from "../shared/site.js?v=9";
+import { get, request } from "../shared/api.js?v=9";
 
 async function loadProfile() {
   await initSite();
@@ -8,6 +8,13 @@ async function loadProfile() {
   if (!user) {
     window.location.href = pageUrl("/login");
     return;
+  }
+
+  let accountProfile = { addresses: [], settings: {} };
+  try {
+    accountProfile = await get("/api/v1/account/profile");
+  } catch (_) {
+    accountProfile = JSON.parse(localStorage.getItem(`trident-profile-${user.id}`) || "{\"addresses\":[],\"settings\":{}}");
   }
 
   // Split name for firstname and lastname
@@ -69,6 +76,8 @@ async function loadProfile() {
   if (emailInput) emailInput.value = user.email || "N/A";
   if (firstNameInput) firstNameInput.value = firstName !== "N/A" ? firstName : "";
   if (lastNameInput) lastNameInput.value = lastName;
+  const mobileInput = document.getElementById("profile-mobile");
+  if (mobileInput) mobileInput.value = user.phone || "";
 
   // Setup tabs
   const tabLinks = document.querySelectorAll("[data-tab]");
@@ -99,15 +108,15 @@ async function loadProfile() {
   const ordersContainer = document.getElementById("orders-container");
   if (ordersContainer) {
     try {
-      const data = await get("/api/orders");
+      const data = await get("/api/v1/orders");
       if (data && data.orders && data.orders.length > 0) {
         let html = '<div style="text-align: left;">';
         data.orders.forEach(o => {
           html += `
             <div style="border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem; border-radius: 4px;">
               <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
-                <strong>Order ID: ${o.order_id}</strong>
-                <span style="color:var(--primary); font-weight: bold;">${o.status.toUpperCase()}</span>
+                <strong>Order ID: ${escapeHtml(o.order_id)}</strong>
+                <span style="color:var(--primary); font-weight: bold;">${escapeHtml(String(o.status || "confirmed").toUpperCase())}</span>
               </div>
               <p style="margin-bottom: 0.5rem; color: #555;">Date: ${new Date(o.created_at).toLocaleDateString()}</p>
               <p style="margin-bottom: 0.5rem; color: #555;">Total: ₹${o.subtotal}</p>
@@ -133,7 +142,11 @@ async function loadProfile() {
   const btnEditAddress = document.getElementById("btn-edit-address");
 
   // Store address object
-  let savedAddress = {};
+  let savedAddress = accountProfile.addresses?.find((address) => String(address.id) === String(accountProfile.default_address_id)) || accountProfile.addresses?.[0] || {};
+  if (addressDisplay && savedAddress.street) {
+    addressDisplay.textContent = formatAddressDisplay(savedAddress);
+    addressDisplay.style.color = "#333";
+  }
 
   function openAddressModal() {
     if (document.getElementById("addr-street")) document.getElementById("addr-street").value = savedAddress.street || "";
@@ -171,15 +184,43 @@ async function loadProfile() {
         return;
       }
 
-      savedAddress = { street, area, city, state, pin };
+      savedAddress = { id: savedAddress.id || `addr_${Date.now()}`, label: "Default shipping", street, area, city, state, pin, country: "India" };
       const formatted = formatAddressDisplay(savedAddress);
       if (addressDisplay) {
         addressDisplay.textContent = formatted;
         addressDisplay.style.color = "#333";
       }
       if (addressModal) addressModal.style.display = "none";
-      showToast("Address saved!", "success");
+      saveProfile({ addresses: [savedAddress], default_address_id: savedAddress.id });
     });
+  }
+
+  const profileForm = document.getElementById("profile-update-form");
+  profileForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const fullName = [firstNameInput?.value.trim(), lastNameInput?.value.trim()].filter(Boolean).join(" ");
+    const gender = document.querySelector("input[name='title']:checked")?.value || user.gender || "";
+    saveProfile({ name: fullName || user.name, phone: mobileInput?.value.trim() || "", gender });
+  });
+
+  async function saveProfile(payload) {
+    const nextProfile = {
+      ...accountProfile,
+      ...payload,
+      addresses: payload.addresses || accountProfile.addresses || [],
+    };
+    try {
+      const saved = await request("/api/v1/account/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      accountProfile = saved.profile || saved;
+      showToast("Profile saved.", "success");
+    } catch (error) {
+      localStorage.setItem(`trident-profile-${user.id}`, JSON.stringify(nextProfile));
+      showToast("Saved locally. It will sync when account APIs are available.", "success");
+    }
   }
 
   // Password Modal Logic

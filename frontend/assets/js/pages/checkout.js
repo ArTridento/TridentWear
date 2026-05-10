@@ -105,6 +105,12 @@ function showSuccess(orderId, form) {
 function bindCheckout(items) {
   const form = document.querySelector("[data-checkout-form]");
   if (!form) return;
+  document.querySelectorAll("input[name='payment']").forEach((input) => {
+    input.addEventListener("change", () => {
+      const btn = document.querySelector("[data-checkout-button]");
+      if (btn) btn.textContent = input.value === "cod" ? "Place Order (COD)" : "Pay Online";
+    });
+  });
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -120,6 +126,8 @@ function bindCheckout(items) {
       subtotal: finalTotal,
       discount_amount: appliedCoupon ? appliedCoupon.discount_amount : 0,
       coupon_code: appliedCoupon ? appliedCoupon.code : null,
+      payment_method: method,
+      test_mode: Boolean(form.querySelector("#checkout-test-mode")?.checked),
       customer: {
         name: form.querySelector("#checkout-name").value.trim(),
         email: form.querySelector("#checkout-email").value.trim(),
@@ -140,7 +148,7 @@ function bindCheckout(items) {
 
     try {
       if (method === "cod") {
-        const data = await post("/api/payment/cod", {
+        const data = await post("/api/v1/payments/cod", {
           ...orderData,
           coupon_code: orderData.coupon_code,
         });
@@ -148,7 +156,7 @@ function bindCheckout(items) {
 
       } else {
         if (STATIC_MODE) {
-          const verifyData = await post("/api/payment/verify", {
+          const verifyData = await post("/api/v1/payments/verify", {
             razorpay_order_id: `order_${Date.now()}`,
             razorpay_payment_id: `pay_${Date.now()}`,
             razorpay_signature: "static-demo-signature",
@@ -159,7 +167,7 @@ function bindCheckout(items) {
         }
 
         // Razorpay online payment
-        const rzResp = await post("/api/payment/create-order", {
+        const rzResp = await post("/api/v1/payments/create-order", {
           amount: Math.round(finalTotal * 100), // paise
           currency: "INR",
         });
@@ -179,7 +187,7 @@ function bindCheckout(items) {
           theme: { color: "#6244c5" },
           handler: async (response) => {
             try {
-              const verifyData = await post("/api/payment/verify", {
+              const verifyData = await post("/api/v1/payments/verify", {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,

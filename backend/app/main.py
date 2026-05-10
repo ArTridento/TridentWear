@@ -11,6 +11,8 @@ from app.api.admin import router as admin_router
 from app.api.payments import router as payments_router
 from app.api.frontend import router as frontend_router
 from app.api.contact import router as contact_router
+from app.api.account import router as account_router
+from app.api.reviews import router as reviews_router
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
@@ -23,6 +25,7 @@ IMAGES_DIR = FRONTEND_ROOT / "assets" / "images"
 
 app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="assets")
 app.mount("/images", StaticFiles(directory=IMAGES_DIR), name="images")
+app.mount("/components", StaticFiles(directory=str(FRONTEND_ROOT / "components")), name="components")
 
 app.add_middleware(
     CORSMiddleware,
@@ -37,6 +40,7 @@ app.add_middleware(
     secret_key=os.getenv("TRIDENT_SESSION_SECRET", "trident-local-session-secret"),
     same_site="lax",
     https_only=os.getenv("ENVIRONMENT", "development") == "production",
+    max_age=int(os.getenv("TRIDENT_SESSION_MAX_AGE_SECONDS", "604800")),
 )
 
 # Mount our extracted routes!
@@ -47,6 +51,8 @@ app.include_router(orders_router)
 app.include_router(admin_router)
 app.include_router(payments_router)
 app.include_router(contact_router)
+app.include_router(account_router)
+app.include_router(reviews_router)
 app.include_router(frontend_router)
 
 from fastapi import Request, HTTPException
@@ -196,6 +202,16 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     request_id = getattr(request.state, "request_id", None)
+    app_logger.exception(
+        f"Unhandled exception: {request.method} {request.url.path}",
+        extra={
+            "request_id": request_id,
+            "endpoint": request.url.path,
+            "method": request.method,
+            "status_code": 500,
+            "user_id": request.session.get("user_id") if hasattr(request, "session") else None,
+        },
+    )
     if not request.url.path.startswith("/api/"):
         return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
     return JSONResponse(

@@ -7,6 +7,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Shop all premium T-shirts at TridentWear. Browse crew neck, oversized, polo, graphic tees and more — made in India."/>
+    <link rel="canonical" href="/products" />
+    <meta property="og:title" content="Shop All | TridentWear" />
+    <meta property="og:description" content="Shop premium heavyweight T-shirts, oversized fits, polos, and everyday essentials from TridentWear." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/assets/images/hero-banner.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
     <title>Shop All | TridentWear</title>
     <link rel="stylesheet" href="/assets/css/styles.css?v=20260424-mobile-grid" />
     <link rel="icon" type="image/png" href="/assets/images/Logo.png" />
@@ -59,6 +65,51 @@
       <button class="filter-chip" type="button" data-main-category="blazer">Blazers</button>
       <button class="filter-chip" type="button" data-main-category="tunic">Tunics</button>
 
+    </div>
+
+    <div class="shop-control-bar">
+      <div class="shop-search-wrap">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <input class="shop-search-input" type="search" placeholder="Search drops, fits, fabric" data-shop-search autocomplete="off" />
+      </div>
+      <button class="btn btn-outline shop-filter-toggle" type="button" data-filter-drawer-toggle>
+        <i class="fa-solid fa-sliders" aria-hidden="true"></i> Filters
+      </button>
+      <label class="shop-sort-wrap">
+        <span>Sort</span>
+        <select class="sort-select" data-shop-sort>
+          <option value="newest">Newest</option>
+          <option value="popular">Popular</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="shop-filter-drawer" data-filter-drawer>
+      <div class="shop-filter-panel">
+        <div class="shop-filter-head">
+          <strong>Refine The Drop</strong>
+          <button type="button" data-filter-drawer-close aria-label="Close filters"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="shop-filter-group">
+          <span>Fit</span>
+          <label><input type="checkbox" value="regular-fit" data-filter-fit> Regular</label>
+          <label><input type="checkbox" value="oversized-fit" data-filter-fit> Oversized</label>
+          <label><input type="checkbox" value="drop-shoulder" data-filter-fit> Drop Shoulder</label>
+        </div>
+        <div class="shop-filter-group">
+          <span>Size</span>
+          <div class="shop-size-grid">
+            <label><input type="checkbox" value="S" data-filter-size><span>S</span></label>
+            <label><input type="checkbox" value="M" data-filter-size><span>M</span></label>
+            <label><input type="checkbox" value="L" data-filter-size><span>L</span></label>
+            <label><input type="checkbox" value="XL" data-filter-size><span>XL</span></label>
+            <label><input type="checkbox" value="XXL" data-filter-size><span>XXL</span></label>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-full" type="button" data-filter-drawer-close>Apply Filters</button>
+      </div>
     </div>
 
 

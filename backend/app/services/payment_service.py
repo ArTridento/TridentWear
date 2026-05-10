@@ -3,15 +3,26 @@ import uuid
 from typing import Dict, Any
 from app.services.order_service import create_payment_order_record
 
-def process_cod_order(subtotal: float, customer: Dict[str, Any], shipping: Dict[str, Any], items: list, coupon_code: str = None) -> Dict[str, Any]:
+def process_cod_order(
+    subtotal: float,
+    customer: Dict[str, Any],
+    shipping: Dict[str, Any],
+    items: list,
+    coupon_code: str = None,
+    test_mode: bool = False,
+) -> Dict[str, Any]:
     order_data = {
         "method": "COD",
+        "payment_method": "cod",
+        "payment_status": "cod_pending",
         "subtotal": subtotal,
+        "total": subtotal,
         "customer": customer,
         "shipping": shipping,
         "items": items,
         "coupon_code": coupon_code,
-        "status": "pending",
+        "status": "placed",
+        "test_mode": test_mode,
     }
     
     new_order = create_payment_order_record(order_data)
@@ -27,15 +38,21 @@ def process_razorpay_create(amount: int, currency: str = "INR") -> Dict[str, Any
     }
 
 def process_razorpay_verify(razorpay_payment_id: str, order_data_payload: Dict[str, Any]) -> Dict[str, Any]:
+    test_mode = bool(order_data_payload.get("test_mode", False))
     order_data = {
         "method": "Razorpay",
+        "payment_method": "razorpay",
         "razorpay_payment_id": razorpay_payment_id,
         "subtotal": order_data_payload.get("subtotal"),
+        "total": order_data_payload.get("subtotal"),
+        "discount_amount": order_data_payload.get("discount_amount", 0),
         "customer": order_data_payload.get("customer"),
         "shipping": order_data_payload.get("shipping"),
         "items": order_data_payload.get("items"),
         "coupon_code": order_data_payload.get("coupon_code"),
-        "status": "paid",
+        "status": "placed",
+        "payment_status": "paid",
+        "test_mode": test_mode,
     }
     
     new_order = create_payment_order_record(order_data)

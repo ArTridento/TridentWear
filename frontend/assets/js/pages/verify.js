@@ -3,14 +3,22 @@ import { initSite, pageUrl, showToast } from "../shared/site.js?v=9";
 
 window.addEventListener("DOMContentLoaded", async () => {
   await initSite();
+
+  const params = new URLSearchParams(window.location.search);
+  const email = params.get("email");
+  const display = document.getElementById("verify-email-display");
+  if (display && email) {
+    display.textContent = "Enter the 6-digit OTP sent to ";
+    const strong = document.createElement("strong");
+    strong.textContent = email;
+    display.appendChild(strong);
+  }
   
   const form = document.querySelector("[data-verify-form]");
   if (!form) return;
   
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const params = new URLSearchParams(window.location.search);
-    const email = params.get("email");
     if (!email) {
       showToast("No email found to verify. Please register again.", "error");
       return;

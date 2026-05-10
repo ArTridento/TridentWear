@@ -17,6 +17,8 @@ from app.db.json_manager import read_json, update_json
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 DB_DIR = BASE_DIR / "db"
 ORDERS_PATH = str(DB_DIR / "orders.json")
+ORDER_STATUSES = {"placed", "confirmed", "packed", "shipped", "delivered", "cancelled"}
+PAYMENT_STATUSES = {"pending", "paid", "failed", "refunded", "cod_pending"}
 
 def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
@@ -91,7 +93,6 @@ def process_create_order(payload: Any, request: Request) -> Dict[str, Any]:
     if len(shipping_phone) < 8:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="A valid phone number is required.")
 
-    user = get_session_user(request)
     items = []
     for item in payload.items:
         qty = max(int(item.get("qty", 1)), 1)
@@ -132,17 +133,19 @@ def process_create_order(payload: Any, request: Request) -> Dict[str, Any]:
             },
             "items": payload.items,
             "subtotal": subtotal,
-            "payment_method": payload.payment_method,
-            "status": "confirmed",
-            "created_at": now_iso()
+            "payment_method": getattr(payload, "payment_method", "cod"),
+            "status": "placed",
+            "payment_status": "cod_pending" if getattr(payload, "payment_method", "cod") == "cod" else "pending",
+            "test_mode": bool(getattr(payload, "test_mode", False)),
+            "created_at": now_iso(),
         }
         orders.append(new_order)
         return orders
 
     update_json(ORDERS_PATH, _create_order)
     
-    # After order is successfully written, deduct stock
-    deduct_stock(payload.items)
+    if not new_order.get("test_mode"):
+        deduct_stock(payload.items)
 
     try:
         send_order_email(new_order)
@@ -212,13 +215,32 @@ def create_shiprocket_shipment(order: Dict[str, Any]) -> Dict[str, Any]:
 def get_all_orders_data() -> List[Dict[str, Any]]:
     return load_orders()
 
-def update_order_status_logic(order_id: str, payload_status: str) -> Dict[str, Any]:
+def normalize_order_status(value: str) -> str:
+    normalized = str(value or "").strip().lower()
+    if normalized not in ORDER_STATUSES:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Order status must be one of: {', '.join(sorted(ORDER_STATUSES))}.")
+    return normalized
+
+def normalize_payment_status(value: str) -> str:
+    normalized = str(value or "").strip().lower()
+    if normalized not in PAYMENT_STATUSES:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Payment status must be one of: {', '.join(sorted(PAYMENT_STATUSES))}.")
+    return normalized
+
+def update_order_status_logic(order_id: str, payload: Any) -> Dict[str, Any]:
+    changes = payload if isinstance(payload, dict) else {"status": payload}
+    payload_status = normalize_order_status(changes.get("status"))
     updated_order = None
     def _update_status(orders: list):
         nonlocal updated_order
         for o in orders:
             if o.get("order_id") == order_id:
                 o["status"] = payload_status
+                if changes.get("payment_status"):
+                    o["payment_status"] = normalize_payment_status(changes["payment_status"])
+                for field in ("tracking_id", "courier", "estimated_delivery", "shipment_notes"):
+                    if changes.get(field) is not None:
+                        o[field] = str(changes[field]).strip()
                 if payload_status == "shipped" and not o.get("tracking_id"):
                     try:
                         shipment = create_shiprocket_shipment(o)
@@ -227,6 +249,7 @@ def update_order_status_logic(order_id: str, payload_status: str) -> Dict[str, A
                         o["estimated_delivery"] = shipment["estimated_delivery"]
                     except Exception:
                         pass
+                o["updated_at"] = now_iso()
                 updated_order = o
                 break
         return orders
@@ -253,12 +276,20 @@ def create_payment_order_record(order_data: Dict[str, Any]) -> Dict[str, Any]:
             "id": next_id(orders),
             "order_id": order_id,
             "created_at": now_iso(),
+            "updated_at": now_iso(),
+            "payment_status": order_data.get("payment_status", "pending"),
+            "tracking_id": order_data.get("tracking_id"),
+            "courier": order_data.get("courier"),
+            "estimated_delivery": order_data.get("estimated_delivery"),
+            "test_mode": bool(order_data.get("test_mode", False)),
             **order_data
         }
         orders.append(new_order)
         return orders
 
     update_json(ORDERS_PATH, _create_record)
+    if new_order and not new_order.get("test_mode"):
+        deduct_stock(new_order.get("items", []))
     
     try:
         send_order_email(new_order)

@@ -17,6 +17,8 @@ class OrderPayload(BaseModel):
     subtotal: float
     customer: Dict[str, Any]
     shipping: Dict[str, Any]
+    payment_method: str = "cod"
+    test_mode: bool = False
 
 @router.get("/stats")
 def get_stats() -> Dict[str, int]:

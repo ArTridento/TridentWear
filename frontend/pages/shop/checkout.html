@@ -59,7 +59,7 @@
         </div>
       </section>
 
-      <section class="section" data-animate="fade-up">
+      <section class="section checkout-experience-section" data-animate="fade-up">
         <div class="container checkout-shell">
           <div data-order-status></div>
 
@@ -69,6 +69,11 @@
               <span class="eyebrow">Order Summary</span>
             </div>
             <div data-cart-summary></div>
+            <div class="checkout-sidebar-trust" aria-label="Checkout reassurance">
+              <span><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Secure encrypted checkout</span>
+              <span><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> 30-day returns on unused products</span>
+              <span><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Fast order support</span>
+            </div>
           </div>
 
           <!-- Coupon -->
@@ -88,6 +93,14 @@
               </button>
             </div>
             <p data-coupon-msg class="checkout-note"></p>
+          </div>
+
+          <div class="checkout-panel reveal-scale checkout-stack checkout-reassurance">
+            <span class="eyebrow">Protected Purchase</span>
+            <h2 class="section-title">Your drop is handled carefully.</h2>
+            <p class="section-copy">
+              COD and Razorpay orders use the same protected TridentWear order flow, with confirmation, support, and tracking after checkout.
+            </p>
           </div>
 
           <!-- Payment Method -->
@@ -181,6 +194,14 @@
                 ></textarea>
               </div>
               <div class="form-group full">
+                <label class="checkbox-row" for="checkout-test-mode"
+                  ><input id="checkout-test-mode" type="checkbox" /><span
+                    >Create as staging test order</span
+                  ></label
+                >
+                <p class="field-help">Test orders are clearly marked in admin and do not reduce live stock.</p>
+              </div>
+              <div class="form-group full">
                 <button
                   class="btn btn-primary checkout-submit"
                   type="submit"
@@ -219,17 +240,6 @@
         <polyline points="18 15 12 9 6 15" />
       </svg>
     </button>
-
     <script type="module" src="/assets/js/pages/checkout.js?v=20260423-frontend"></script>
-    <script>
-      // Update button label when payment method changes
-      document.addEventListener("change", (e) => {
-        if (e.target.name === "payment") {
-          const btn = document.querySelector("[data-checkout-button]");
-          btn.textContent =
-            e.target.value === "cod" ? "Place Order (COD)" : "Pay Online";
-        }
-      });
-    </script>
   </body>
 </html>

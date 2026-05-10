@@ -14,7 +14,9 @@ export const STATIC_MODE = Boolean(
     (runtimeLocation.protocol === "file:" || runtimeLocation.hostname.endsWith("github.io"))
 );
 
-const API_ROOT = "http://127.0.0.1:8000";
+const API_ROOT = typeof window !== "undefined" && window.__TRIDENT_API_ROOT
+  ? String(window.__TRIDENT_API_ROOT).replace(/\/$/, "")
+  : "";
 const SITE_ROOT = new URL("../../../", import.meta.url);
 const SITE_BASE_PATH = SITE_ROOT.pathname === "/" ? "" : SITE_ROOT.pathname.replace(/\/$/, "");
 const STATIC_PAGE_ROUTES = {
@@ -49,6 +51,7 @@ const STORAGE_KEYS = {
   contacts: "tridentwear-contacts-db",
   chat: "tridentwear-chat-db",
   coupons: "tridentwear-coupons-db",
+  otpSessions: "tridentwear-otp-sessions-db",
 };
 const memoryStore = new Map();
 
@@ -238,7 +241,8 @@ function findUserByEmail(email) {
 }
 
 function findUserByPhone(phone) {
-  return getUsersDb().find((user) => user.phone === String(phone || "").trim()) || null;
+  const normalized = normalizePhone(phone).e164;
+  return getUsersDb().find((user) => user.phone === normalized || user.phone === normalizePhone(phone).national) || null;
 }
 
 function findProductById(productId) {
@@ -285,6 +289,48 @@ function validateEmail(email) {
 
 function createOrderId() {
   return `TRI-${Math.random().toString(16).slice(2, 10).toUpperCase()}`;
+}
+
+function normalizePhone(phone, countryCode = "+91") {
+  let digits = String(phone || "").replace(/\D/g, "");
+  const codeDigits = String(countryCode || "+91").replace(/\D/g, "") || "91";
+  if (digits.startsWith(codeDigits) && digits.length > 10) {
+    digits = digits.slice(codeDigits.length);
+  }
+  if (!/^\d{10}$/.test(digits)) {
+    throw createHttpError(400, "Enter a valid 10-digit mobile number.");
+  }
+  return { national: digits, country_code: `+${codeDigits}`, e164: `+${codeDigits}${digits}` };
+}
+
+function getOtpSessionsDb() {
+  return readStorage(STORAGE_KEYS.otpSessions, []);
+}
+
+function saveOtpSessionsDb(sessions) {
+  return writeStorage(STORAGE_KEYS.otpSessions, sessions);
+}
+
+function createMobileUser(phone) {
+  const users = getUsersDb();
+  const existing = users.find((user) => user.phone === phone.e164 || user.phone === phone.national);
+  if (existing) return existing;
+  const id = nextNumericId(users);
+  const user = {
+    id,
+    user_id: `TW${new Date().getFullYear().toString().slice(-2)}-${String(id).padStart(3, "0")}`,
+    name: `Trident Member ${phone.national.slice(-4)}`,
+    email: `${phone.national}@mobile.trident.local`,
+    phone: phone.e164,
+    password: `mobile-${Date.now()}`,
+    role: "customer",
+    otp_verification_status: true,
+    profile_completed_status: false,
+    created_at: nowIso(),
+  };
+  users.push(user);
+  saveUsersDb(users);
+  return user;
 }
 
 function createTrackingPayload(order) {
@@ -454,12 +500,12 @@ function shouldHandleLocally(url) {
 async function handleStaticRequest(url, method, body, originalPath) {
   const pathname = stripSiteBase(url.pathname);
 
-  if (pathname === "/api/products" && method === "GET") {
+  if ((pathname === "/api/products" || pathname === "/api/v1/products") && method === "GET") {
     const products = getProductsDb();
     return url.searchParams.get("featured") === "true" ? products.filter((product) => product.featured) : products;
   }
 
-  const productMatch = pathname.match(/^\/api\/products\/(\d+)$/);
+  const productMatch = pathname.match(/^\/api(?:\/v1)?\/products\/(\d+)$/);
   if (productMatch && method === "GET") {
     const product = findProductById(Number(productMatch[1]));
     if (!product) {
@@ -577,39 +623,46 @@ async function handleStaticRequest(url, method, body, originalPath) {
     };
   }
 
-  if (pathname === "/api/auth/otp/send" && method === "POST") {
-    const phone = String(body?.phone || "").trim();
-    if (!/^\d{10}$/.test(phone)) {
-      throw createHttpError(400, "Please enter a valid 10-digit mobile number.");
+  if ((pathname === "/api/auth/otp/send" || pathname === "/api/v1/auth/send-otp") && method === "POST") {
+    const phone = normalizePhone(body?.phone, body?.country_code || "+91");
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
+    const now = Date.now();
+    const sessions = getOtpSessionsDb().filter((session) => Number(session.expires_at || 0) > now && session.phone !== phone.e164);
+    const recent = getOtpSessionsDb().find((session) => session.phone === phone.e164 && now - Number(session.sent_at || 0) < 45000);
+    if (recent) {
+      throw createHttpError(429, "Please wait before requesting another OTP.");
     }
+    sessions.push({ phone: phone.e164, otp, sent_at: now, expires_at: now + 5 * 60 * 1000, attempts: 0 });
+    saveOtpSessionsDb(sessions);
+    console.log(`[STATIC_BACKEND_MOCK] Mobile OTP for ${phone.e164.slice(0, 3)}******${phone.e164.slice(-3)} is: ${otp}`);
     return {
       success: true,
-      message: "OTP sent successfully. Use 123456 for the static demo.",
+      message: "OTP sent successfully.",
+      dev_otp: otp,
+      expires_in: 300,
+      resend_after: 45,
+      phone_masked: `${phone.e164.slice(0, 3)}******${phone.e164.slice(-3)}`,
     };
   }
 
-  if (pathname === "/api/auth/otp/verify" && method === "POST") {
-    const phone = String(body?.phone || "").trim();
+  if ((pathname === "/api/auth/otp/verify" || pathname === "/api/v1/auth/verify-otp") && method === "POST") {
+    const phone = normalizePhone(body?.phone, body?.country_code || "+91");
     const otp = String(body?.otp || "").trim();
-    if (otp !== "123456") {
-      throw createHttpError(400, "Invalid OTP. Use 123456 for this static demo.");
+    const sessions = getOtpSessionsDb();
+    const session = sessions.find((entry) => entry.phone === phone.e164);
+    if (!session || Number(session.expires_at || 0) <= Date.now()) {
+      throw createHttpError(400, "OTP has expired. Please request a new one.");
     }
-
-    const users = getUsersDb();
-    let user = findUserByPhone(phone);
-    if (!user) {
-      user = {
-        id: nextNumericId(users),
-        name: body?.name ? String(body.name).trim() : `User ${phone.slice(-4)}`,
-        email: `user${phone.slice(-4)}@trident.local`,
-        phone,
-        password: "123456",
-        role: "customer",
-        created_at: nowIso(),
-      };
-      users.push(user);
-      saveUsersDb(users);
+    if (Number(session.attempts || 0) >= 5) {
+      throw createHttpError(429, "Too many OTP attempts. Please request a new OTP.");
     }
+    if (session.otp !== otp) {
+      session.attempts = Number(session.attempts || 0) + 1;
+      saveOtpSessionsDb(sessions);
+      throw createHttpError(400, "Incorrect OTP.");
+    }
+    saveOtpSessionsDb(sessions.filter((entry) => entry.phone !== phone.e164));
+    const user = findUserByPhone(phone.e164) || createMobileUser(phone);
 
     return {
       success: true,
@@ -654,6 +707,48 @@ async function handleStaticRequest(url, method, body, originalPath) {
       return { success: true, message: "Profile setup complete", user: users[userIndex] };
     }
     throw createHttpError(404, "User not found.");
+  }
+
+  if (pathname === "/api/v1/account/profile" && method === "GET") {
+    const user = requireUser();
+    return {
+      user: sanitizeUser(user),
+      addresses: Array.isArray(user.addresses) ? user.addresses : [],
+      default_address_id: user.default_address_id || null,
+      settings: user.settings || { notifications: true, marketing: false },
+    };
+  }
+
+  if (pathname === "/api/v1/account/profile" && ["PUT", "PATCH"].includes(method)) {
+    const user = requireUser();
+    const users = getUsersDb();
+    const index = users.findIndex((entry) => Number(entry.id) === Number(user.id));
+    if (index === -1) {
+      throw createHttpError(404, "User not found.");
+    }
+    const updates = {};
+    if (body?.name != null) {
+      const name = String(body.name).trim();
+      if (name.length < 2) throw createHttpError(400, "Name must be at least 2 characters.");
+      updates.name = name;
+    }
+    if (body?.phone != null) updates.phone = String(body.phone).trim();
+    if (body?.gender != null) updates.gender = String(body.gender).trim();
+    if (body?.addresses != null) updates.addresses = Array.isArray(body.addresses) ? body.addresses : [];
+    if (body?.default_address_id != null) updates.default_address_id = String(body.default_address_id);
+    if (body?.settings != null) updates.settings = body.settings;
+    users[index] = { ...users[index], ...updates };
+    saveUsersDb(users);
+    return {
+      success: true,
+      message: "Profile updated.",
+      profile: {
+        user: sanitizeUser(users[index]),
+        addresses: Array.isArray(users[index].addresses) ? users[index].addresses : [],
+        default_address_id: users[index].default_address_id || null,
+        settings: users[index].settings || { notifications: true, marketing: false },
+      },
+    };
   }
 
   if (pathname === "/api/auth/google" && method === "POST") {
@@ -710,12 +805,24 @@ async function handleStaticRequest(url, method, body, originalPath) {
     return { success: true, message: "Message sent successfully." };
   }
 
-  const reviewsMatch = pathname.match(/^\/api\/reviews\/(\d+)$/);
+  const reviewsMatch = pathname.match(/^\/api(?:\/v1)?\/reviews\/(\d+)$/);
   if (reviewsMatch && method === "GET") {
-    return getReviewsDb().filter((review) => Number(review.product_id) === Number(reviewsMatch[1]));
+    const reviews = getReviewsDb().filter((review) => Number(review.product_id) === Number(reviewsMatch[1]));
+    const bars = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    reviews.forEach((review) => {
+      const rating = Number(review.rating || 0);
+      if (bars[rating] != null) bars[rating] += 1;
+    });
+    return {
+      product_id: Number(reviewsMatch[1]),
+      count: reviews.length,
+      average: reviews.length ? Math.round((reviews.reduce((sum, review) => sum + Number(review.rating || 0), 0) / reviews.length) * 10) / 10 : 0,
+      bars,
+      reviews,
+    };
   }
 
-  if (pathname === "/api/reviews" && method === "POST") {
+  if ((pathname === "/api/reviews" || pathname === "/api/v1/reviews") && method === "POST") {
     const user = requireUser();
     const reviews = getReviewsDb();
     const productId = Number(body?.product_id);
@@ -739,6 +846,8 @@ async function handleStaticRequest(url, method, body, originalPath) {
       product_id: productId,
       rating,
       review: reviewText,
+      verified_purchase: false,
+      status: "pending_moderation",
       created_at: nowIso(),
     };
     reviews.push(review);
@@ -793,7 +902,7 @@ async function handleStaticRequest(url, method, body, originalPath) {
     };
   }
 
-  if (pathname === "/api/payment/create-order" && method === "POST") {
+  if ((pathname === "/api/payment/create-order" || pathname === "/api/v1/payments/create-order") && method === "POST") {
     return {
       key_id: "static_demo_checkout",
       razorpay_order_id: `order_${Math.random().toString(36).slice(2, 10)}`,
@@ -802,7 +911,7 @@ async function handleStaticRequest(url, method, body, originalPath) {
     };
   }
 
-  if (pathname === "/api/payment/cod" && method === "POST") {
+  if ((pathname === "/api/payment/cod" || pathname === "/api/v1/payments/cod") && method === "POST") {
     const orderData = body || {};
     const orderResponse = createStaticOrder(orderData, "confirmed");
     return {
@@ -812,7 +921,7 @@ async function handleStaticRequest(url, method, body, originalPath) {
     };
   }
 
-  if (pathname === "/api/payment/verify" && method === "POST") {
+  if ((pathname === "/api/payment/verify" || pathname === "/api/v1/payments/verify") && method === "POST") {
     const orderData = body?.order_data;
     if (!orderData) {
       throw createHttpError(400, "Missing order data.");
@@ -842,12 +951,54 @@ async function handleStaticRequest(url, method, body, originalPath) {
     };
   }
 
-  if (pathname === "/api/admin/orders" && method === "GET") {
+  if ((pathname === "/api/admin/orders" || pathname === "/api/v1/admin/orders") && method === "GET") {
     requireAdmin();
     return getOrdersDb();
   }
 
-  const adminOrderMatch = pathname.match(/^\/api\/admin\/orders\/([^/]+)$/);
+  if ((pathname === "/api/admin/reviews" || pathname === "/api/v1/admin/reviews") && method === "GET") {
+    requireAdmin();
+    const status = url.searchParams.get("status");
+    const reviews = getReviewsDb();
+    const normalized = (value) => String(value || "pending").replace("_moderation", "").toLowerCase();
+    const filtered = status ? reviews.filter((review) => normalized(review.status) === status) : reviews;
+    return {
+      counts: {
+        pending: reviews.filter((review) => normalized(review.status) === "pending").length,
+        approved: reviews.filter((review) => normalized(review.status) === "approved").length,
+        rejected: reviews.filter((review) => normalized(review.status) === "rejected").length,
+      },
+      reviews: filtered,
+    };
+  }
+
+  const adminReviewMatch = pathname.match(/^\/api(?:\/v1)?\/admin\/reviews\/(\d+)$/);
+  if (adminReviewMatch && ["PATCH", "PUT"].includes(method)) {
+    requireAdmin();
+    const reviews = getReviewsDb();
+    const review = reviews.find((entry) => Number(entry.id) === Number(adminReviewMatch[1]));
+    if (!review) {
+      throw createHttpError(404, "Review not found.");
+    }
+    review.status = String(body?.status || review.status || "pending").replace("_moderation", "").toLowerCase();
+    review.moderation_notes = String(body?.moderation_notes || "").trim();
+    review.moderated_at = nowIso();
+    saveReviewsDb(reviews);
+    return { success: true, message: `Review ${review.status}.`, review };
+  }
+
+  if (adminReviewMatch && method === "DELETE") {
+    requireAdmin();
+    const reviews = getReviewsDb();
+    const reviewId = Number(adminReviewMatch[1]);
+    if (!reviews.some((entry) => Number(entry.id) === reviewId)) {
+      throw createHttpError(404, "Review not found.");
+    }
+    saveReviewsDb(reviews.filter((entry) => Number(entry.id) !== reviewId));
+    return { success: true, message: "Review deleted." };
+  }
+
+  const adminOrderMatch = pathname.match(/^\/api(?:\/v1)?\/admin\/orders\/([^/]+)$/);
   if (adminOrderMatch && ["PATCH", "PUT"].includes(method)) {
     requireAdmin();
     const orders = getOrdersDb();
@@ -857,6 +1008,10 @@ async function handleStaticRequest(url, method, body, originalPath) {
     }
 
     order.status = String(body?.status || order.status || "pending").toLowerCase();
+    if (body?.payment_status) order.payment_status = String(body.payment_status).toLowerCase();
+    ["tracking_id", "courier", "estimated_delivery", "shipment_notes"].forEach((field) => {
+      if (body?.[field] != null) order[field] = String(body[field]).trim();
+    });
     if (order.status === "shipped" && !order.tracking_id) {
       order.tracking_id = `SR${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
       order.courier = "Delhivery";
@@ -867,12 +1022,12 @@ async function handleStaticRequest(url, method, body, originalPath) {
     return { success: true, message: "Order status updated.", order };
   }
 
-  if (pathname === "/api/admin/analytics" && method === "GET") {
+  if ((pathname === "/api/admin/analytics" || pathname === "/api/v1/admin/analytics") && method === "GET") {
     requireAdmin();
     return buildAnalytics(getOrdersDb());
   }
 
-  if (pathname === "/api/admin/products" && method === "POST") {
+  if ((pathname === "/api/admin/products" || pathname === "/api/v1/admin/products") && method === "POST") {
     requireAdmin();
     const products = getProductsDb();
     const parsed = body instanceof FormData ? await parseFormData(body) : body || {};
@@ -889,7 +1044,7 @@ async function handleStaticRequest(url, method, body, originalPath) {
     return { success: true, message: "Product added successfully.", product };
   }
 
-  const adminProductMatch = pathname.match(/^\/api\/admin\/products\/(\d+)$/);
+  const adminProductMatch = pathname.match(/^\/api(?:\/v1)?\/admin\/products\/(\d+)$/);
   if (adminProductMatch && method === "PUT") {
     requireAdmin();
     const productId = Number(adminProductMatch[1]);
@@ -1022,6 +1177,9 @@ function createStaticOrder(orderData, defaultStatus) {
       notes: String(orderData?.shipping?.notes || "").trim(),
     },
     status: defaultStatus,
+    payment_method: orderData?.payment_method || "cod",
+    payment_status: orderData?.payment_status || (orderData?.payment_method === "online" ? "paid" : "cod_pending"),
+    test_mode: Boolean(orderData?.test_mode),
     created_at: nowIso(),
   };
 
@@ -1040,7 +1198,8 @@ export function resolveUrl(path) {
   const normalizedPath = stripSiteBase(normalizedUrl ? normalizedUrl.pathname : path);
   if (!STATIC_MODE && normalizedPath.startsWith("/api/")) {
     const suffix = normalizedUrl ? `${normalizedUrl.search}${normalizedUrl.hash}` : "";
-    return `${API_ROOT}${normalizedPath}${suffix}`;
+    const origin = API_ROOT || runtimeLocation?.origin || "";
+    return `${origin}${normalizedPath}${suffix}`;
   }
 
   const cleanPath = STATIC_MODE
@@ -1109,12 +1268,19 @@ export async function withLoading(btnElement, asyncFn) {
 export async function request(path, options = {}) {
   const method = String(options.method || "GET").toUpperCase();
   const url = new URL(resolveUrl(path));
-  const body = parseJsonBody(options);
+  const requestOptions = {
+    ...options,
+    headers: {
+      ...(options.headers || {}),
+    },
+  };
+  const timeoutMs = Number(requestOptions.timeoutMs || 12000);
+  delete requestOptions.timeoutMs;
+  const body = parseJsonBody(requestOptions);
   
-  if (!options.headers) options.headers = {};
   const session = getAuthSession();
   if (session && session.token) {
-    options.headers["Authorization"] = `Bearer ${session.token}`;
+    requestOptions.headers["Authorization"] = `Bearer ${session.token}`;
   }
 
   try {
@@ -1122,10 +1288,37 @@ export async function request(path, options = {}) {
       return await handleStaticRequest(url, method, body, path);
     }
 
-    const response = await fetch(resolveUrl(path), options);
+    const fetchOnce = async () => {
+      const controller = new AbortController();
+      const externalSignal = requestOptions.signal;
+      const timer = window.setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        return await fetch(resolveUrl(path), {
+          ...requestOptions,
+          signal: externalSignal || controller.signal,
+        });
+      } finally {
+        window.clearTimeout(timer);
+      }
+    };
+
+    let response;
+    try {
+      response = await fetchOnce();
+    } catch (networkError) {
+      if (!["GET", "HEAD"].includes(method)) {
+        throw networkError;
+      }
+      response = await fetchOnce();
+    }
+
     const contentType = response.headers.get("content-type") || "";
     let payload = contentType.includes("application/json") ? await response.json() : null;
     if (!response.ok) {
+      if (response.status === 401) {
+        clearAuthSession();
+        window.dispatchEvent(new CustomEvent("trident:auth-expired", { detail: { path } }));
+      }
       const errMsg = payload?.error?.message || payload?.detail || payload?.message || "Request failed.";
       throw createHttpError(response.status, errMsg);
     }
@@ -1179,6 +1372,16 @@ export function getWithFallback(paths) {
 export function post(path, body) {
   return request(path, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+}
+
+export function put(path, body) {
+  return request(path, {
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },

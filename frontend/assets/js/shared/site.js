@@ -1,6 +1,7 @@
 import { clearAuthSession, get, getAuthSession, post, resolveAssetUrl, resolveUrl, saveAuthSession, withLoading } from "./api.js";
-import { addCartItem, getCartCount, loadCart, syncCart } from "./cart.js";
+import { addCartItem, getCartCount, getCartSubtotal, loadCart, syncCart } from "./cart.js";
 import { normalizeProduct } from "./catalog.js";
+import { initErrorMonitoring } from "./error-monitor.js";
 
 let currentUser = null;
 
@@ -58,6 +59,11 @@ export function showToast(message, type = "success") {
   }, 2800);
 }
 
+export function notify(type, message, detail = {}) {
+  window.dispatchEvent(new CustomEvent("trident:notification", { detail: { type, message, ...detail } }));
+  showToast(message, type === "error" ? "error" : "success");
+}
+
 /* ───────── Skeleton loaders ───────── */
 
 export function createSkeletonCards(count = 3) {
@@ -93,8 +99,9 @@ export function createEmptyMarkup(title, copy, href = "/products", label = "Brow
 export function productCardMarkup(product) {
   const item = normalizeProduct(product);
   const productImage = resolveAssetUrl(item.image);
-  const subcategoryLabel = product.subcategory
-    ? product.subcategory
+  const metaSource = item.fit_type || item.subcategory || item.category || "";
+  const subcategoryLabel = metaSource
+    ? String(metaSource)
         .replace(/-/g, " ")
         .split(" ")
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -102,7 +109,9 @@ export function productCardMarkup(product) {
     : "T-Shirt";
 
   let scarcityTag = "";
-  if (item.stock < 5) {
+  if (item.stock <= 0) {
+    scarcityTag = `<span class="product-badge danger">Out of Stock</span>`;
+  } else if (item.stock < 5) {
     scarcityTag = `<span class="product-badge danger">Only ${item.stock} Left</span>`;
   } else if (item.stock < 20) {
     scarcityTag = `<span class="product-badge warning">Fast Selling</span>`;
@@ -116,24 +125,42 @@ export function productCardMarkup(product) {
     <article class="product-card reveal" data-product-card data-product-id="${item.id}">
       <a class="product-media image-wrap" href="${pageUrl(`/product?id=${item.id}`)}" aria-label="View ${escapeHtml(item.name)}">
         ${scarcityTag}
+        <button
+          class="wishlist-btn product-card-wishlist ${isWishlisted(item.id) ? "is-wishlisted" : ""}"
+          type="button"
+          data-wishlist-toggle
+          data-product-id="${item.id}"
+          aria-label="${isWishlisted(item.id) ? "Remove from wishlist" : "Add to wishlist"}"
+          aria-pressed="${isWishlisted(item.id) ? "true" : "false"}"
+        >
+          <i class="${isWishlisted(item.id) ? "fa-solid" : "fa-regular"} fa-heart" aria-hidden="true"></i>
+        </button>
         <img
           src="${escapeHtml(productImage)}"
           alt="${escapeHtml(item.name)}"
           loading="lazy"
+          decoding="async"
+          width="640"
+          height="800"
           class="product-image"
           data-product-image
         >
       </a>
       <div class="product-body">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="product-meta-row">
           <span class="product-type">${escapeHtml(subcategoryLabel)}</span>
-          <span style="font-size: 0.65rem; color: var(--gray); font-weight: 600;"><i class="fa-solid fa-fire" style="color: var(--danger);"></i> High Demand</span>
+          <span class="product-demand"><i class="fa-solid fa-fire" aria-hidden="true"></i> High Demand</span>
         </div>
         <h3 class="product-name" style="margin-top: 4px; margin-bottom: 2px;">${escapeHtml(item.name)}</h3>
         ${tagline}
+        <div class="product-card-rating" aria-label="Rated 4.8 out of 5">
+          <i class="fa-solid fa-star" aria-hidden="true"></i>
+          <span>4.8</span>
+          <small>verified fit</small>
+        </div>
         <div class="product-footer" style="margin-top: 12px;">
           <strong class="product-price" style="font-size: 1.1rem;">${formatCurrency(item.price)}</strong>
-          <a href="${pageUrl(`/product?id=${item.id}`)}" class="btn btn-premium-primary product-card-cta" style="padding: 0.4rem 1rem; font-size: 0.8rem; border-radius: 4px;">Select Size</a>
+          <a href="${pageUrl(`/product?id=${item.id}`)}" class="btn btn-premium-primary product-card-cta" style="padding: 0.4rem 1rem; font-size: 0.8rem; border-radius: 4px;">${item.stock <= 0 ? "Notify Me" : "Select Size"}</a>
         </div>
       </div>
     </article>
@@ -193,22 +220,97 @@ export function bindProductCardActions(container, products) {
   });
 
   container.querySelectorAll("[data-wishlist-toggle]").forEach((button) => {
-    button.addEventListener("click", (event) => {
+    button.addEventListener("click", async (event) => {
       event.preventDefault();
       event.stopPropagation();
       const productId = Number(button.dataset.productId);
       const product = lookup.get(String(productId));
-      toggleWishlist(productId);
-      button.classList.toggle("is-wishlisted");
-      button.classList.add("wishlist-pop");
-      window.setTimeout(() => button.classList.remove("wishlist-pop"), 400);
-      if (button.classList.contains("is-wishlisted")) {
-        showToast(`${product?.name || "Item"} added to wishlist.`);
+      button.disabled = true;
+      try {
+        await toggleWishlist(productId);
+        button.classList.toggle("is-wishlisted", isWishlisted(productId));
+        button.setAttribute("aria-pressed", String(button.classList.contains("is-wishlisted")));
+        button.setAttribute("aria-label", button.classList.contains("is-wishlisted") ? "Remove from wishlist" : "Add to wishlist");
+        const icon = button.querySelector("i");
+        if (icon) icon.className = button.classList.contains("is-wishlisted") ? "fa-solid fa-heart" : "fa-regular fa-heart";
+        button.classList.add("wishlist-pop");
+        window.setTimeout(() => button.classList.remove("wishlist-pop"), 400);
+        showToast(
+          button.classList.contains("is-wishlisted")
+            ? `${product?.name || "Item"} added to wishlist.`
+            : `${product?.name || "Item"} removed from wishlist.`
+        );
+      } catch (error) {
+        if (error.message === "unauthorized") promptLoginOverlay();
+        else showToast(error.message, "error");
+      } finally {
+        button.disabled = false;
       }
     });
   });
 
   observeReveals(container);
+}
+
+function renderCartDrawer(items = loadCart()) {
+  let drawer = document.querySelector("[data-cart-drawer]");
+  if (!drawer) {
+    drawer = document.createElement("aside");
+    drawer.className = "cart-drawer";
+    drawer.setAttribute("data-cart-drawer", "");
+    drawer.innerHTML = `
+      <div class="cart-drawer-backdrop" data-cart-drawer-close></div>
+      <div class="cart-drawer-panel">
+        <div class="cart-drawer-head">
+          <strong>Your Cart</strong>
+          <button type="button" data-cart-drawer-close aria-label="Close cart"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="cart-drawer-list" data-cart-drawer-list></div>
+        <div class="cart-drawer-foot">
+          <div><span>Subtotal</span><strong data-cart-drawer-subtotal></strong></div>
+          <a class="btn btn-primary btn-full" href="${pageUrl("/checkout")}">Checkout</a>
+          <a class="btn btn-outline btn-full" href="${pageUrl("/cart")}">View Cart</a>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(drawer);
+    drawer.querySelectorAll("[data-cart-drawer-close]").forEach((el) => el.addEventListener("click", () => drawer.classList.remove("is-open")));
+  }
+  const list = drawer.querySelector("[data-cart-drawer-list]");
+  const subtotal = drawer.querySelector("[data-cart-drawer-subtotal]");
+  if (subtotal) subtotal.textContent = formatCurrency(getCartSubtotal(items));
+  if (list) {
+    list.innerHTML = items.length
+      ? items.map((item) => `
+        <article class="cart-drawer-item">
+          <img src="${resolveAssetUrl(item.image)}" alt="${escapeHtml(item.name)}">
+          <div><strong>${escapeHtml(item.name)}</strong><span>Size ${escapeHtml(item.size)} x ${Number(item.qty || 1)}</span></div>
+        </article>
+      `).join("")
+      : `<div class="empty-state compact"><strong>Your cart is empty</strong><span>Add a premium piece to start checkout.</span></div>`;
+  }
+  return drawer;
+}
+
+function openCartDrawer(items = loadCart()) {
+  renderCartDrawer(items).classList.add("is-open");
+}
+
+function renderStickyCartCta(items = loadCart()) {
+  let cta = document.querySelector("[data-sticky-cart-cta]");
+  const count = getCartCount(items);
+  if (!cta) {
+    cta = document.createElement("a");
+    cta.className = "sticky-cart-cta";
+    cta.setAttribute("data-sticky-cart-cta", "");
+    cta.href = pageUrl("/cart");
+    document.body.appendChild(cta);
+  }
+  cta.hidden = count <= 0;
+  cta.innerHTML = `
+    <span><i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>${count} item${count === 1 ? "" : "s"}</span>
+    <strong>${formatCurrency(getCartSubtotal(items))}</strong>
+  `;
 }
 
 // Product detail modal
@@ -659,7 +761,7 @@ function bindLogout() {
     button.dataset.logoutBound = "true";
     button.addEventListener("click", async () => {
       try {
-        await post("/api/auth/logout", {});
+        await post("/api/v1/auth/logout", {});
         clearAuthSession();
         currentUser = null;
         setAccountUi();
@@ -681,7 +783,7 @@ let searchLoadedOnce = false;
 async function ensureSearchProducts() {
   if (searchLoadedOnce) return;
   try {
-    const data = await get("/api/products");
+    const data = await get("/api/v1/products");
     searchProducts = (Array.isArray(data) ? data : data.products || []).map(normalizeProduct);
     searchLoadedOnce = true;
   } catch { searchProducts = []; }
@@ -798,7 +900,7 @@ export async function refreshAuthState() {
   setAccountUi();
   if (!session?.token) return currentUser;
   try {
-    const data = await get("/api/auth/me");
+    const data = await get("/api/v1/auth/me");
     if (!data?.authenticated || !data.user) {
       clearAuthSession();
       currentUser = null;
@@ -890,6 +992,7 @@ function initButtonRipple() {
 export async function initSite() {
   // Guard, scroll reveal, glass navbar — clean global init
   document.body.classList.add("js-loaded");
+  initErrorMonitoring();
   initGlobalScrollReveal();
   initNavbarScroll();
 
@@ -911,7 +1014,14 @@ export async function initSite() {
   bindNewsletter();
   initBackToTop();
   setCartCount(getCartCount(loadCart()));
-  window.addEventListener("trident:cart-change", (event) => { setCartCount(event.detail.count); });
+  renderCartDrawer(loadCart());
+  renderStickyCartCta(loadCart());
+  window.addEventListener("trident:cart-change", (event) => {
+    setCartCount(event.detail.count);
+    renderCartDrawer(event.detail.items || loadCart());
+    renderStickyCartCta(event.detail.items || loadCart());
+    if (event.detail.openDrawer) openCartDrawer(event.detail.items || loadCart());
+  });
   syncCart();
   observeReveals();
 }

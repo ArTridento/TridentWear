@@ -2,7 +2,16 @@ from fastapi import APIRouter, Request, HTTPException, status
 from pydantic import BaseModel
 from typing import Dict, Any, Optional
 
-from app.services.auth_service import register_user, login_user, get_current_user_state, logout_user
+from app.services.auth_service import (
+    register_user,
+    login_user,
+    get_current_user_state,
+    deactivate_account_placeholder,
+    logout_all_devices,
+    logout_user,
+    send_mobile_otp,
+    verify_mobile_otp,
+)
 
 router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
 
@@ -17,6 +26,15 @@ class RegisterPayload(BaseModel):
     confirm_password: Optional[str] = None
     gender: Optional[str] = None
 
+class SendOtpPayload(BaseModel):
+    phone: str
+    country_code: str = "+91"
+
+class VerifyOtpPayload(BaseModel):
+    phone: str
+    otp: str
+    country_code: str = "+91"
+
 @router.get("/me")
 def get_auth_state(request: Request) -> Dict[str, Any]:
     return get_current_user_state(request)
@@ -29,6 +47,22 @@ def register(payload: RegisterPayload, request: Request) -> Dict[str, Any]:
 def login(payload: LoginPayload, request: Request) -> Dict[str, Any]:
     return login_user(payload, request)
 
+@router.post("/send-otp")
+def send_otp(payload: SendOtpPayload, request: Request) -> Dict[str, Any]:
+    return send_mobile_otp(payload, request)
+
+@router.post("/verify-otp")
+def verify_otp(payload: VerifyOtpPayload, request: Request) -> Dict[str, Any]:
+    return verify_mobile_otp(payload, request)
+
 @router.post("/logout")
 def logout(request: Request) -> Dict[str, Any]:
     return logout_user(request)
+
+@router.post("/logout-all")
+def logout_all(request: Request) -> Dict[str, Any]:
+    return logout_all_devices(request)
+
+@router.post("/deactivate")
+def deactivate_account(request: Request) -> Dict[str, Any]:
+    return deactivate_account_placeholder(request)

@@ -4,3 +4,7 @@ python-multipart
 bcrypt
 PyJWT
 itsdangerous
+sqlalchemy
+psycopg2-binary
+alembic
+python-dotenv

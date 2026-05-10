@@ -94,6 +94,12 @@ function setSubmitting(form, isSubmitting, idleLabel, pendingLabel) {
   button.textContent = isSubmitting ? pendingLabel : idleLabel;
 }
 
+function setButtonLoading(button, isLoading, idleLabel, loadingLabel) {
+  if (!button) return;
+  button.disabled = isLoading;
+  button.textContent = isLoading ? loadingLabel : idleLabel;
+}
+
 function bindRegisterForm() {
   const form = document.querySelector("[data-register-form]");
   if (!form) {
@@ -120,7 +126,7 @@ function bindRegisterForm() {
 
     setSubmitting(form, true, "Create Account", "Creating Account...");
     try {
-      const data = await post("/api/auth/register", {
+      const data = await post("/api/v1/auth/register", {
         name,
         email,
         password,
@@ -146,62 +152,217 @@ function bindRegisterForm() {
 
 function bindOtpLogin() {
   const sendOtpBtn = document.getElementById("send-otp-btn");
+  const resendOtpBtn = document.getElementById("resend-otp-btn");
   const mobileInput = document.getElementById("login-mobile");
+  const countryInput = document.getElementById("login-country-code");
   const otpContainer = document.getElementById("otp-field-container");
   const otpInput = document.getElementById("login-otp");
+  const otpStatus = document.querySelector("[data-otp-status]");
+  const otpHelper = document.querySelector("[data-otp-helper]");
 
   if (!sendOtpBtn) return;
 
-  sendOtpBtn.addEventListener("click", async () => {
-    const mobile = mobileInput.value.trim();
-    if (!mobile || !/^[0-9]{10}$/.test(mobile)) {
+  let otpSent = false;
+  let resendTimer = null;
+
+  const resetOtpBoxes = () => {
+    document.querySelectorAll(".otp-box").forEach((box) => { box.value = ""; });
+    if (otpInput) otpInput.value = "";
+  };
+
+  const currentPayload = () => ({
+    phone: mobileInput.value.replace(/\D/g, ""),
+    country_code: countryInput?.value || "+91",
+  });
+
+  const startResendTimer = (seconds = 45) => {
+    if (!resendOtpBtn) return;
+    window.clearInterval(resendTimer);
+    let remaining = Number(seconds || 45);
+    resendOtpBtn.hidden = false;
+    resendOtpBtn.disabled = true;
+    resendOtpBtn.textContent = `Resend OTP in ${remaining}s`;
+    resendTimer = window.setInterval(() => {
+      remaining -= 1;
+      if (remaining <= 0) {
+        window.clearInterval(resendTimer);
+        resendOtpBtn.disabled = false;
+        resendOtpBtn.textContent = "Resend OTP";
+        return;
+      }
+      resendOtpBtn.textContent = `Resend OTP in ${remaining}s`;
+    }, 1000);
+  };
+
+  const sendOtp = async ({ isResend = false } = {}) => {
+    const payload = currentPayload();
+    if (!payload.phone || !/^[0-9]{10}$/.test(payload.phone)) {
       showToast("Please enter a valid 10-digit mobile number.", "error");
       return;
     }
 
-    if (otpContainer.style.display === "none") {
-      sendOtpBtn.disabled = true;
-      sendOtpBtn.textContent = "Sending...";
-      
-      try {
-        const data = await post("/api/auth/otp/send", { phone: mobile });
-        otpContainer.style.display = "block";
-        sendOtpBtn.textContent = "Verify & Login";
-        sendOtpBtn.classList.replace("btn-secondary", "btn-primary");
-        if (data.dev_otp) {
-           showToast("OTP sent to your mobile!\nDev OTP: " + data.dev_otp, "success");
-        } else {
-           showToast("OTP sent to your mobile!", "success");
-        }
-      } catch (err) {
-        showToast(err.message, "error");
-        sendOtpBtn.textContent = "Send OTP";
-      } finally {
-        sendOtpBtn.disabled = false;
+    setButtonLoading(isResend ? resendOtpBtn : sendOtpBtn, true, isResend ? "Resend OTP" : "Send OTP", "Sending...");
+    try {
+      const data = await post("/api/v1/auth/send-otp", payload);
+      otpSent = true;
+      resetOtpBoxes();
+      otpContainer.style.display = "block";
+      sendOtpBtn.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Verify & Login';
+      if (otpHelper) otpHelper.textContent = `OTP sent to ${data.phone_masked || "your mobile number"}.`;
+      if (otpStatus) {
+        otpStatus.textContent = data.dev_otp
+          ? `Development OTP: ${data.dev_otp}`
+          : "Enter the 6-digit OTP before it expires.";
       }
-    } else {
-      const otp = otpInput.value.trim();
-      if (!otp || otp.length < 6) {
-        showToast("Please enter the 6-digit OTP.", "error");
-        return;
+      startResendTimer(data.resend_after || 45);
+      document.querySelector(".otp-box")?.focus();
+      showToast(data.dev_otp ? `OTP sent. Dev OTP: ${data.dev_otp}` : "OTP sent to your mobile.", "success");
+    } catch (err) {
+      showToast(err.message, "error");
+    } finally {
+      if (!isResend) {
+        setButtonLoading(sendOtpBtn, false, "Send OTP", "Sending...");
       }
-
-      sendOtpBtn.disabled = true;
-      sendOtpBtn.textContent = "Verifying...";
-
-      try {
-        const data = await post("/api/auth/otp/verify", { phone: mobile, otp });
-        showToast("Login successful!", "success");
-        saveAuthSession({ token: data.token, user: data.user });
-        await refreshAuthState();
-        redirectAfterAuth(data.user);
-      } catch (err) {
-        showToast(err.message, "error");
-        sendOtpBtn.textContent = "Verify & Login";
-      } finally {
-        sendOtpBtn.disabled = false;
+      if (otpSent) {
+        sendOtpBtn.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Verify & Login';
       }
     }
+  };
+
+  const verifyOtp = async () => {
+    const payload = { ...currentPayload(), otp: otpInput.value.trim() };
+    if (!payload.otp || payload.otp.length < 6) {
+      showToast("Please enter the 6-digit OTP.", "error");
+      return;
+    }
+
+    setButtonLoading(sendOtpBtn, true, "Verify & Login", "Verifying...");
+    try {
+      const data = await post("/api/v1/auth/verify-otp", payload);
+      showToast("Mobile verified. Welcome to TridentWear.", "success");
+      saveAuthSession({ token: data.token, user: data.user });
+      await refreshAuthState();
+      redirectAfterAuth(data.user);
+    } catch (err) {
+      showToast(err.message, "error");
+      sendOtpBtn.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Verify & Login';
+    } finally {
+      sendOtpBtn.disabled = false;
+    }
+  };
+
+  mobileInput?.addEventListener("input", () => {
+    mobileInput.value = mobileInput.value.replace(/\D/g, "").slice(0, 10);
+    otpSent = false;
+    otpContainer.style.display = "none";
+    sendOtpBtn.innerHTML = '<i class="fa-solid fa-mobile-screen-button"></i> Send OTP';
+    if (resendOtpBtn) resendOtpBtn.hidden = true;
+  });
+
+  countryInput?.addEventListener("change", () => {
+    otpSent = false;
+    otpContainer.style.display = "none";
+    sendOtpBtn.innerHTML = '<i class="fa-solid fa-mobile-screen-button"></i> Send OTP';
+    if (resendOtpBtn) resendOtpBtn.hidden = true;
+  });
+
+  sendOtpBtn.addEventListener("click", async () => {
+    if (!otpSent) await sendOtp();
+    else await verifyOtp();
+  });
+
+  resendOtpBtn?.addEventListener("click", () => {
+    sendOtp({ isResend: true });
+  });
+}
+
+function bindLoginTabs() {
+  const emailBlock = document.getElementById("email-login-block");
+  const otpBlock = document.getElementById("otp-login-block");
+  const emailTab = document.getElementById("btn-tab-email");
+  const otpTab = document.getElementById("btn-tab-otp");
+  if (!emailBlock || !otpBlock || !emailTab || !otpTab) return;
+
+  const switchTab = (tab) => {
+    const emailActive = tab === "email";
+    emailBlock.style.display = emailActive ? "block" : "none";
+    otpBlock.style.display = emailActive ? "none" : "block";
+    emailTab.classList.toggle("is-active", emailActive);
+    otpTab.classList.toggle("is-active", !emailActive);
+  };
+
+  document.querySelectorAll("[data-login-tab]").forEach((button) => {
+    button.addEventListener("click", () => switchTab(button.dataset.loginTab));
+  });
+}
+
+function bindPasswordToggles() {
+  document.querySelectorAll("[data-toggle-password]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const input = document.getElementById(button.dataset.togglePassword);
+      const icon = button.querySelector("i");
+      if (!input || !icon) return;
+      input.type = input.type === "password" ? "text" : "password";
+      icon.className = input.type === "password" ? "fa-regular fa-eye" : "fa-regular fa-eye-slash";
+    });
+  });
+}
+
+function bindOtpBoxes() {
+  const boxes = Array.from(document.querySelectorAll(".otp-box"));
+  const target = document.getElementById("login-otp");
+  if (!boxes.length || !target) return;
+  boxes.forEach((box, index) => {
+    box.addEventListener("input", () => {
+      box.value = box.value.replace(/\D/g, "").slice(0, 1);
+      if (box.value && index < boxes.length - 1) boxes[index + 1].focus();
+      target.value = boxes.map((entry) => entry.value).join("");
+    });
+    box.addEventListener("paste", (event) => {
+      event.preventDefault();
+      const pasted = event.clipboardData.getData("text").replace(/\D/g, "").slice(0, boxes.length);
+      pasted.split("").forEach((digit, digitIndex) => {
+        if (boxes[digitIndex]) boxes[digitIndex].value = digit;
+      });
+      target.value = boxes.map((entry) => entry.value).join("");
+      boxes[Math.min(pasted.length, boxes.length) - 1]?.focus();
+    });
+    box.addEventListener("keydown", (event) => {
+      if (event.key === "Backspace" && !box.value && index > 0) boxes[index - 1].focus();
+    });
+  });
+}
+
+function bindPasswordStrength() {
+  const password = document.getElementById("register-password");
+  const wrap = document.getElementById("pw-strength-wrap");
+  const fill = document.getElementById("pw-fill");
+  const label = document.getElementById("pw-label");
+  if (!password || !wrap || !fill || !label) return;
+
+  password.addEventListener("input", () => {
+    const val = password.value;
+    if (!val) {
+      wrap.hidden = true;
+      return;
+    }
+    wrap.hidden = false;
+    let score = 0;
+    if (val.length >= 8) score++;
+    if (/[A-Z]/.test(val)) score++;
+    if (/[0-9]/.test(val)) score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+    const levels = [
+      { w: "25%", c: "#dc3545", t: "Weak" },
+      { w: "50%", c: "#fd7e14", t: "Fair" },
+      { w: "75%", c: "#ffc107", t: "Good" },
+      { w: "100%", c: "#198754", t: "Strong" },
+    ];
+    const level = levels[score - 1] || levels[0];
+    fill.style.width = level.w;
+    fill.style.background = level.c;
+    label.textContent = level.t;
+    label.style.color = level.c;
   });
 }
 
@@ -318,7 +479,7 @@ function bindLoginForm() {
 
     setSubmitting(form, true, "Login", "Signing In...");
     try {
-      const data = await post("/api/auth/login", { email, password });
+      const data = await post("/api/v1/auth/login", { email, password });
       saveAuthSession({ token: data.token, user: data.user });
       await refreshAuthState();
       renderAuthStatus();
@@ -338,7 +499,11 @@ export async function initAuthPage(mode) {
   bindRegisterForm();
   bindLoginForm();
   bindGoogleLogin();
+  bindPasswordToggles();
+  bindPasswordStrength();
   if (mode === "login") {
+    bindLoginTabs();
+    bindOtpBoxes();
     bindOtpLogin();
     bindForgotPassword();
   }

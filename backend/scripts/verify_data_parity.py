@@ -1,6 +1,6 @@
-import os
 import json
 import sys
+import argparse
 from pathlib import Path
 from sqlalchemy import create_engine, select, func
 
@@ -10,7 +10,7 @@ BASE_DIR = BACKEND_DIR.parent
 DB_DIR = BASE_DIR / "db"
 sys.path.append(str(BACKEND_DIR))
 
-from app.db.models import metadata, users, products, orders, chat_messages
+from app.db.models import users, products, orders, chat_messages, reviews, otp_sessions
 from app.core.logger import app_logger
 
 PG_DSN = os.getenv("PG_DSN", "postgresql://user:password@localhost/tridentwear")
@@ -30,12 +30,14 @@ def load_json(filename):
     except Exception:
         return []
 
-def verify():
+def verify(archive_json=False):
     print("=== DATA PARITY VERIFICATION ===")
     
     users_data = load_json("users.json")
     products_data = load_json("products.json")
     orders_data = load_json("orders.json")
+    reviews_data = load_json("reviews.json")
+    otp_data = load_json("otp_sessions.json")
     chat_data = load_json("contacts.json")
     if not chat_data:
         chat_data = load_json("chat.json")
@@ -69,19 +71,35 @@ def verify():
             if len(chat_data) != pg_chat_count:
                 print("❌ Mismatch in Chat")
                 parity = False
+
+            pg_reviews_count = conn.execute(select(func.count()).select_from(reviews)).scalar()
+            print(f"Reviews: JSON={len(reviews_data)} | PG={pg_reviews_count}")
+            if len(reviews_data) != pg_reviews_count:
+                print("❌ Mismatch in Reviews")
+                parity = False
+
+            pg_otp_count = conn.execute(select(func.count()).select_from(otp_sessions)).scalar()
+            print(f"OTP Sessions: JSON={len(otp_data)} | PG={pg_otp_count}")
+            if len(otp_data) != pg_otp_count:
+                print("❌ Mismatch in OTP Sessions")
+                parity = False
     except Exception as e:
         print(f"❌ Verification failed due to database connection error: {e}")
         parity = False
 
     if parity:
         print("\nAll records migrated successfully.")
+        if not archive_json:
+            print("JSON files left untouched. Pass --archive-json after backups to rename them.")
+            print("\nMIGRATION SAFE: TRUE")
+            return
         print("Archiving JSON files...")
         
         # Archiving logic - strictly renaming, never deleting
-        for fname in ["users.json", "products.json", "orders.json", "contacts.json", "chat.json"]:
+        for fname in ["users.json", "products.json", "orders.json", "contacts.json", "chat.json", "reviews.json", "otp_sessions.json"]:
             fpath = DB_DIR / fname
             if fpath.exists():
-                os.rename(fpath, DB_DIR / f"{fname}.archive")
+                fpath.rename(DB_DIR / f"{fname}.archive")
                 print(f" -> Archived {fname} to {fname}.archive")
                 
         print("\nMIGRATION SAFE: TRUE")
@@ -89,4 +107,7 @@ def verify():
         print("\nMIGRATION SAFE: FALSE")
 
 if __name__ == "__main__":
-    verify()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--archive-json", action="store_true", help="Rename JSON files only after manual backup confirmation.")
+    args = parser.parse_args()
+    verify(archive_json=args.archive_json)

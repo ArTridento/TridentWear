@@ -11,6 +11,8 @@ class CODPayload(BaseModel):
     customer: Dict[str, Any]
     shipping: Dict[str, Any]
     coupon_code: Optional[str] = None
+    discount_amount: float = 0
+    test_mode: bool = False
 
 class RazorpayCreatePayload(BaseModel):
     amount: int
@@ -29,7 +31,8 @@ def place_cod_order(payload: CODPayload, request: Request) -> Dict[str, Any]:
         customer=payload.customer,
         shipping=payload.shipping,
         items=payload.items,
-        coupon_code=payload.coupon_code
+        coupon_code=payload.coupon_code,
+        test_mode=payload.test_mode,
     )
 
 @router.post("/create-order")

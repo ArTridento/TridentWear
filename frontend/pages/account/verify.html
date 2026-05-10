@@ -75,13 +75,6 @@
       </div>
     </main>
     
-    <script>
-      const params = new URLSearchParams(window.location.search);
-      if(params.get("email")) {
-        const el = document.getElementById("verify-email-display");
-        if(el) el.innerHTML = `Enter the 6-digit OTP sent to <strong>${params.get("email")}</strong>`;
-      }
-    </script>
     <script type="module" src="/assets/js/pages/verify.js?v=20260423-frontend"></script>
   </body>
 </html>

@@ -28,7 +28,7 @@ async function triggerTracking(orderId) {
   
   try {
     startProgress();
-    const data = await get(`/api/orders/${orderId}/tracking`);
+    const data = await get(`/api/v1/orders/${orderId}/tracking`);
     
     resultDiv.style.display = "block";
     updateTrackingUI(data);

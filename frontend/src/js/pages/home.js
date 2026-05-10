@@ -9,6 +9,7 @@ import {
   resolveAssetUrl,
   startProgress,
   endProgress,
+  escapeHtml,
 } from "../shared/site.js?v=9";
 import { createGlobalScrollManager } from "../utilities/scroll-throttle.js";
 
@@ -50,19 +51,32 @@ function initHeroSlider() {
 /* ─── Featured Products (New Arrivals) ─── */
 async function loadFeaturedProducts() {
   const grid = document.querySelector("[data-featured-grid]");
-  if (!grid) return;
+  const spotlight = document.querySelector("[data-featured-drop-product]");
+  if (!grid && !spotlight) return;
 
-  grid.innerHTML = createSkeletonCards(4);
+  if (grid) grid.innerHTML = createSkeletonCards(4);
   startProgress();
 
   try {
-    const data     = await get("/api/products?featured=true");
+    const data     = await get("/api/v1/products?featured=true");
     const products = (Array.isArray(data) ? data : data.products || []).slice(0, 4);
-    if (!products.length) { grid.innerHTML = ""; return; }
-    grid.innerHTML = products.map(productCardMarkup).join("");
-    bindProductCardActions(grid, products);
+    if (!products.length) {
+      if (grid) grid.innerHTML = "";
+      if (spotlight) spotlight.closest("[data-featured-drop]")?.remove();
+      return;
+    }
+    if (grid) {
+      grid.innerHTML = products.map(productCardMarkup).join("");
+      bindProductCardActions(grid, products);
+    }
+    if (spotlight) {
+      const heroProduct = products[0];
+      spotlight.innerHTML = productCardMarkup(heroProduct);
+      bindProductCardActions(spotlight, [heroProduct]);
+    }
   } catch {
-    grid.innerHTML = "";
+    if (grid) grid.innerHTML = "";
+    if (spotlight) spotlight.closest("[data-featured-drop]")?.remove();
   } finally {
     endProgress();
   }
@@ -76,7 +90,7 @@ async function loadTrendingProducts() {
   wrap.innerHTML = createSkeletonCards(6);
 
   try {
-    const data     = await get("/api/products");
+    const data     = await get("/api/v1/products");
     const products = (Array.isArray(data) ? data : data.products || []).slice(0, 8);
     if (!products.length) { wrap.closest(".trending-section")?.remove(); return; }
     wrap.innerHTML = products.map(productCardMarkup).join("");
@@ -99,7 +113,7 @@ async function loadStats() {
   };
 
   try {
-    const data = await get("/api/stats");
+    const data = await get("/api/v1/orders/stats");
     if (data?.customers) statsData.customers = data.customers;
     if (data?.orders) statsData.orders = data.orders;
     if (data?.rating) statsData.rating = data.rating;
@@ -217,13 +231,13 @@ function loadRecentlyViewed() {
     const productUrl = pageUrl(`/product?id=${p.id}`);
     const img = resolveAssetUrl(p.image || "assets/images/Logo.png");
     return `
-      <article class="product-card reveal" style="cursor:pointer;" onclick="window.location.href='${productUrl}'">
+      <article class="product-card reveal" style="cursor:pointer;" data-recent-product-link="${escapeHtml(productUrl)}">
         <div class="product-media" style="position:relative; overflow:hidden;">
-          <img src="${img}" alt="${p.name}" loading="lazy" class="product-image">
+          <img src="${escapeHtml(img)}" alt="${escapeHtml(p.name)}" loading="lazy" class="product-image">
         </div>
         <div class="product-body">
-          <span class="product-type">${p.category || "T-Shirt"}</span>
-          <h3 class="product-name">${p.name}</h3>
+          <span class="product-type">${escapeHtml(p.category || "T-Shirt")}</span>
+          <h3 class="product-name">${escapeHtml(p.name)}</h3>
           <div class="product-footer">
             <strong class="product-price">${formatCurrency(p.price)}</strong>
           </div>
@@ -233,6 +247,12 @@ function loadRecentlyViewed() {
   }).join("");
 
   section.style.display = "block";
+  grid.querySelectorAll("[data-recent-product-link]").forEach((card) => {
+    card.addEventListener("click", (event) => {
+      if (event.target.closest("a")) return;
+      window.location.href = card.dataset.recentProductLink;
+    });
+  });
 
   clearBtn?.addEventListener("click", () => {
     localStorage.removeItem(RV_KEY);

@@ -15,6 +15,7 @@ function emitChange(items) {
         items,
         count: getCartCount(items),
         subtotal: getCartSubtotal(items),
+        openDrawer: false,
       },
     }),
   );
@@ -74,7 +75,18 @@ export function addCartItem(product, options = {}) {
     });
   }
 
-  return saveCart(items);
+  const saved = saveCart(items);
+  window.dispatchEvent(
+    new CustomEvent("trident:cart-change", {
+      detail: {
+        items: saved,
+        count: getCartCount(saved),
+        subtotal: getCartSubtotal(saved),
+        openDrawer: Boolean(options.openDrawer),
+      },
+    }),
+  );
+  return saved;
 }
 
 export function updateCartItemQuantity(id, size, nextQty) {

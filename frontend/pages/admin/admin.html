@@ -45,13 +45,57 @@
               <strong class="stat-value" data-summary-total>0</strong>
             </article>
             <article class="summary-card reveal reveal-delay-2">
-              <span class="label">T-Shirts</span>
-              <strong class="stat-value" data-summary-shirts>0</strong>
+              <span class="label">Low Stock</span>
+              <strong class="stat-value" data-summary-low-stock>0</strong>
             </article>
             <article class="summary-card reveal reveal-delay-3">
               <span class="label">Featured</span>
               <strong class="stat-value" data-summary-featured>0</strong>
             </article>
+            <article class="summary-card reveal reveal-delay-4">
+              <span class="label">Orders</span>
+              <strong class="stat-value" data-summary-orders>0</strong>
+            </article>
+          </div>
+
+          <div class="admin-ops-grid reveal-scale">
+            <article class="admin-ops-card">
+              <span class="eyebrow">Order Overview</span>
+              <div class="admin-mini-stats">
+                <span><strong data-admin-orders-pending>0</strong> pending</span>
+                <span><strong data-admin-orders-shipped>0</strong> shipped</span>
+                <span><strong data-admin-revenue>₹0</strong> revenue</span>
+              </div>
+            </article>
+            <article class="admin-ops-card">
+              <span class="eyebrow">Analytics Preview</span>
+              <div class="admin-analytics-placeholder" data-admin-analytics>
+                Conversion, returning customers, and drop velocity will appear here as order volume grows.
+              </div>
+            </article>
+          </div>
+
+          <div class="admin-launch-grid reveal-scale">
+            <section class="admin-ops-card">
+              <div class="section-header">
+                <span class="eyebrow">Order Management</span>
+                <h2 class="section-title">Fulfillment queue</h2>
+              </div>
+              <div class="admin-order-list" data-admin-order-list></div>
+            </section>
+            <section class="admin-ops-card">
+              <div class="section-header">
+                <span class="eyebrow">Review Moderation</span>
+                <h2 class="section-title">Customer reviews</h2>
+              </div>
+              <div class="admin-review-tabs" data-review-tabs>
+                <button class="admin-filter-btn is-active" type="button" data-review-status="">All</button>
+                <button class="admin-filter-btn" type="button" data-review-status="pending">Pending</button>
+                <button class="admin-filter-btn" type="button" data-review-status="approved">Approved</button>
+                <button class="admin-filter-btn" type="button" data-review-status="rejected">Rejected</button>
+              </div>
+              <div class="admin-review-list" data-admin-review-list></div>
+            </section>
           </div>
 
           <div class="admin-grid">
@@ -133,6 +177,7 @@
                     type="file"
                     accept="image/*"
                   />
+                  <p class="field-help">Use square or vertical product images for best storefront cropping.</p>
                 </div>
                 <div class="form-group full">
                   <div class="preview-frame">
