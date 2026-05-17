@@ -23,6 +23,6 @@ export function promptLoginOverlay() {
   
   modal.querySelector("[data-cancel]").addEventListener("click", () => modal.remove());
   modal.querySelector("[data-login]").addEventListener("click", () => {
-    window.location.href = \`/login?next=\${encodeURIComponent(window.location.pathname)}\`;
+    window.location.href = "/login?next=" + encodeURIComponent(window.location.pathname);
   });
 }

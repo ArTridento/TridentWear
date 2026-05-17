@@ -33,6 +33,7 @@ def place_cod_order(payload: CODPayload, request: Request) -> Dict[str, Any]:
         items=payload.items,
         coupon_code=payload.coupon_code,
         test_mode=payload.test_mode,
+        request=request,
     )
 
 @router.post("/create-order")
@@ -40,8 +41,9 @@ def create_razorpay_order(payload: RazorpayCreatePayload) -> Dict[str, Any]:
     return process_razorpay_create(amount=payload.amount, currency=payload.currency)
 
 @router.post("/verify")
-def verify_razorpay_payment(payload: RazorpayVerifyPayload) -> Dict[str, Any]:
+def verify_razorpay_payment(payload: RazorpayVerifyPayload, request: Request) -> Dict[str, Any]:
     return process_razorpay_verify(
         razorpay_payment_id=payload.razorpay_payment_id,
-        order_data_payload=payload.order_data
+        order_data_payload=payload.order_data,
+        request=request,
     )

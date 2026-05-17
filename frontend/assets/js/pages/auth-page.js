@@ -1,5 +1,6 @@
-import { post, saveAuthSession } from "../shared/api.js?v=9";
-import { escapeHtml, getCurrentUser, initSite, pageUrl, refreshAuthState, showToast } from "../shared/site.js?v=9";
+import { post, saveAuthSession } from "../shared/api.js?v=20260430-v3";
+import { mergeGuestCartOnLogin } from "../shared/cart.js?v=20260430-v3";
+import { escapeHtml, getCurrentUser, initSite, pageUrl, refreshAuthState, showToast } from "../shared/site.js?v=20260430-v3";
 
 function nextPath() {
   const params = new URLSearchParams(window.location.search);
@@ -481,6 +482,7 @@ function bindLoginForm() {
     try {
       const data = await post("/api/v1/auth/login", { email, password });
       saveAuthSession({ token: data.token, user: data.user });
+      mergeGuestCartOnLogin();
       await refreshAuthState();
       renderAuthStatus();
       redirectAfterAuth(data.user);

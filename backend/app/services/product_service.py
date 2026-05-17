@@ -112,7 +112,7 @@ def normalize_product(raw_product: Dict[str, Any], index: int = 0) -> Dict[str, 
     return {
         "id": int(raw_product.get("id", index + 1)),
         "name": str(raw_product.get("name", "")).strip(),
-        "category": "shirt" if str(raw_product.get("category", "")).strip().lower() == "shirt" else "tshirt",
+        "category": str(raw_product.get("category", "tshirt")).strip().lower(),
         "price": int(float(raw_product.get("price", 0) or 0)),
         "description": str(raw_product.get("description", "")).strip(),
         "image": normalize_image_path(str(raw_product.get("image", ""))),
@@ -120,6 +120,11 @@ def normalize_product(raw_product: Dict[str, Any], index: int = 0) -> Dict[str, 
         "sizes": normalize_sizes(raw_product.get("sizes", [])),
         "stock": max(int(float(raw_product.get("stock", 0) or 0)), 0),
         "featured": normalize_bool(raw_product.get("featured", index < 4)),
+        "material": str(raw_product.get("material", "100% Cotton")),
+        "gsm": int(float(raw_product.get("gsm", 220) or 220)),
+        "fit_type": str(raw_product.get("fit_type", "Oversized")),
+        "neck_type": str(raw_product.get("neck_type", "Round Neck")),
+        "design_type": str(raw_product.get("design_type", "Graphic")),
     }
 
 def product_sort_key(product: Dict[str, Any]) -> Any:

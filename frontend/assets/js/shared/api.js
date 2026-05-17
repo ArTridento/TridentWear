@@ -110,16 +110,35 @@ function roundCurrency(value) {
 }
 
 function normalizeImagePath(value) {
+
   if (!value) {
+
     return "/assets/images/hero-banner.jpg";
+
   }
+
   if (value.startsWith("data:") || /^https?:\/\//.test(value)) {
+
     return value;
+
   }
+
+  // Backend serves images at /images/ - remap to /assets/images/ for frontend
+
+  if (value.startsWith("/images/")) {
+
+    return `/assets${value}`;
+
+  }
+
   if (value.startsWith("/")) {
+
     return value;
+
   }
+
   return `/${String(value).replace(/^\.?\//, "")}`;
+
 }
 
 function stripSiteBase(value) {
@@ -527,11 +546,11 @@ async function handleStaticRequest(url, method, body, originalPath) {
     return getProductsDb();
   }
 
-  if (pathname === "/api/stats" && method === "GET") {
+  if ((pathname === "/api/stats" || pathname === "/api/v1/orders/stats") && method === "GET") {
     return buildStats(getOrdersDb());
   }
 
-  if (pathname === "/api/auth/me" && method === "GET") {
+  if ((pathname === "/api/auth/me" || pathname === "/api/v1/auth/me") && method === "GET") {
     const user = getAuthUser();
     return {
       authenticated: Boolean(user),
@@ -539,7 +558,7 @@ async function handleStaticRequest(url, method, body, originalPath) {
     };
   }
 
-  if (pathname === "/api/auth/register" && method === "POST") {
+  if ((pathname === "/api/auth/register" || pathname === "/api/v1/auth/register") && method === "POST") {
     const users = getUsersDb();
     const name = String(body?.name || "").trim();
     const email = validateEmail(body?.email);
@@ -598,7 +617,7 @@ async function handleStaticRequest(url, method, body, originalPath) {
     };
   }
 
-  if (pathname === "/api/auth/login" && method === "POST") {
+  if ((pathname === "/api/auth/login" || pathname === "/api/v1/auth/login") && method === "POST") {
     const user = findUserByEmail(body?.email);
     const inputPass = String(body?.password || "").trim();
     
@@ -776,11 +795,11 @@ async function handleStaticRequest(url, method, body, originalPath) {
     };
   }
 
-  if (pathname === "/api/auth/logout" && method === "POST") {
+  if ((pathname === "/api/auth/logout" || pathname === "/api/v1/auth/logout") && method === "POST") {
     return { success: true, message: "Logged out." };
   }
 
-  if (pathname === "/api/contact" && method === "POST") {
+  if ((pathname === "/api/contact" || pathname === "/api/v1/contact") && method === "POST") {
     const contacts = getContactsDb();
     const name = String(body?.name || "").trim();
     const email = validateEmail(body?.email);
@@ -856,12 +875,12 @@ async function handleStaticRequest(url, method, body, originalPath) {
     return { success: true, message: "Review submitted successfully.", review };
   }
 
-  if (pathname === "/api/wishlist" && method === "GET") {
+  if ((pathname === "/api/wishlist" || pathname === "/api/v1/wishlist") && method === "GET") {
     const user = requireUser();
     return formatWishlistItems(user.id);
   }
 
-  if (pathname === "/api/wishlist/add" && method === "POST") {
+  if ((pathname === "/api/wishlist/add" || pathname === "/api/v1/wishlist/add") && method === "POST") {
     const user = requireUser();
     const productId = Number(body?.product_id);
     if (!findProductById(productId)) {
@@ -875,7 +894,7 @@ async function handleStaticRequest(url, method, body, originalPath) {
     return { success: true, message: "Added to wishlist." };
   }
 
-  if (pathname === "/api/wishlist/remove" && ["DELETE", "POST"].includes(method)) {
+  if ((pathname === "/api/wishlist/remove" || pathname === "/api/v1/wishlist/remove") && ["DELETE", "POST"].includes(method)) {
     const user = requireUser();
     const productId = Number(body?.product_id);
     const wishlist = getWishlistDb(user.id).filter((id) => Number(id) !== productId);
@@ -934,13 +953,13 @@ async function handleStaticRequest(url, method, body, originalPath) {
     };
   }
 
-  const trackingMatch = pathname.match(/^\/api\/orders\/([^/]+)\/tracking$/);
+  const trackingMatch = pathname.match(/^\/api(?:\/v1)?\/orders\/([^/]+)\/tracking$/);
   if (trackingMatch && method === "GET") {
     const order = getOrdersDb().find((entry) => entry.order_id === trackingMatch[1]);
     return createTrackingPayload(order);
   }
 
-  if (pathname === "/api/orders" && method === "GET") {
+  if ((pathname === "/api/orders" || pathname === "/api/v1/orders") && method === "GET") {
     const user = requireUser();
     return {
       orders: getOrdersDb().filter(
@@ -1264,9 +1283,23 @@ export async function withLoading(btnElement, asyncFn) {
     }
   }
 }
+const inflightRequests = new Map();
 
 export async function request(path, options = {}) {
   const method = String(options.method || "GET").toUpperCase();
+  if (method === "GET") {
+    const cacheKey = path + JSON.stringify(options);
+    if (inflightRequests.has(cacheKey)) {
+      return inflightRequests.get(cacheKey);
+    }
+    const p = _executeRequest(path, options, method).finally(() => inflightRequests.delete(cacheKey));
+    inflightRequests.set(cacheKey, p);
+    return p;
+  }
+  return _executeRequest(path, options, method);
+}
+
+async function _executeRequest(path, options, method) {
   const url = new URL(resolveUrl(path));
   const requestOptions = {
     ...options,

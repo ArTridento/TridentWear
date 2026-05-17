@@ -1,5 +1,5 @@
-import { get, post } from "../shared/api.js?v=10";
-import { initSite, showToast, withLoading, escapeHtml, getCurrentUser, pageUrl } from "../shared/site.js?v=10";
+import { get, post } from "../shared/api.js?v=20260430-v3";
+import { initSite, showToast, withLoading, escapeHtml, getCurrentUser, pageUrl } from "../shared/site.js?v=20260430-v3";
 
 let threadsData = {};
 let activeThreadId = null;

@@ -1,11 +1,17 @@
-import { resolveAssetUrl } from "../shared/api.js?v=9";
-import { getCartSubtotal, loadCart, removeCartItem, updateCartItemQuantity } from "../shared/cart.js?v=9";
-import { createEmptyMarkup, endGlobalLoader, escapeHtml, formatCurrency, initSite, startGlobalLoader } from "../shared/site.js?v=9";
+import { post, resolveAssetUrl } from "../shared/api.js?v=20260430-v3";
+import { getCartSubtotal, loadCart, removeCartItem, updateCartItemQuantity } from "../shared/cart.js?v=20260430-v3";
+import { createEmptyMarkup, endGlobalLoader, escapeHtml, formatCurrency, initSite, showToast, startGlobalLoader } from "../shared/site.js?v=20260430-v3";
+
+let appliedCartCoupon = null;
 
 function renderSummary(items) {
   const summary = document.querySelector("[data-cart-summary]");
   if (!summary) return;
   const subtotal = getCartSubtotal(items);
+  const discountRow = appliedCartCoupon
+    ? `<div class="summary-row" style="color:var(--success,#22c55e);"><span>Coupon (${appliedCartCoupon.code})</span><strong>-${formatCurrency(appliedCartCoupon.discount_amount)}</strong></div>`
+    : "";
+  const finalTotal = appliedCartCoupon ? appliedCartCoupon.final_total : subtotal;
   summary.innerHTML = `
     <div class="summary-row">
       <span>Subtotal</span>
@@ -14,6 +20,11 @@ function renderSummary(items) {
     <div class="summary-row">
       <span>Items</span>
       <strong>${items.length}</strong>
+    </div>
+    ${discountRow}
+    <div class="summary-row" style="border-top:1px solid rgba(255,255,255,.1);padding-top:0.5rem;margin-top:0.25rem;">
+      <span style="font-weight:700;">Total</span>
+      <strong class="summary-price">${formatCurrency(finalTotal)}</strong>
     </div>
   `;
 }
@@ -90,6 +101,42 @@ function renderCart() {
   bindCartActions();
 }
 
+function bindCartCoupon() {
+  const btn = document.getElementById("cart-coupon-apply");
+  const input = document.getElementById("cart-coupon-code");
+  const msg = document.getElementById("cart-coupon-msg");
+  if (!btn || !input) return;
+  btn.addEventListener("click", async () => {
+    const code = input.value.trim();
+    if (!code) { showToast("Enter a coupon code.", "error"); return; }
+    btn.disabled = true;
+    btn.textContent = "Checking…";
+    try {
+      const data = await post("/api/coupons/apply", {
+        code,
+        subtotal: getCartSubtotal(loadCart()),
+      });
+      appliedCartCoupon = { code: data.code, discount_amount: data.discount_amount, final_total: data.final_total };
+      if (msg) {
+        msg.textContent = `${data.discount_pct}% off applied — saving ${formatCurrency(data.discount_amount)}!`;
+        msg.style.color = "var(--success, #22c55e)";
+      }
+      renderSummary(loadCart());
+      showToast(`Coupon "${data.code}" applied!`, "success");
+    } catch (err) {
+      appliedCartCoupon = null;
+      if (msg) {
+        msg.textContent = err.message;
+        msg.style.color = "var(--danger, #ef4444)";
+      }
+      renderSummary(loadCart());
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Apply";
+    }
+  });
+}
+
 window.addEventListener("DOMContentLoaded", async () => {
   await initSite();
   const list = document.querySelector("[data-cart-list]");
@@ -104,6 +151,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   startGlobalLoader();
   setTimeout(() => {
     renderCart();
+    bindCartCoupon();
     endGlobalLoader();
     if (list) list.classList.add("fade-in");
   }, 500);

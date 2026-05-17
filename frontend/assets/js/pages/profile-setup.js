@@ -1,5 +1,5 @@
-import { getAuthSession, post, saveAuthSession } from "../shared/api.js?v=9";
-import { pageUrl, showToast } from "../shared/site.js?v=9";
+import { getAuthSession, post, saveAuthSession } from "../shared/api.js?v=20260430-v3";
+import { pageUrl, showToast } from "../shared/site.js?v=20260430-v3";
 
 function nextPath() {
   const params = new URLSearchParams(window.location.search);

@@ -1,5 +1,5 @@
-import { post } from "../shared/api.js?v=9";
-import { initSite, showToast, withLoading } from "../shared/site.js?v=9";
+import { post } from "../shared/api.js?v=20260430-v3";
+import { initSite, showToast, withLoading } from "../shared/site.js?v=20260430-v3";
 
 window.addEventListener("DOMContentLoaded", async () => {
   await initSite();
@@ -18,7 +18,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     const btn = form.querySelector("button[type='submit']");
     await withLoading(btn, async () => {
       try {
-        await post("/api/contact", payload);
+        await post("/api/v1/contact", payload);
         form.reset();
         status.innerHTML = `<div class="helper-note success">Message sent. We will reply from the Trident desk soon.</div>`;
         showToast("Message sent successfully.");

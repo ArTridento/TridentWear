@@ -11,7 +11,7 @@
       content="Review your TridentWear cart and checkout securely. Free shipping over ₹999."
     />
     <title>Your Cart | TridentWear</title>
-    <link rel="stylesheet" href="/assets/css/styles.css?v=20260424-mobile-grid" />
+    <link rel="stylesheet" href="/assets/css/styles.css?v=20260430-v3" />
     <link rel="icon" type="image/png" href="/assets/images/Logo.png" />
     <link
       rel="stylesheet"
@@ -65,11 +65,13 @@
               <div class="cart-promo-inputs">
                 <input
                   class="field cart-promo-input"
+                  id="cart-coupon-code"
                   type="text"
-                  placeholder="Enter code"
+                  placeholder="Enter code e.g. TRIDENT10"
                 />
-                <button class="btn btn-dark cart-promo-apply">Apply</button>
+                <button class="btn btn-dark cart-promo-apply" id="cart-coupon-apply">Apply</button>
               </div>
+              <p class="auth-helper-text" id="cart-coupon-msg" style="margin-top:0.5rem;"></p>
             </div>
           </div>
         </div>
@@ -121,7 +123,7 @@
       </svg>
     </button>
 
-    <script type="module" src="/assets/js/pages/cart.js?v=20260423-frontend"></script>
+    <script type="module" src="/assets/js/pages/cart.js?v=20260430-v3"></script>
 
     <!-- Bottom Navigation (Mobile App Style) -->
     <nav class="bottom-nav">

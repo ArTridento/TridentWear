@@ -15595,3 +15595,20 @@ body[data-page] main {
     min-width: 0;
   }
 }
+
+/* Fix input text color issue globally */
+.field {
+  color: var(--dark);
+}
+.auth-panel-left .field, .newsletter-form .field {
+  color: var(--white);
+}
+
+/* Fix cart drawer dark text on dark background */
+.cart-drawer-panel strong {
+  color: var(--white) !important;
+}
+.cart-drawer-panel .empty-state.compact {
+  color: rgba(255, 255, 255, 0.68) !important;
+  background: transparent !important;
+}

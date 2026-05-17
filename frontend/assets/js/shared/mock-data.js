@@ -110,8 +110,10 @@ export const DEFAULT_USERS = [
     name: "Trident Admin",
     email: "admin@trident.local",
     phone: "9999999999",
-    password: "admin@12345",
+    password: "admin123",
     role: "admin",
+    otp_verification_status: true,
+    profile_completed_status: true,
     created_at: "2026-04-12T00:00:00.000Z",
   },
   {
@@ -119,8 +121,10 @@ export const DEFAULT_USERS = [
     name: "Demo Customer",
     email: "customer@trident.local",
     phone: "9876543210",
-    password: "customer@12345",
+    password: "password",
     role: "customer",
+    otp_verification_status: true,
+    profile_completed_status: true,
     created_at: "2026-04-12T00:30:00.000Z",
   },
 ];

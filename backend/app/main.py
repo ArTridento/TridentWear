@@ -13,6 +13,8 @@ from app.api.frontend import router as frontend_router
 from app.api.contact import router as contact_router
 from app.api.account import router as account_router
 from app.api.reviews import router as reviews_router
+from app.api.wishlist import router as wishlist_router
+from app.api.coupons import router as coupons_router
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
@@ -27,12 +29,15 @@ app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="assets")
 app.mount("/images", StaticFiles(directory=IMAGES_DIR), name="images")
 app.mount("/components", StaticFiles(directory=str(FRONTEND_ROOT / "components")), name="components")
 
+_raw_origins = os.getenv("ALLOWED_ORIGINS", "")
+_cors_origins = [o.strip() for o in _raw_origins.split(",") if o.strip()] if _raw_origins else ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=_cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "Idempotency-Key"],
 )
 
 app.add_middleware(
@@ -53,7 +58,9 @@ app.include_router(payments_router)
 app.include_router(contact_router)
 app.include_router(account_router)
 app.include_router(reviews_router)
-app.include_router(frontend_router)
+app.include_router(wishlist_router)
+app.include_router(coupons_router)
+app.include_router(frontend_router)  # frontend last — catch-all routes
 
 from fastapi import Request, HTTPException
 from fastapi.responses import JSONResponse

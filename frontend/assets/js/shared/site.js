@@ -1,4 +1,4 @@
-import { clearAuthSession, get, getAuthSession, post, resolveAssetUrl, resolveUrl, saveAuthSession, withLoading } from "./api.js";
+import { clearAuthSession, get, getAuthSession, post, resolveAssetUrl, resolveUrl, saveAuthSession, withLoading, STATIC_MODE } from "./api.js";
 import { addCartItem, getCartCount, getCartSubtotal, loadCart, syncCart } from "./cart.js";
 import { normalizeProduct } from "./catalog.js";
 import { initErrorMonitoring } from "./error-monitor.js";
@@ -994,6 +994,7 @@ export async function initSite() {
   document.body.classList.add("js-loaded");
   initErrorMonitoring();
   initGlobalScrollReveal();
+  interceptLinks();
   initNavbarScroll();
 
   setActiveNav();
@@ -1027,6 +1028,25 @@ export async function initSite() {
 }
 
 /* ───────── Global scroll reveal (runs on every page) ───────── */
+
+function interceptLinks() {
+  if (!STATIC_MODE) return;
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a');
+    if (!a || !a.href || a.hasAttribute('download') || a.target === '_blank') return;
+    try {
+      const url = new URL(a.href, window.location.href);
+      if (url.origin === window.location.origin) {
+        const href = a.getAttribute('href');
+        if (href && href.startsWith('/')) {
+          e.preventDefault();
+          window.location.href = pageUrl(href);
+        }
+      }
+    } catch (_) {}
+  });
+}
+
 function initGlobalScrollReveal() {
   const targets = document.querySelectorAll("[data-animate]");
   if (!targets.length) return;

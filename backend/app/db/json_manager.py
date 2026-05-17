@@ -4,6 +4,8 @@ import time
 import tempfile
 import threading
 from typing import Dict, Any, Callable, Optional
+import copy
+
 
 from app.db.db_interface import DBInterface
 
@@ -150,7 +152,7 @@ class MemoryCache(DBInterface):
         with self._cache_lock:
             cached = self._cache.get(collection_path)
             if cached and (time.time() - cached['time'] < self.CACHE_TTL):
-                return cached['data']
+                return copy.deepcopy(cached['data'])
                 
         # Cache miss or expired
         data = self.backend.read(collection_path)
@@ -158,7 +160,7 @@ class MemoryCache(DBInterface):
         with self._cache_lock:
             self._cache[collection_path] = {
                 'time': time.time(),
-                'data': data
+                'data': copy.deepcopy(data)
             }
         return data
 

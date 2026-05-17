@@ -1,4 +1,4 @@
-import { getWithFallback } from "../shared/api.js?v=9";
+import { getWithFallback } from "../shared/api.js?v=20260430-v3";
 import {
   formatCurrency,
   escapeHtml,
@@ -12,9 +12,9 @@ import {
   promptLoginOverlay,
   isWishlisted,
   toggleWishlist,
-} from "../shared/site.js?v=9";
-import { addCartItem } from "../shared/cart.js?v=9";
-import { normalizeProduct } from "../shared/catalog.js?v=9";
+} from "../shared/site.js?v=20260430-v3";
+import { addCartItem } from "../shared/cart.js?v=20260430-v3";
+import { normalizeProduct } from "../shared/catalog.js?v=20260430-v3";
 
 /* ─── Recently viewed ─── */
 const RV_KEY = "trident_recently_viewed";
@@ -345,7 +345,7 @@ function bindReviewForm(productId) {
     event.preventDefault();
     const review = form.querySelector("[data-review-text]")?.value.trim() || "";
     try {
-      const { post } = await import("../shared/api.js?v=9");
+      const { post } = await import("../shared/api.js?v=20260430-v3");
       await post("/api/v1/reviews", { product_id: productId, rating, review });
       notify("review", "Review submitted for moderation.");
       form.reset();

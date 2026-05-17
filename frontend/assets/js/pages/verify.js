@@ -1,5 +1,5 @@
-import { post } from "../shared/api.js?v=9";
-import { initSite, pageUrl, showToast } from "../shared/site.js?v=9";
+import { post } from "../shared/api.js?v=20260430-v3";
+import { initSite, pageUrl, showToast } from "../shared/site.js?v=20260430-v3";
 
 window.addEventListener("DOMContentLoaded", async () => {
   await initSite();

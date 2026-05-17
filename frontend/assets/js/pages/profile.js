@@ -1,5 +1,5 @@
-import { escapeHtml, getCurrentUser, initSite, pageUrl, showToast } from "../shared/site.js?v=9";
-import { get, request } from "../shared/api.js?v=9";
+import { escapeHtml, getCurrentUser, initSite, pageUrl, showToast } from "../shared/site.js?v=20260430-v3";
+import { get, request } from "../shared/api.js?v=20260430-v3";
 
 async function loadProfile() {
   await initSite();

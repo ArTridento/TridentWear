@@ -1,5 +1,5 @@
-import { get } from "../shared/api.js?v=9";
-import { initSite, startProgress, endProgress, showToast } from "../shared/site.js?v=9";
+import { get } from "../shared/api.js?v=20260430-v3";
+import { initSite, startProgress, endProgress, showToast } from "../shared/site.js?v=20260430-v3";
 
 async function trackOrder() {
   const form = document.querySelector("[data-track-form]");
