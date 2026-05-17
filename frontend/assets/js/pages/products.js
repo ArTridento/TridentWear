@@ -21,16 +21,8 @@ let activeFits = new Set();
 let activeSizes = new Set();
 
 const categoryLabels = {
-  all:         "All Products",
-  tshirt:      "T-Shirts",
-  shirt:       "Shirts",
-  kurta:       "Kurtas",
-  hoodie:      "Hoodies",
-  sweatshirt:  "Sweatshirts",
-  jacket:      "Jackets",
-  sweater:     "Sweaters",
-  blazer:      "Blazers",
-  tunic:       "Tunics",
+  all:     "All T-Shirts",
+  tshirt:  "T-Shirts",
 };
 
 /* ───────────────────────────────────────────
