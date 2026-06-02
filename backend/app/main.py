@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 import os
 
-from app.api.health import router as health_router
+from app.api.health import router as health_router, root_health_router
 from app.api.auth import router as auth_router
 from app.api.products import router as products_router
 from app.api.orders import router as orders_router
@@ -49,7 +49,8 @@ app.add_middleware(
 )
 
 # Mount our extracted routes!
-app.include_router(health_router)
+app.include_router(health_router)        # /api/v1/health
+app.include_router(root_health_router)  # /health  (Render/Railway/Docker probe)
 app.include_router(auth_router)
 app.include_router(products_router)
 app.include_router(orders_router)
